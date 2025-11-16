@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
-import Image from "next/image";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,49 +27,47 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = {
+    fullName: "John Doe",
+  };
   return (
     <html lang="en">
-      <body className={`flex flex-col ${geistSans.variable} ${geistMono.variable}`}>
-        <nav
-          aria-label="Global"
-          className="flex items-center justify-between p-6 h-16"
-        >
-          <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <Image width={8} height={8}
-                alt=""
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
-            </Link>
-          </div>
-          <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm/6 font-semibold text-gray-900"
-              >
-                {item.name}
+      <body
+        className={`flex flex-col ${geistSans.variable} ${geistMono.variable}`}
+      >
+        <header className="bg-blue-600">
+          <div className="w-full flex flex-row justify-between px-4">
+            <div className="lg:w-1/2 flex flex-col lg:flex-row gap-8 items-center py-4">
+              <Link className="font-bold text-xl text-gray-100" href={"/"}>
+                NextTribe
               </Link>
-            ))}
+            </div>
+            <div className="lg:w-1/2 flex flex-row p-4 lg:p-0 gap-8 items-center justify-center lg:justify-end">
+              {user ? (
+                <>
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="text-sm/6 font-medium text-gray-100"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <Link href="/sign-in" className={"text-gray-300"}>
+                    Sign In
+                  </Link>
+                  <Link href="/sign-up" className={"text-gray-300"}>
+                    Join Now
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link
-              href="/sign-in"
-              className="text-sm/6 font-semibold text-gray-900"
-            >
-              Sign in <span aria-hidden="true">&rarr;</span>
-            </Link>
-            <Link
-              href="/sign-up"
-              className="text-sm/6 font-semibold text-gray-900"
-            >
-              Sign Up <span aria-hidden="true">&rarr;</span>
-            </Link>
-          </div>
-        </nav>
+        </header>
         {children}
       </body>
     </html>
