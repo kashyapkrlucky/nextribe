@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 };
 
 const navigation = [
-  { name: "Communities", href: "/community" },
-  { name: "Discussions", href: "/discussion" },
+  { name: "Sign In", href: "/sign-in" },
+  { name: "Sign Up", href: "/sign-up" },
 ];
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
       <body
         className={`flex flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
-        <header className="bg-blue-600">
+        <header className="bg-blue-600 h-16">
           <div className="w-full flex flex-row justify-between px-4">
             <div className="lg:w-1/2 flex flex-col lg:flex-row gap-8 items-center py-4">
               <Link className="font-bold text-xl text-gray-100" href={"/"}>
