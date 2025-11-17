@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,14 +24,31 @@ const navigation = [
   { name: "Sign Up", href: "/sign-up" },
 ];
 
-export default function RootLayout({
+async function getUserFromCookie() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    if (!token) return null;
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return null;
+    const key = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(token, key);
+    return {
+      id: typeof payload.sub === "string" ? payload.sub : undefined,
+      email: typeof payload.email === "string" ? payload.email : undefined,
+      name: typeof payload.name === "string" ? payload.name : undefined,
+    } as { id?: string; email?: string; name?: string };
+  } catch {
+    return null;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = {
-    fullName: "John Doe",
-  };
+  const user = await getUserFromCookie();
   return (
     <html lang="en">
       <body
@@ -43,7 +62,19 @@ export default function RootLayout({
               </Link>
             </div>
             <div className="lg:w-1/2 flex flex-row p-4 lg:p-0 gap-8 items-center justify-center lg:justify-end">
-              {user ? (
+              {user && user.name ? (
+                <div className="flex items-center gap-4">
+                  <div className="text-gray-100 text-sm font-medium">Hi, {user.name}</div>
+                  <form action="/api/auth/logout" method="post">
+                    <button
+                      type="submit"
+                      className="text-sm/6 font-medium text-gray-100 hover:underline"
+                    >
+                      Log out
+                    </button>
+                  </form>
+                </div>
+              ) : (
                 <>
                   {navigation.map((item) => (
                     <Link
@@ -55,15 +86,6 @@ export default function RootLayout({
                     </Link>
                   ))}
                 </>
-              ) : (
-                <>
-                  <Link href="/sign-in" className={"text-gray-300"}>
-                    Sign In
-                  </Link>
-                  <Link href="/sign-up" className={"text-gray-300"}>
-                    Join Now
-                  </Link>
-                </>
               )}
             </div>
           </div>
@@ -73,3 +95,4 @@ export default function RootLayout({
     </html>
   );
 }
+

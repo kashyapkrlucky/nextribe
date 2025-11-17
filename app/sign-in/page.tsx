@@ -10,26 +10,30 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!email || !password) {
-      setError("Please enter your email and password.");
+  e.preventDefault();
+  setError("");
+  if (!email || !password) { setError("Please enter your email and password."); return; }
+  try {
+    setLoading(true);
+    const res = await fetch("/api/auth/sign-in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data?.error || "Sign in failed.");
       return;
     }
-    try {
-      setLoading(true);
-      // TODO: Replace with real auth call
-      await new Promise((r) => setTimeout(r, 600));
-      console.log("sign-in", { email, remember });
-      // On success, redirect to home
-      window.location.href = "/";
-    } catch (e) {
-      console.log(e);
-      setError("Sign in failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Cookie is set by server; just redirect
+    window.location.href = "/";
+  } catch (e) {
+    console.log(e);
+    setError("Sign in failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">

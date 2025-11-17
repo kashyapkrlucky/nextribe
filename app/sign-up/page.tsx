@@ -12,33 +12,33 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!name || !email || !password || !confirm) {
-      setError("Please fill in all fields.");
+  e.preventDefault();
+  setError("");
+  if (!name || !email || !password || !confirm) { setError("Please fill in all fields."); return; }
+  if (password !== confirm) { setError("Passwords do not match."); return; }
+  if (!agree) { setError("You must accept the Terms to continue."); return; }
+
+  try {
+    setLoading(true);
+    const res = await fetch("/api/auth/sign-up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data?.error || "Sign up failed.");
       return;
     }
-    if (password !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
-    if (!agree) {
-      setError("You must accept the Terms to continue.");
-      return;
-    }
-    try {
-      setLoading(true);
-      // TODO: Replace with real sign-up call
-      await new Promise((r) => setTimeout(r, 800));
-      console.log("sign-up", { name, email });
-      // After sign-up, redirect to home or sign-in
-      window.location.href = "/";
-    } catch (e) {
-      setError("Sign up failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Redirect to sign-in after successful sign up
+    window.location.href = "/sign-in";
+  } catch (e) {
+    console.log(e);
+    setError("Sign up failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
