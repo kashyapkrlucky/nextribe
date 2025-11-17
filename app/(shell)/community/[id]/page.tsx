@@ -1,113 +1,100 @@
 "use client";
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { PlusIcon, FilterIcon, SearchIcon, TrendingUpIcon, LinkIcon, HomeIcon, CompassIcon, MessageSquareIcon, SettingsIcon } from "lucide-react";
+import { FilterIcon, SearchIcon, TrendingUpIcon } from "lucide-react";
 
-// Mock user
-const MOCK_USER = {
-  name: "John Doe",
-  title: "Community Builder",
-  linkedin: "https://www.linkedin.com/in/johndoe",
-};
-
-type Community = {
-  id: number;
+type ApiCommunity = {
+  _id: string;
   name: string;
-  members: number;
-  topics: string[];
-  description: string;
+  slug: string;
+  description?: string;
+  topics?: string[]; // Topic ids if present
 };
 
-type Discussion = {
-  id: number;
+type ApiDiscussion = {
+  _id: string;
   title: string;
-  replies: number;
-  tags: string[];
+  slug: string;
+  body: string;
+  author: string;
+  community: string;
+  commentCount?: number;
+  lastActivityAt?: string;
+  createdAt?: string;
 };
-
-// Deterministic helpers
-function getCommunityById(idNum: number): Community {
-  const name = `Community ${idNum}`;
-  const topicsPool = [
-    ["tech", "ai"],
-    ["design", "ux"],
-    ["startup", "funding"],
-    ["health", "fitness"],
-  ];
-  const topics = topicsPool[(idNum - 1) % topicsPool.length];
-  const members = 50 + ((idNum * 911) % 5000);
-  return {
-    id: idNum,
-    name,
-    members,
-    topics,
-    description:
-      "This is a sample community description. Replace with real community details like purpose, rules, and highlights.",
-  };
-}
-
-function getDiscussions(seed: number, count = 37): Discussion[] {
-  return Array.from({ length: count }).map((_, i) => {
-    const id = i + 1;
-    const replies = (seed * (i + 7) * 97) % 300;
-    const tags = ["general", "help", "show-and-tell", "resources"];
-    return {
-      id,
-      title: `Discussion #${id}: Topic ${(seed + id) % 100}`,
-      replies,
-      tags: [tags[(seed + i) % tags.length]],
-    };
-  });
-}
-
-const MY_COMMUNITY_IDS = new Set([1, 3, 7, 11, 20]);
 
 export default function CommunityPage() {
   const params = useParams();
-  const idStr = (params?.id as string) || "1";
-  const id = Math.max(1, parseInt(idStr, 10) || 1);
-
-  // Base mock data
-  const community = useMemo(() => getCommunityById(id), [id]);
-  const allDiscussions = useMemo(() => getDiscussions(id, 53), [id]);
+  const communityId = (params?.id as string) || "";
+  
+  const [community, setCommunity] = useState<ApiCommunity | null>(null);
+  const [allDiscussions, setAllDiscussions] = useState<ApiDiscussion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // UI state
   const [query, setQuery] = useState("");
-  const [tag, setTag] = useState<string | "all">("all");
   const [sort, setSort] = useState<"popular" | "new">("popular");
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const tags = ["all", "general", "help", "show-and-tell", "resources"] as const;
+  function isObjectIdLike(s: string) {
+    return /^[a-fA-F0-9]{24}$/.test(s);
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
+        // community (by id or slug)
+        let cRes: Response;
+        if (isObjectIdLike(communityId)) {
+          console.log('isObjectIdLike', isObjectIdLike(communityId));
+          console.log('communityId', communityId, `/api/communities/${communityId}`);
+          
+          cRes = await fetch(`/api/communities/${communityId}`, { cache: "no-store" });
+        } else {
+          cRes = await fetch(`/api/communities/slug/${encodeURIComponent(communityId)}` , { cache: "no-store" });
+        }
+        const cJson = await cRes.json();
+        if (!cRes.ok) throw new Error(cJson?.error || "Failed to load community");
+
+        const dRes = await fetch(`/api/communities/${communityId}/discussions`, { cache: "no-store" });
+        const dJson = await dRes.json();
+        if (!dRes.ok) throw new Error(dJson?.error || "Failed to load discussions");
+        if (cancelled) return;
+        setCommunity(cJson.community as ApiCommunity);
+        setAllDiscussions((dJson.discussions as ApiDiscussion[]) || []);
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : "Failed to load";
+        if (!cancelled) setError(msg);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    if (communityId) load();
+    return () => { cancelled = true; };
+  }, [communityId]);
 
   const filtered = useMemo(() => {
     let list = [...allDiscussions];
     if (query.trim()) {
       const q = query.toLowerCase();
-      list = list.filter((d) => d.title.toLowerCase().includes(q));
-    }
-    if (tag !== "all") {
-      list = list.filter((d) => d.tags.includes(tag));
+      list = list.filter((d) => d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q));
     }
     if (sort === "popular") {
-      list.sort((a, b) => b.replies - a.replies);
+      list.sort((a, b) => (b.commentCount || 0) - (a.commentCount || 0));
     } else {
-      list.sort((a, b) => a.id - b.id);
+      list.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
     }
     return list;
-  }, [allDiscussions, query, tag, sort]);
+  }, [allDiscussions, query, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
-
-  // Left sidebar data
-  const importantLinks = [
-    { href: "/", label: "Home", icon: HomeIcon },
-    { href: "/community", label: "Explore", icon: CompassIcon },
-    { href: "/discussion", label: "Discussions", icon: MessageSquareIcon },
-    { href: "/settings", label: "Settings", icon: SettingsIcon },
-  ];
 
   // Right sidebar data
   const popularItems = filtered.slice(0, 5);
@@ -118,20 +105,37 @@ export default function CommunityPage() {
     { href: "https://lucide.dev", label: "Lucide Icons" },
   ];
 
+  async function onJoin() {
+    try {
+      const id = community?._id || communityId;
+      const res = await fetch(`/api/communities/${id}/join`, { method: "POST" });
+      if (res.status === 401) { window.location.href = "/sign-in"; return; }
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json?.error || "Failed to join");
+      }
+      // Optionally refetch members-related data here in future
+      alert("Joined community");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to join");
+    }
+  }
+
   return ( 
       <Fragment>
         {/* Mid section */}
         <section className="flex flex-col lg:w-3/5 gap-4">
           <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-xl p-3">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <h2 className="text-xl font-semibold">{community.name} Discussions</h2>
+              <h2 className="text-xl font-semibold">{community?.name || "Community"} Discussions</h2>
               <div className="flex items-center gap-2">
-                <Link
-                  href={`/discussion/new?community=${community.id}`}
+                <button
+                  onClick={onJoin}
                   className="inline-flex items-center gap-2 rounded-lg px-3 py-2 bg-blue-600 text-white text-sm"
                 >
-                  <PlusIcon className="w-4 h-4" /> Create Discussion
-                </Link>
+                  Join Community
+                </button>
                 <button
                   className="inline-flex items-center justify-center bg-white rounded-lg border border-gray-200 px-2 py-2"
                   title="Filters"
@@ -155,20 +159,6 @@ export default function CommunityPage() {
                 />
               </div>
               <select
-                value={tag}
-                onChange={(e) => {
-                  setTag(e.target.value as string);
-                  setPage(1);
-                }}
-                className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
-              >
-                {tags.map((t) => (
-                  <option key={t} value={t}>
-                    {t === "all" ? "All tags" : t}
-                  </option>
-                ))}
-              </select>
-              <select
                 value={sort}
                 onChange={(e) => {
                   setSort(e.target.value as "popular" | "new");
@@ -183,18 +173,22 @@ export default function CommunityPage() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl">
-            {pageData.length === 0 ? (
+            {loading ? (
+              <div className="p-8 text-center text-slate-600">Loading...</div>
+            ) : error ? (
+              <div className="p-8 text-center text-red-600 text-sm">{error}</div>
+            ) : pageData.length === 0 ? (
               <div className="p-8 text-center text-slate-600">No discussions found.</div>
             ) : (
               <ul className="divide-y divide-gray-200">
                 {pageData.map((d) => (
-                  <li key={d.id} className="p-4 flex items-center justify-between">
+                  <li key={d._id} className="p-4 flex items-center justify-between">
                     <div>
-                      <Link href={`/discussion/${d.id}`} className="font-medium hover:underline">
+                      <Link href={`/discussion/${d._id}`} className="font-medium hover:underline">
                         {d.title}
                       </Link>
                       <div className="text-xs text-slate-600">
-                        {d.replies.toLocaleString('en-US')} replies • {d.tags.join(", ")}
+                        {(d.commentCount || 0).toLocaleString('en-US')} replies
                       </div>
                     </div>
                     <button className="text-xs border border-gray-200 rounded-md px-2 py-1">Reply</button>
@@ -232,11 +226,10 @@ export default function CommunityPage() {
         <aside className="flex flex-col lg:w-1/5 gap-4">
           <div className="bg-white border border-gray-200 rounded-xl p-3">
             <h3 className="text-sm font-semibold mb-2">About Community</h3>
-            <div className="text-sm text-slate-700">{community.description}</div>
+            <div className="text-sm text-slate-700">{community?.description || ""}</div>
             <div className="mt-3 text-xs text-slate-600">
-              <div>Members: {community.members.toLocaleString('en-US')}</div>
-              <div>Topics: {community.topics.join(", ")}</div>
-              <div>ID: {community.id}</div>
+              <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div>
+              <div>ID: {community?._id}</div>
             </div>
           </div>
 
@@ -246,11 +239,11 @@ export default function CommunityPage() {
             </h3>
             <ul className="space-y-2">
               {popularItems.map((d) => (
-                <li key={d.id} className="flex items-center justify-between">
-                  <Link href={`/discussion/${d.id}`} className="text-sm hover:underline">
+                <li key={d._id} className="flex items-center justify-between">
+                  <Link href={`/discussion/${d._id}`} className="text-sm hover:underline">
                     {d.title}
                   </Link>
-                  <span className="text-xs text-slate-600">{d.replies.toLocaleString('en-US')}</span>
+                  <span className="text-xs text-slate-600">{(d.commentCount || 0).toLocaleString('en-US')}</span>
                 </li>
               ))}
             </ul>
@@ -273,11 +266,11 @@ export default function CommunityPage() {
             <h3 className="text-sm font-semibold mb-2">Top Discussions</h3>
             <ul className="space-y-2">
               {topDiscussions.map((d) => (
-                <li key={d.id} className="text-sm">
-                  <Link href={`/discussion/${d.id}`} className="hover:underline">
+                <li key={d._id} className="text-sm">
+                  <Link href={`/discussion/${d._id}`} className="hover:underline">
                     {d.title}
                   </Link>
-                  <div className="text-xs text-slate-600">{d.replies.toLocaleString('en-US')} replies</div>
+                  <div className="text-xs text-slate-600">{(d.commentCount || 0).toLocaleString('en-US')} replies</div>
                 </li>
               ))}
             </ul>

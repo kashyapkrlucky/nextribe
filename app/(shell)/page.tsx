@@ -1,43 +1,20 @@
 "use client";
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  HomeIcon,
-  CompassIcon,
-  MessageSquareIcon,
-  SettingsIcon,
   PlusIcon,
   FilterIcon,
   SearchIcon,
   TrendingUpIcon,
-  LinkIcon,
 } from "lucide-react";
 
-// Mock data
-const MOCK_USER = {
-  name: "John Doe",
-  title: "Community Builder",
-  linkedin: "https://www.linkedin.com/in/johndoe",
-};
-
-type Community = {
-  id: number;
+type ApiCommunity = {
+  _id: string;
   name: string;
-  members: number;
-  topics: string[];
+  slug: string;
+  topics?: string[]; // stored as ObjectId strings when not populated
+  membersCount?: number;
 };
-
-const ALL_COMMUNITIES: Community[] = Array.from({ length: 47 }).map((_, i) => ({
-  id: i + 1,
-  name: `Community ${i + 1}`,
-  members: 50 + ((i * 137) % 5000),
-  topics: ["tech", "design", "startup", "health"][i % 4] ? [
-    ["tech", "ai"],
-    ["design", "ux"],
-    ["startup", "funding"],
-    ["health", "fitness"],
-  ][i % 4] : ["general"],
-}));
 
 
 export default function Home() {
@@ -46,32 +23,57 @@ export default function Home() {
   const [sort, setSort] = useState<"popular" | "new">("popular");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const [data, setData] = useState<ApiCommunity[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", slug: "", description: "", isPrivate: false });
 
-  const filtered = useMemo(() => {
-    let list = [...ALL_COMMUNITIES];
-    if (query.trim()) {
-      const q = query.toLowerCase();
-      list = list.filter((c) => c.name.toLowerCase().includes(q));
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      try {
+        setLoading(true);
+        setError(null);
+        const params = new URLSearchParams({
+          q: query,
+          sort,
+          page: String(page),
+          pageSize: String(pageSize),
+        });
+        const res = await fetch(`/api/communities?${params.toString()}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.error || "Failed to load communities");
+        if (cancelled) return;
+        setData(json.communities || []);
+        setTotalPages(Math.max(1, json.totalPages || 1));
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : "Failed to load communities";
+        if (!cancelled) setError(msg);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-    if (topic !== "all") {
-      list = list.filter((c) => c.topics.includes(topic));
-    }
-    if (sort === "popular") {
-      list.sort((a, b) => b.members - a.members);
-    } else {
-      list.sort((a, b) => a.id - b.id);
-    }
-    return list;
-  }, [query, topic, sort]);
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [query, sort, page]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const pageData = data; // API provides pagination already
 
   const topics = ["all", "tech", "design", "startup", "health"] as const;
 
 
   // Right sidebar data
-  const popularItems = filtered.slice(0, 5);
+  const popularItems = data.slice(0, 5);
   const topDiscussions = [
     { id: 101, title: "What tools are you using in 2025?", replies: 128 },
     { id: 102, title: "Show your latest side project", replies: 67 },
@@ -83,6 +85,23 @@ export default function Home() {
     { href: "https://lucide.dev", label: "Lucide Icons" },
   ];
 
+  async function onJoin(communityId: string) {
+    try {
+      const res = await fetch(`/api/communities/${communityId}/join`, { method: "POST" });
+      if (res.status === 401) {
+        window.location.href = "/sign-in";
+        return;
+      }
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || "Failed to join");
+      // success - optionally refresh list
+      setPage(1); // trigger refetch due to dep
+    } catch (e) {
+      console.error(e);
+      alert("Failed to join community");
+    }
+  }
+
   return (
     <Fragment>
 
@@ -93,7 +112,8 @@ export default function Home() {
               <h2 className="text-xl font-semibold">Discover Communities</h2>
               <div className="flex items-center gap-2">
                 <Link
-                  href="/community"
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); setShowCreate(true); }}
                   className="inline-flex items-center gap-2 rounded-lg px-3 py-2 bg-blue-600 text-white text-sm"
                 >
                   <PlusIcon className="w-4 h-4" /> Create Community
@@ -149,24 +169,29 @@ export default function Home() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl">
-            {pageData.length === 0 ? (
+            {loading ? (
+              <div className="p-8 text-center text-slate-600">Loading...</div>
+            ) : error ? (
+              <div className="p-8 text-center text-red-600 text-sm">{error}</div>
+            ) : pageData.length === 0 ? (
               <div className="p-8 text-center text-slate-600">No communities found.</div>
             ) : (
               <ul className="divide-y divide-gray-200">
                 {pageData.map((c) => (
-                  <li key={c.id} className="p-4 flex items-center justify-between">
+                  <li key={c._id} className="p-4 flex items-center justify-between">
                     <div>
                       <Link
-                        href={`/community/${c?.id}`}
+                        href={`/community/${c?._id}`}
                         className="font-medium hover:underline"
                       >
                         {c?.name}
                       </Link>
                       <div className="text-xs text-slate-600">
-                        {c.members.toLocaleString('en-US')} members • {c.topics.join(", ")}
+                        {(c.membersCount || 0).toLocaleString('en-US')} members
+                        {Array.isArray(c.topics) ? ` • ${c.topics.length} topics` : ""}
                       </div>
                     </div>
-                    <button className="text-xs border border-gray-200 rounded-md px-2 py-1">Join</button>
+                    <button onClick={() => onJoin(c._id)} className="text-xs border border-gray-200 rounded-md px-2 py-1">Join</button>
                   </li>
                 ))}
               </ul>
@@ -205,11 +230,11 @@ export default function Home() {
             </h3>
             <ul className="space-y-2">
               {popularItems.map((c) => (
-                <li key={c.id} className="flex items-center justify-between">
-                  <Link href={`/community/${c.id}`} className="text-sm hover:underline">
+                <li key={c._id} className="flex items-center justify-between">
+                  <Link href={`/community/${c._id}`} className="text-sm hover:underline">
                     {c.name}
                   </Link>
-                  <span className="text-xs text-slate-600">{c.members.toLocaleString('en-US')}</span>
+                  <span className="text-xs text-slate-600">{(c.membersCount || 0).toLocaleString('en-US')}</span>
                 </li>
               ))}
             </ul>
@@ -243,6 +268,107 @@ export default function Home() {
           </div>
         </aside>
       
+    {/* Create Community Modal */}
+    {showCreate ? (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/40" onClick={() => setShowCreate(false)} />
+        <div className="relative bg-white rounded-xl shadow-lg w-full max-w-md mx-4 p-5">
+          <h3 className="text-lg font-semibold mb-3">Create Community</h3>
+          {createError ? (
+            <div className="mb-3 text-sm text-red-600">{createError}</div>
+          ) : null}
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setCreateError(null);
+              if (!form.name.trim()) { setCreateError("Name is required"); return; }
+              try {
+                setCreateLoading(true);
+                const res = await fetch("/api/communities", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: form.name,
+                    slug: form.slug.trim() || undefined,
+                    description: form.description.trim() || undefined,
+                    isPrivate: !!form.isPrivate,
+                  }),
+                });
+                if (res.status === 401) { window.location.href = "/sign-in"; return; }
+                const json = await res.json();
+                if (!res.ok) throw new Error(json?.error || "Failed to create");
+                // success
+                setShowCreate(false);
+                setForm({ name: "", slug: "", description: "", isPrivate: false });
+                setPage(1); // trigger refetch
+              } catch (err: unknown) {
+                const msg = err instanceof Error ? err.message : "Failed to create";
+                setCreateError(msg);
+              } finally {
+                setCreateLoading(false);
+              }
+            }}
+            className="space-y-3"
+          >
+            <div>
+              <label className="block text-sm font-medium mb-1">Name</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="e.g., Next.js Builders"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Slug (optional)</label>
+              <input
+                value={form.slug}
+                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="e.g., nextjs-builders"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                rows={3}
+                placeholder="Describe the community"
+              />
+            </div>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.isPrivate}
+                onChange={(e) => setForm((f) => ({ ...f, isPrivate: e.target.checked }))}
+                className="h-4 w-4 rounded border border-gray-300"
+              />
+              Private community
+            </label>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowCreate(false)}
+                className="px-3 py-2 text-sm border border-gray-200 rounded-lg"
+                disabled={createLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={createLoading}
+                className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg disabled:opacity-60"
+              >
+                {createLoading ? "Creating..." : "Create"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    ) : null}
+
     </Fragment>
   );
 }
