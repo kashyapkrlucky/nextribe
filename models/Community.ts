@@ -23,7 +23,5 @@ const CommunitySchema = new Schema<ICommunity>(
   { timestamps: true }
 );
 
-CommunitySchema.index({ slug: 1 }, { unique: true });
-
 export const Community: Model<ICommunity> =
   models.Community || mongoose.model<ICommunity>("Community", CommunitySchema);

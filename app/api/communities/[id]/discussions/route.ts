@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Discussion } from "@/models/Discussion";
 import { Community } from "@/models/Community";
 import mongoose from "mongoose";
 import { jwtVerify } from "jose";
+
+// Remove the RouteParams type as we'll use the direct approach
 
 function slugify(input: string) {
   return input
@@ -35,9 +37,16 @@ async function getUserIdFromCookie(request: Request): Promise<string | null> {
   }
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = await params;
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+    
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
@@ -53,12 +62,19 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
-    const userId = await getUserIdFromCookie(req);
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+    
+    const userId = await getUserIdFromCookie(request);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
@@ -67,7 +83,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const community = await Community.findById(id).lean();
     if (!community) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const body = await req.json();
+    const body = await request.json();
     const title: string | undefined = body?.title;
     const content: string | undefined = body?.body;
     const providedSlug: string | undefined = body?.slug;

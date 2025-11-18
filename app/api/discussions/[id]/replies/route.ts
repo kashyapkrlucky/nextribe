@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Reply } from "@/models/Reply";
 import { Discussion } from "@/models/Discussion";
@@ -26,9 +26,15 @@ async function getUserIdFromCookie(request: Request): Promise<string | null> {
   }
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = params;
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid discussion id" }, { status: 400 });
     }
@@ -62,12 +68,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+
     const userId = await getUserIdFromCookie(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid discussion id" }, { status: 400 });
     }

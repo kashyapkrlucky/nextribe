@@ -1,9 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
 
-export async function GET(req: Request, { params }: { params: { slug: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { slug: string } } | { params: Promise<{ slug: string }> }
+) {
   try {
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
     const slug = (params.slug || "").trim().toLowerCase();
     await connectToDatabase();
     const community = await Community.findOne({ slug }).populate("topics").lean();

@@ -1,8 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
+import { Topic, type ITopic } from "@/models/Topic";
 import mongoose from "mongoose";
 import { jwtVerify } from "jose";
+
+// Define a type for the community response with populated topics
+interface CommunityResponse extends Omit<ITopic, 'topics'> {
+  topics: ITopic[];
+}
+
+// Ensure Topic model is registered
+if (!mongoose.models.Topic) {
+  mongoose.model("Topic", Topic.schema);
+}
 
 async function getUserIdFromCookie(request: Request): Promise<string | null> {
   try {
@@ -27,24 +38,58 @@ async function getUserIdFromCookie(request: Request): Promise<string | null> {
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   try {
-    const item = await params;
-
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+      
+    const id = params.id.trim();
+    
     await connectToDatabase();
-    let community:
-      | Awaited<ReturnType<typeof Community.findById>>
-      | Awaited<ReturnType<typeof Community.findOne>>
-      | null = null;
-    if (item.id) {
-      community = await Community.findById(item.id).lean();
+    
+    // First try to find by ID if it looks like an ObjectId
+    let community = await Community.findById(id).lean();
+    
+    // If not found by ID, try by slug
+    if (!community) {
+      community = await Community.findOne({ slug: id.toLowerCase() }).lean();
     }
-    if (!community)
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json({ community });
-  } catch (e) {
-    console.error(e);
+    
+    if (!community) {
+      return NextResponse.json({ error: "Community not found" }, { status: 404 });
+    }
+    
+    // Get topics for the community
+    const topics = await Topic.find({ 
+      community: community._id, 
+      isArchived: { $ne: true } 
+    })
+    .sort({ order: 1, name: 1 })
+    .lean();
+    
+    // Create a new object with the community and its topics
+    const communityWithTopics = {
+      ...community,
+      topics: topics.map(topic => ({
+        _id: topic._id,
+        name: topic.name,
+        slug: topic.slug,
+        description: topic.description,
+        community: topic.community,
+        createdBy: topic.createdBy,
+        isArchived: topic.isArchived,
+        discussionCount: topic.discussionCount,
+        order: topic.order,
+        createdAt: topic.createdAt,
+        updatedAt: topic.updatedAt
+      }))
+    };
+    
+    return NextResponse.json({ community: communityWithTopics });
+  } catch (error) {
+    console.error('Error in GET /api/communities/[id]:', error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -53,15 +98,18 @@ export async function GET(
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+
     const userId = await getUserIdFromCookie(req);
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }

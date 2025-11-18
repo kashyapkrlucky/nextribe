@@ -32,5 +32,8 @@ TopicSchema.index({ community: 1, slug: 1 }, { unique: true });
 // Retrieve topics ordered within a community
 TopicSchema.index({ community: 1, order: 1 });
 
+// Export both the model and schema
 export const Topic: Model<ITopic> =
   models.Topic || mongoose.model<ITopic>("Topic", TopicSchema);
+
+export const TopicSchemaInstance = TopicSchema;

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Reply } from "@/models/Reply";
 import mongoose from "mongoose";
@@ -25,12 +25,18 @@ async function getUserIdFromCookie(request: Request): Promise<string | null> {
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+
     const userId = await getUserIdFromCookie(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
@@ -56,12 +62,18 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+) {
   try {
+    const params = 'then' in context.params 
+      ? await context.params 
+      : context.params;
+    const id = params.id.trim();
+
     const userId = await getUserIdFromCookie(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
