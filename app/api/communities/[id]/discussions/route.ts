@@ -46,12 +46,24 @@ export async function GET(
       ? await context.params 
       : context.params;
     const id = params.id.trim();
+
+    let community = null;
+ 
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+    if (mongoose.Types.ObjectId.isValid(id)) { 
+      community = await Community.findById(id).lean()
+    } else {
+      community = await Community.findOne({ slug: id }).lean()
     }
+    console.log(community);
+    
+   if (!community) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+
     await connectToDatabase();
-    const list = await Discussion.find({ community: id })
+    const list = await Discussion.find({ community: community._id })
       .sort({ lastActivityAt: -1 })
       .limit(50)
       .lean();

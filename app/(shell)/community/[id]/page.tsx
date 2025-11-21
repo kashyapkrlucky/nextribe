@@ -3,14 +3,7 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FilterIcon, SearchIcon, TrendingUpIcon } from "lucide-react";
-
-type ApiCommunity = {
-  _id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  topics?: string[]; // Topic ids if present
-};
+import { ApiCommunity } from "@/types/api.types";
 
 type ApiDiscussion = {
   _id: string;

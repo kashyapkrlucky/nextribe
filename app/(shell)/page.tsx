@@ -7,14 +7,7 @@ import {
   SearchIcon,
   TrendingUpIcon,
 } from "lucide-react";
-
-type ApiCommunity = {
-  _id: string;
-  name: string;
-  slug: string;
-  topics?: string[]; // stored as ObjectId strings when not populated
-  membersCount?: number;
-};
+import { ApiCommunity } from "../../types/api.types";
 
 
 export default function Home() {
@@ -78,11 +71,6 @@ export default function Home() {
     { id: 101, title: "What tools are you using in 2025?", replies: 128 },
     { id: 102, title: "Show your latest side project", replies: 67 },
     { id: 103, title: "Best practices for onboarding", replies: 54 },
-  ];
-  const externalLinks = [
-    { href: "https://nextjs.org", label: "Next.js Docs" },
-    { href: "https://tailwindcss.com", label: "Tailwind CSS" },
-    { href: "https://lucide.dev", label: "Lucide Icons" },
   ];
 
   async function onJoin(communityId: string) {
@@ -234,13 +222,13 @@ export default function Home() {
                   <Link href={`/community/${c._id}`} className="text-sm hover:underline">
                     {c.name}
                   </Link>
-                  <span className="text-xs text-slate-600">{(c.membersCount || 0).toLocaleString('en-US')}</span>
+                  <span className="text-xs text-slate-600">{(c?.membersCount || 0).toLocaleString('en-US')}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-3">
+          {/* <div className="bg-white border border-gray-200 rounded-xl p-3">
             <h3 className="text-sm font-semibold mb-2">Useful Links</h3>
             <ul className="space-y-1">
               {externalLinks.map((l) => (
@@ -251,7 +239,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           <div className="bg-white border border-gray-200 rounded-xl p-3">
             <h3 className="text-sm font-semibold mb-2">Top Discussions</h3>
