@@ -11,7 +11,7 @@ const MyCommunities: React.FC = () => {
     const fetchCommunities = async () => {
       const response = await fetch("/api/user/communities");
       const data = await response.json();
-      setCommunities(data);
+      setCommunities(data ?? []);
     };
     fetchCommunities();
   }, []);
