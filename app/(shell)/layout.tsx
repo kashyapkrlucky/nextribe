@@ -8,7 +8,7 @@ import {
   LinkIcon,
 } from "lucide-react";
 import MyCommunities from "@/components/layout/MyCommunities";
-import { getUserFromCookie, getUserIdFromRequest } from "@/lib/auth";
+import { getUserFromCookie } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Nextribe | Home",

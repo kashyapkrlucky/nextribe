@@ -21,7 +21,6 @@ const DiscussionSchema = new Schema<IDiscussion>(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     community: { type: Schema.Types.ObjectId, ref: "Community", required: true, index: true },
     isLocked: { type: Boolean, default: false },
-    commentCount: { type: Number, default: 0 },
     lastActivityAt: { type: Date, default: Date.now, index: true },
   },
   { timestamps: true }

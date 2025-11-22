@@ -1,13 +1,17 @@
-import { SignJWT } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
+import { cookies } from 'next/headers';
+import { IUser } from '@/models/User';
 
+// Server-side only functions
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not set in environment variables");
 }
 const JWT_KEY = new TextEncoder().encode(JWT_SECRET);
 
-export async function signToken(payload: Record<string, any>, opts?: { expiresIn?: string }) {
+// Server-side token functions
+export async function signToken(payload: Record<string, unknown>, opts?: { expiresIn?: string }) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -17,8 +21,13 @@ export async function signToken(payload: Record<string, any>, opts?: { expiresIn
 }
 
 export async function verifyToken(token: string) {
-  const { payload } = await jwtVerify(token, JWT_KEY);
-  return payload;
+  try {
+    const { payload } = await jwtVerify(token, JWT_KEY);
+    return { payload, error: null };
+  } catch (err) {
+    console.error('Token verification failed:', err);
+    return { payload: null, error: 'Invalid or expired token' };
+  }
 }
 
 export function setAuthCookie(res: NextResponse, token: string, opts?: { maxAge?: number }) {
@@ -50,7 +59,8 @@ export async function getUserIdFromRequest(request: Request): Promise<string | n
       .find((c) => c.startsWith("token="))
       ?.split("=")[1];
     if (!token) return null;
-    const payload = await verifyToken(token);
+    const { payload } = await verifyToken(token);
+    if (!payload) return null;
     const sub = payload.sub;
     if (typeof sub !== "string") return null;
     return sub;
@@ -58,54 +68,90 @@ export async function getUserIdFromRequest(request: Request): Promise<string | n
     return null;
   }
 }
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import { IUser } from '@/models/User';
 
-export async function getUserFromCookie(): Promise<{ id?: string; email?: string; name?: string } | null> {
+// Client-side compatible functions
+export async function getCurrentUserClient() {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) {
+      if (res.status === 401 && typeof window !== 'undefined') {
+        window.location.href = '/sign-in';
+      }
+      return null;
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    return null;
+  }
+}
+
+// Server-side only function
+export async function getUserFromCookie() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
     
     if (!token) return null;
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return null;
-    const key = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, key);
+    const { payload } = await jwtVerify(token, JWT_KEY);
+    
+    // Return a partial IUser that matches the required fields
     return {
-      id: typeof payload.sub === "string" ? payload.sub : undefined,
+      _id: typeof payload.sub === "string" ? payload.sub : undefined,
       email: typeof payload.email === "string" ? payload.email : undefined,
       name: typeof payload.name === "string" ? payload.name : undefined,
-      bio: typeof payload.bio === "string" ? payload.bio : undefined,
-    } as { id?: string; email?: string; name?: string; bio?: string };
-
-  } catch (error) {
-    console.error('Error getting user from cookie:', error);
+      // Add required fields with default values
+      passwordHash: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as IUser & { _id: string };
+  } catch (err) {
+    console.error('Error getting user from cookie:', err);
     return null;
   }
 }
 
+// Universal auth functions
 export async function isAuthenticated(): Promise<boolean> {
-  const user = await getUserFromCookie();
-  return !!user;
+  if (typeof window === 'undefined') {
+    // Server-side check
+    const user = await getUserFromCookie();
+    return !!user;
+  } else {
+    // Client-side check
+    const user = await getCurrentUserClient();
+    return !!user;
+  }
 }
 
-export async function getCurrentUser(): Promise<{ user: IUser & { bio?: string } | null; isAuthenticated: boolean }> {
-  const user = await getUserFromCookie();
-  return {
-    user: user ? JSON.parse(JSON.stringify(user)) : null,
-    isAuthenticated: !!user
-  };
+export async function getCurrentUser(): Promise<{ user: IUser & { _id: string } | null; isAuthenticated: boolean }> {
+  if (typeof window === 'undefined') {
+    // Server-side
+    const user = await getUserFromCookie();
+    return {
+      user: user ? { ...user, _id: '' } : null,
+      isAuthenticated: !!user
+    };
+  } else {
+    // Client-side
+    const user = await getCurrentUserClient();
+    return {
+      user: user || { _id: "" },
+      isAuthenticated: !!user
+    };
+  }
 }
 
-// Example of a protected route helper for Next.js pages
+// Protected route helper for Next.js pages
 export async function withAuth() {
-  const user = await getUserFromCookie();
+  const user = typeof window === 'undefined' 
+    ? await getUserFromCookie() 
+    : await getCurrentUserClient();
   
   if (!user) {
     return { 
       redirect: { 
-        destination: '/login', 
+        destination: '/sign-in', 
         permanent: false 
       } 
     };
@@ -113,7 +159,7 @@ export async function withAuth() {
   
   return { 
     props: { 
-      user: JSON.parse(JSON.stringify(user)) 
+      user: JSON.parse(JSON.stringify(user))
     } 
   };
 }

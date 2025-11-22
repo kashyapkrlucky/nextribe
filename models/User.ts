@@ -4,6 +4,7 @@ export interface IUser {
   name: string;
   email: string;
   passwordHash: string;
+  bio?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

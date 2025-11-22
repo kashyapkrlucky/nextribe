@@ -31,14 +31,14 @@ export default async function SettingsPage() {
             <h2 className="text-lg font-medium text-gray-900 mb-4">Account</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name
                 </label>
                 <input
                   type="text"
-                  id="username"
+                  id="name"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue="johndoe"
+                  defaultValue={user.name}
                 />
               </div>
               <div>
@@ -49,7 +49,7 @@ export default async function SettingsPage() {
                   type="email"
                   id="email"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue="john@example.com"
+                  defaultValue={user.email}
                 />
               </div>
             </div>
