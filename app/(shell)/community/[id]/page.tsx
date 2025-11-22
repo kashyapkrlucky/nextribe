@@ -129,7 +129,7 @@ export default function CommunityPage() {
         <section className="flex flex-col lg:w-3/5 gap-4">
           <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-xl p-3">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <h2 className="text-xl font-semibold">{community?.name || "Community"} Discussions</h2>
+              <h2 className="text-xl font-semibold">{community?.name || "Community"}</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={onJoin}
@@ -230,7 +230,7 @@ export default function CommunityPage() {
             <div className="text-sm text-slate-700">{community?.description || ""}</div>
             <div className="mt-3 text-xs text-slate-600">
               {/* <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div> */}
-              <div>ID: {community?._id}</div>
+              {/* <div>ID: {community?._id}</div> */}
             </div>
           </div>
 

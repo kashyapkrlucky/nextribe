@@ -76,7 +76,8 @@ export async function getUserFromCookie(): Promise<{ id?: string; email?: string
       id: typeof payload.sub === "string" ? payload.sub : undefined,
       email: typeof payload.email === "string" ? payload.email : undefined,
       name: typeof payload.name === "string" ? payload.name : undefined,
-    } as { id?: string; email?: string; name?: string };
+      bio: typeof payload.bio === "string" ? payload.bio : undefined,
+    } as { id?: string; email?: string; name?: string; bio?: string };
 
   } catch (error) {
     console.error('Error getting user from cookie:', error);
@@ -89,7 +90,7 @@ export async function isAuthenticated(): Promise<boolean> {
   return !!user;
 }
 
-export async function getCurrentUser(): Promise<{ user: IUser | null; isAuthenticated: boolean }> {
+export async function getCurrentUser(): Promise<{ user: IUser & { bio?: string } | null; isAuthenticated: boolean }> {
   const user = await getUserFromCookie();
   return {
     user: user ? JSON.parse(JSON.stringify(user)) : null,

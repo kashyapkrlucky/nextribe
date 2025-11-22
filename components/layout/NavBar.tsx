@@ -1,9 +1,9 @@
 import Link from "next/link";
 import React from "react";
-import Button from "../ui/Button";
+import { UserMenu } from "../auth/UserMenu";
 
 interface NavBarProps {
-  user?: { name?: string };
+  user?: { name?: string; email?: string };
 }
 
 const navigation = [
@@ -21,16 +21,9 @@ const NavBar = ({ user }: NavBarProps) => {
           </Link>
         </div>
         <div className="lg:w-1/2 flex flex-row p-4 lg:p-0 gap-8 items-center justify-center lg:justify-end">
-          {user && user.name ? (
-            <div className="flex items-center gap-4">
-              <div className="text-gray-100 text-sm font-medium">
-                Hi, {user.name}
-              </div>
-              <form action="/api/auth/logout" method="post">
-                <Button className="ml-2 bg-gray-100 text-gray-800">
-                  Logout
-                </Button>
-              </form>
+          {user ? (
+            <div className="flex items-center">
+              <UserMenu user={user} />
             </div>
           ) : (
             <>

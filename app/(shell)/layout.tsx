@@ -8,6 +8,7 @@ import {
   LinkIcon,
 } from "lucide-react";
 import MyCommunities from "@/components/layout/MyCommunities";
+import { getUserFromCookie, getUserIdFromRequest } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Nextribe | Home",
@@ -22,19 +23,18 @@ const importantLinks = [
   { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getUserFromCookie();
 
   return (
     <main className="w-full flex-1 overflow-y-auto p-4">
       <div className="w-full flex flex-col lg:flex-row gap-4 max-w-7xl mx-auto">
         {/* Left sidebar */}
         <aside className="flex flex-col lg:w-1/5 gap-4">
-
           <div className="bg-white border border-gray-200 rounded-xl p-3">
             <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
               <LinkIcon className="w-4 h-4" /> Important
@@ -53,7 +53,7 @@ export default function RootLayout({
             </nav>
           </div>
 
-          <MyCommunities />
+          {user && <MyCommunities />}
         </aside>
         {children}
       </div>
