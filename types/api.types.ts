@@ -1,25 +1,16 @@
-
-export type ApiCommunity = {
+export interface MyCommunity {
   _id: string;
   name: string;
   slug: string;
-  description?: string;
-  owner?: string;
-  isPrivate?: boolean;
-  topics?: string[] | Array<{
-    _id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    community: string;
-    createdBy?: string;
-    isArchived?: boolean;
-    discussionCount?: number;
-    order?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }>;
-  membersCount?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+}
+
+export interface ApiCommunity {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  membersCount: number;
+  topics: string[];
+}

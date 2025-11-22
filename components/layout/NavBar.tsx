@@ -14,7 +14,7 @@ const navigation = [
 const NavBar = ({ user }: NavBarProps) => {
   return (
     <header className="bg-blue-600 h-16">
-      <div className="w-full flex flex-row justify-between px-4">
+      <div className="w-full flex flex-row justify-between px-4 lg:px-0 max-w-7xl mx-auto">
         <div className="lg:w-1/2 flex flex-col lg:flex-row gap-8 items-center py-4">
           <Link className="font-bold text-xl text-gray-100" href={"/"}>
             NextTribe

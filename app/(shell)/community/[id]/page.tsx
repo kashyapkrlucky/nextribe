@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FilterIcon, SearchIcon, TrendingUpIcon } from "lucide-react";
-import { ApiCommunity } from "@/types/api.types";
 
 type ApiDiscussion = {
   _id: string;
@@ -15,6 +14,15 @@ type ApiDiscussion = {
   commentCount?: number;
   lastActivityAt?: string;
   createdAt?: string;
+};
+
+type ApiCommunity = {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export default function CommunityPage() {
@@ -221,7 +229,7 @@ export default function CommunityPage() {
             <h3 className="text-sm font-semibold mb-2">About Community</h3>
             <div className="text-sm text-slate-700">{community?.description || ""}</div>
             <div className="mt-3 text-xs text-slate-600">
-              <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div>
+              {/* <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div> */}
               <div>ID: {community?._id}</div>
             </div>
           </div>
