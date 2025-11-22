@@ -1,11 +1,14 @@
-import mongoose, { Schema, models, Model, Types } from "mongoose";
+import mongoose, { Schema, models, Model, Types, Document } from "mongoose";
+
+// Make sure the User model is registered
+import "./User";
 
 export interface IDiscussion {
   title: string;
   slug: string;
   body: string;
-  author: Types.ObjectId; // ref: User
-  community: Types.ObjectId; // ref: Community
+  author: Types.ObjectId | IUser;
+  community: Types.ObjectId;
   isLocked?: boolean;
   commentCount?: number;
   lastActivityAt?: Date;
@@ -13,13 +16,30 @@ export interface IDiscussion {
   updatedAt?: Date;
 }
 
+// Define IUser interface to match the User model
+interface IUser extends Document {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
+}
+
 const DiscussionSchema = new Schema<IDiscussion>(
   {
     title: { type: String, required: true, trim: true, maxlength: 180 },
     slug: { type: String, required: true, lowercase: true, trim: true },
     body: { type: String, required: true },
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    community: { type: Schema.Types.ObjectId, ref: "Community", required: true, index: true },
+    author: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true, 
+      index: true 
+    },
+    community: { 
+      type: Schema.Types.ObjectId, 
+      ref: "Community", 
+      required: true, 
+      index: true 
+    },
     isLocked: { type: Boolean, default: false },
     lastActivityAt: { type: Date, default: Date.now, index: true },
   },
