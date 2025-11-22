@@ -10,7 +10,7 @@ export default async function ProfilePage() {
   }
 
   return ( 
-      <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="w-full bg-white rounded-xl border border-gray-200 overflow-hidden">
         {/* Profile Header */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-32 relative">
           <div className="absolute -bottom-12 left-6">
