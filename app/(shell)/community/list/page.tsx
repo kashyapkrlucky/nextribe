@@ -152,7 +152,7 @@ export default function CommunityListPage() {
                 >
                   <div>
                     <Link
-                      href={`/community/${c?._id}`}
+                      href={`/community/${c?.slug}`}
                       className="font-medium hover:underline"
                     >
                       {c?.name}

@@ -7,6 +7,7 @@ const ReplySchema = new Schema<IReply>(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     body: { type: String, required: true },
     parent: { type: Schema.Types.ObjectId, ref: "Reply", default: null, index: true },
+    tag: { type: String, enum: ["answer", "tip", "question"], default: "answer" },
     isDeleted: { type: Boolean, default: false, index: true },
   },
   { timestamps: true }

@@ -111,6 +111,27 @@ export async function getUserFromCookie() {
   }
 }
 
+export async function getUserIdFromCookie(request: Request): Promise<string | null> {
+  try {
+    const cookieHeader = request.headers.get("cookie") || "";
+    const token = cookieHeader
+      .split(";")
+      .map((c) => c.trim())
+      .find((c) => c.startsWith("token="))
+      ?.split("=")[1];
+    if (!token) return null;
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return null;
+    const key = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(token, key);
+    const sub = payload.sub;
+    if (typeof sub !== "string") return null;
+    return sub;
+  } catch {
+    return null;
+  }
+}
+
 // Universal auth functions
 export async function isAuthenticated(): Promise<boolean> {
   if (typeof window === 'undefined') {

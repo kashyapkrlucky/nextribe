@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { MessagesSquareIcon } from "lucide-react";
-import { MyCommunity } from "@/types/api.types";
+import { ICommunity } from "@/types/index.types";
 
 const MyCommunities: React.FC = () => {
-  const [communities, setCommunities] = useState<MyCommunity[]>([]);
+  const [communities, setCommunities] = useState<Partial<ICommunity>[]>([]);
 
   useEffect(() => {
     const fetchCommunities = async () => {
@@ -22,10 +22,10 @@ const MyCommunities: React.FC = () => {
         {communities?.length})
       </h3>
       <ul className="mt-2 space-y-1">
-        {communities?.map((c: MyCommunity) => (
-          <li key={c?._id}>
+        {communities?.map((c: Partial<ICommunity>) => (
+          <li key={c?._id?.toString()}>
             <Link
-              href={`/community/${c?._id}`}
+              href={`/community/${c?.slug}`}
               className="text-sm text-slate-700 hover:underline"
             >
               {c?.name}

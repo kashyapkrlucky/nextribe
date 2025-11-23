@@ -1,40 +1,22 @@
 "use client";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { SearchIcon, TrendingUpIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
 import CreateDiscussionForm from "@/components/discussions/CreateDiscussionForm";
-
-type ApiDiscussion = {
-  _id: string;
-  title: string;
-  slug: string;
-  body: string;
-  author: string;
-  community: string;
-  commentCount?: number;
-  lastActivityAt?: string;
-  createdAt?: string;
-};
-
-type ApiCommunity = {
-  _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { ICommunity, IDiscussion } from "@/types/index.types";
 
 export default function CommunityPage() {
   const params = useParams();
   const communityId = (params?.id as string) || "";
 
-  const [community, setCommunity] = useState<ApiCommunity | null>(null);
-  const [allDiscussions, setAllDiscussions] = useState<ApiDiscussion[]>([]);
+  const [community, setCommunity] = useState<ICommunity | null>(null);
+  const [allDiscussions, setAllDiscussions] = useState<IDiscussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
 
   // UI state
   const [query, setQuery] = useState("");
@@ -46,7 +28,7 @@ export default function CommunityPage() {
     return /^[a-fA-F0-9]{24}$/.test(s);
   }
 
-  const getDiscussions = async () => {
+  const getDiscussions = useCallback(async () => {
     try {
       const res = await fetch(`/api/communities/${communityId}/discussions`, {
         cache: "no-store",
@@ -58,7 +40,7 @@ export default function CommunityPage() {
     } catch (error) {
       console.error("Failed to fetch discussions:", error);
     }
-  };
+  }, [communityId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +65,7 @@ export default function CommunityPage() {
           throw new Error(cJson?.error || "Failed to load community");
 
         if (cancelled) return;
-        setCommunity(cJson.community as ApiCommunity);
+        setCommunity(cJson.community as ICommunity);
         getDiscussions();
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Failed to load";
@@ -97,7 +79,7 @@ export default function CommunityPage() {
     return () => {
       cancelled = true;
     };
-  }, [communityId]);
+  }, [communityId, getDiscussions]);
 
   const filtered = useMemo(() => {
     let list = [...allDiscussions];
@@ -154,7 +136,6 @@ export default function CommunityPage() {
     }
   }
 
-  const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
 
   return (
     <Fragment>
@@ -215,12 +196,12 @@ export default function CommunityPage() {
             <ul className="divide-y divide-gray-200">
               {pageData.map((d) => (
                 <li
-                  key={d._id}
+                  key={d.slug}
                   className="p-4 flex items-center justify-between"
                 >
                   <div>
                     <Link
-                      href={`/discussion/${d._id}`}
+                      href={`/discussion/${d.slug}`}
                       className="font-medium hover:underline"
                     >
                       {d.title}
@@ -288,9 +269,9 @@ export default function CommunityPage() {
           </h3>
           <ul className="space-y-2">
             {popularItems.map((d) => (
-              <li key={d._id} className="flex items-center justify-between">
+              <li key={d.slug} className="flex items-center justify-between">
                 <Link
-                  href={`/discussion/${d._id}`}
+                  href={`/discussion/${d.slug}`}
                   className="text-sm hover:underline"
                 >
                   {d.title}

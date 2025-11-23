@@ -3,28 +3,8 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Reply } from "@/models/Reply";
 import { Discussion } from "@/models/Discussion";
 import mongoose from "mongoose";
-import { jwtVerify } from "jose";
-
-async function getUserIdFromCookie(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split(";")
-      .map((c) => c.trim())
-      .find((c) => c.startsWith("token="))
-      ?.split("=")[1];
-    if (!token) return null;
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return null;
-    const key = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, key);
-    const sub = payload.sub;
-    if (typeof sub !== "string") return null;
-    return sub;
-  } catch {
-    return null;
-  }
-}
+import { getUserIdFromCookie } from "@/lib/auth";
+import { ListResponse } from "@/utils/responses";
 
 export async function GET(
   req: NextRequest,
@@ -41,8 +21,10 @@ export async function GET(
 
     const url = new URL(req.url);
     const parent = url.searchParams.get("parent");
-    const limitParam = url.searchParams.get("limit");
-    const limit = Math.min(Math.max(parseInt(limitParam || "50", 10) || 50, 1), 100);
+    const limitParam = url.searchParams.get("limit") || "10";
+    const pageParam = url.searchParams.get("page") || "1";
+    const limit = Math.round(parseInt(limitParam, 10));
+    const page = Math.round(parseInt(pageParam, 10));
 
     await connectToDatabase();
 
@@ -56,12 +38,20 @@ export async function GET(
       query.parent = null;
     }
 
+    const total = await Reply.countDocuments(query);
+    const totalPages = Math.ceil(total / limit);
+    if (page > totalPages) {
+      return NextResponse.json({ error: "Page not found" }, { status: 404 });
+    }
+    
     const replies = await Reply.find(query)
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
+      .populate("author", "name")
+      .skip((page - 1) * limit)
       .limit(limit)
       .lean();
 
-    return NextResponse.json({ replies });
+    return ListResponse(replies, totalPages);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -90,11 +80,17 @@ export async function POST(
     if (!discussion) return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
 
     const bodyJson = await req.json();
+    console.log(bodyJson);
+    
     const body: string | undefined = bodyJson?.body;
+    const tag: string | undefined = bodyJson?.tag;
     const parent: string | undefined = bodyJson?.parent || undefined;
 
     if (!body || body.trim().length === 0) {
       return NextResponse.json({ error: "body is required" }, { status: 400 });
+    }
+    if (!tag || tag.trim().length === 0) {
+      return NextResponse.json({ error: "tag is required" }, { status: 400 });
     }
 
     let parentId: mongoose.Types.ObjectId | null = null;
@@ -114,13 +110,15 @@ export async function POST(
       discussion: new mongoose.Types.ObjectId(id),
       author: new mongoose.Types.ObjectId(userId),
       body,
+      tag,
       parent: parentId,
     });
-
+    console.log(reply);
+    
     // Update discussion metadata
     await Discussion.updateOne(
       { _id: id },
-      { $inc: { commentCount: 1 }, $set: { lastActivityAt: new Date() } }
+      { $inc: { replyCount: 1 }, $set: { lastActivityAt: new Date() } }
     );
 
     return NextResponse.json({ reply });

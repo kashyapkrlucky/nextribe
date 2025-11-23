@@ -38,7 +38,7 @@ export interface IDiscussion {
   title: string;
   slug: string;
   body: string;
-  author: Types.ObjectId | IUser;
+  author: IUser;
   community: Types.ObjectId;
   isLocked?: boolean;
   commentCount?: number;
@@ -50,13 +50,15 @@ export interface IDiscussion {
 
 
 export interface IReply {
+  _id: Types.ObjectId;
   discussion: Types.ObjectId; // ref: Discussion
-  author: Types.ObjectId; // ref: User
+  author: IUser; // ref: User
   body: string;
   parent?: Types.ObjectId | null; // ref: Reply
   isDeleted?: boolean; // soft delete flag
-  createdAt?: Date;
-  updatedAt?: Date;
+  tag: "answer" | "tip" | "question";
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 

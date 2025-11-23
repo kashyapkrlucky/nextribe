@@ -35,7 +35,7 @@ export function PopularCommunities() {
               className="flex items-center justify-between"
             >
               <Link
-                href={`/community/${c._id}`}
+                href={`/community/${c.slug}`}
                 className="text-sm hover:underline"
               >
                 {c.name}
