@@ -41,7 +41,7 @@ export async function GET(
     const total = await Reply.countDocuments(query);
     const totalPages = Math.ceil(total / limit);
     if (page > totalPages) {
-      return NextResponse.json({ error: "Page not found" }, { status: 404 });
+      return ListResponse([], totalPages);
     }
     
     const replies = await Reply.find(query)
