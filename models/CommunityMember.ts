@@ -1,14 +1,5 @@
-import mongoose, { Schema, models, Model, Types } from "mongoose";
-
-export type CommunityMemberRole = "owner" | "admin" | "member";
-
-export interface ICommunityMember {
-  community: Types.ObjectId; // ref: Community
-  user: Types.ObjectId; // ref: User
-  role: CommunityMemberRole;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import mongoose, { Schema, models, Model } from "mongoose";
+import { ICommunityMember } from "@/types/index.types";
 
 const CommunityMemberSchema = new Schema<ICommunityMember>(
   {

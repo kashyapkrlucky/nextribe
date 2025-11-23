@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers';
-import { IUser } from '@/models/User';
+import { IUser } from '@/types/index.types';
 
 // Server-side only functions
 const JWT_SECRET = process.env.JWT_SECRET;

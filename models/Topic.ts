@@ -1,17 +1,6 @@
-import mongoose, { Schema, models, Model, Types } from "mongoose";
+import mongoose, { Schema, models, Model } from "mongoose";
+import { ITopic } from "@/types/index.types";
 
-export interface ITopic {
-  name: string;
-  slug: string;
-  description?: string;
-  community: Types.ObjectId; // ref: Community
-  createdBy: Types.ObjectId; // ref: User
-  isArchived?: boolean;
-  discussionCount?: number;
-  order?: number; // for manual ordering/pinning within community
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 const TopicSchema = new Schema<ITopic>(
   {

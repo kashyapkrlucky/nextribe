@@ -3,7 +3,7 @@ import Link from "next/link";
 import { HomeIcon, CompassIcon, PlusIcon } from "lucide-react";
 import MyCommunities from "@/components/layout/MyCommunities";
 import { useState } from "react";
-import { IUser } from "@/models/User";
+import { IUser } from "@/types/index.types";
 import CreateCommunityForm from "../community/CreateCommunityForm";
 
 // Left sidebar data

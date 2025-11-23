@@ -19,4 +19,5 @@ export interface Discussion {
   author: Author;
   createdAt: string;
   updatedAt: string;
+  replyCount?: number;
 }

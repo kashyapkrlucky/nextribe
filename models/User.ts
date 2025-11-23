@@ -1,13 +1,5 @@
 import mongoose, { Schema, models, Model } from "mongoose";
-
-export interface IUser {
-  name: string;
-  email: string;
-  passwordHash: string;
-  bio?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { IUser } from "@/types/index.types";
 
 const UserSchema = new Schema<IUser>(
   {

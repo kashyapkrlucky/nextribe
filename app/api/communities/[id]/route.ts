@@ -1,14 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
-import { Topic, type ITopic } from "@/models/Topic";
+import { Topic } from "@/models/Topic";
 import mongoose from "mongoose";
 import { jwtVerify } from "jose";
-
-// Define a type for the community response with populated topics
-interface CommunityResponse extends Omit<ITopic, 'topics'> {
-  topics: ITopic[];
-}
 
 // Ensure Topic model is registered
 if (!mongoose.models.Topic) {

@@ -1,14 +1,5 @@
-import mongoose, { Schema, models, Model, Types } from "mongoose";
-
-export interface IReply {
-  discussion: Types.ObjectId; // ref: Discussion
-  author: Types.ObjectId; // ref: User
-  body: string;
-  parent?: Types.ObjectId | null; // ref: Reply
-  isDeleted?: boolean; // soft delete flag
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import mongoose, { Schema, models, Model } from "mongoose";
+import { IReply } from "@/types/index.types";
 
 const ReplySchema = new Schema<IReply>(
   {

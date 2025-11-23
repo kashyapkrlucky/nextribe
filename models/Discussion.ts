@@ -1,27 +1,8 @@
-import mongoose, { Schema, models, Model, Types, Document } from "mongoose";
+import mongoose, { Schema, models, Model } from "mongoose";
 
 // Make sure the User model is registered
 import "./User";
-
-export interface IDiscussion {
-  title: string;
-  slug: string;
-  body: string;
-  author: Types.ObjectId | IUser;
-  community: Types.ObjectId;
-  isLocked?: boolean;
-  commentCount?: number;
-  lastActivityAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-// Define IUser interface to match the User model
-interface IUser extends Document {
-  _id: Types.ObjectId;
-  name: string;
-  email: string;
-}
+import { IDiscussion } from "@/types/index.types";
 
 const DiscussionSchema = new Schema<IDiscussion>(
   {
@@ -42,6 +23,7 @@ const DiscussionSchema = new Schema<IDiscussion>(
     },
     isLocked: { type: Boolean, default: false },
     lastActivityAt: { type: Date, default: Date.now, index: true },
+    replyCount: { type: Number, default: 0, index: true },
   },
   { timestamps: true }
 );

@@ -1,15 +1,6 @@
-import mongoose, { Schema, models, Model, Types } from "mongoose";
+import mongoose, { Schema, models, Model } from "mongoose";
+import { ICommunity } from "@/types/index.types";
 
-export interface ICommunity {
-  name: string;
-  slug: string;
-  description?: string;
-  owner: Types.ObjectId; // ref: User
-  isPrivate?: boolean;
-  topics?: Types.ObjectId[]; // ref: Topic[]
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 const CommunitySchema = new Schema<ICommunity>(
   {
