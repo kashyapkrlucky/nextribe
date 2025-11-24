@@ -10,20 +10,28 @@ import { Fragment, useEffect, useState } from "react";
 import { Discussion } from "@/types/app.types";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function Home() {
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
     const getDiscussions = async () => {
-      // TODO: Implement discussion fetching
-      console.log("Fetching discussions...");
-      // Example API call:
-      const response = await fetch("/api/discussions");
-      const { data } = await response.json();
-      setDiscussions(data);
-      // For now, just log that we would fetch discussions
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/discussions");
+        if (!response.ok) throw new Error('Failed to fetch discussions');
+        const { data } = await response.json();
+        setDiscussions(data || []);
+      } catch (error) {
+        console.error('Error fetching discussions:', error);
+        setDiscussions([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
+    
     getDiscussions();
   }, []);
 
@@ -46,10 +54,13 @@ export default function Home() {
           </select>
         </div>
 
-        <div className="bg-white rounded-lg shadow-xs p-2 divide-y divide-gray-100">
-          {discussions.length > 0 ? (
-            <>
-              {discussions.map((discussion: Discussion) => (
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <div className="bg-white rounded-lg shadow-xs p-2 divide-y divide-gray-100">
+            {discussions.length > 0 ? (
+              <>
+                {discussions.map((discussion: Discussion) => (
                 // Design a discussion card component
                 <div key={discussion._id} className="p-4">
                   <header className="flex flex-row justify-between mb-2">
@@ -78,7 +89,7 @@ export default function Home() {
                         <ArrowBigDownIcon className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="flex-1">
+                    <Link href={`/discussion/${discussion.slug}`} className="flex-1">
                       <h3 className="font-medium">{discussion.title}</h3>
                       <p className="text-sm text-gray-500">
                         {discussion.content}
@@ -91,18 +102,23 @@ export default function Home() {
                           Share
                         </button>
                       </div>
-                    </div>
+                    </Link>
                     <div className="text-xs text-gray-400"></div>
                   </div>
                 </div>
               ))}
             </>
           ) : (
-            <p className="text-gray-500 text-center text-xs">
-              No discussions available at the moment.
-            </p>
+            <div className="text-center py-12">
+              <MessageCircleIcon className="mx-auto h-12 w-12 text-gray-300" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">No discussions</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Get started by creating a new discussion.
+              </p>
+            </div>
           )}
         </div>
+        )}
       </section>
 
       <aside className="flex flex-col lg:w-1/5 gap-4">

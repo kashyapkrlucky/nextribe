@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { IDiscussion, IReply } from "@/types/index.types";
 import { formatDate } from "@/utils/helpers";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function DiscussionDetailPage() {
   const params = useParams();
@@ -30,7 +31,7 @@ export default function DiscussionDetailPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const pageSize = 1;
+  const pageSize = 2;
 
   const filtered = useMemo(() => {
     let list = replies ? [...replies] : [];
@@ -63,11 +64,7 @@ export default function DiscussionDetailPage() {
       const { data, totalPages } = await response.json();
       setReplies((prev) => {
         const newReplies = [...prev];
-        console.log(newReplies);
-
         newReplies.push(...data);
-        console.log(newReplies);
-
         return newReplies;
       });
       setTotalPages(totalPages);
@@ -77,11 +74,12 @@ export default function DiscussionDetailPage() {
     }
   }
 
-  async function getDiscussion(slug: string): Promise<void> {
+  async function getDiscussion(slug: string): Promise<IDiscussion | null> {
     try {
       const response = await fetch(`/api/discussions/slug/${slug}`);
       const data = await response.json();
       setDiscussion(data);
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -92,13 +90,44 @@ export default function DiscussionDetailPage() {
     setPage((p) => Math.min(totalPages, p + 1));
   }
 
+  // Fetch discussion on mount
   useEffect(() => {
-    getDiscussion(id);
+    let isMounted = true;
+    
+    const fetchDiscussion = async () => {
+      try {
+        await getDiscussion(id);
+        if (isMounted) {
+          // Reset replies and page when discussion changes
+          setReplies([]);
+          setPage(1);
+        }
+      } catch (error) {
+        console.error('Error fetching discussion:', error);
+      }
+    };
+    
+    fetchDiscussion();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
+  // Fetch replies when discussion or page changes
   useEffect(() => {
-    if (discussion?._id) getReplies(discussion?._id.toString(), page, pageSize);
-  }, [page, discussion]);
+    if (!discussion?._id) return;
+    
+    const fetchReplies = async () => {
+      try {
+        await getReplies(discussion._id.toString(), page, pageSize);
+      } catch (error) {
+        console.error('Error fetching replies:', error);
+      }
+    };
+    
+    fetchReplies();
+  }, [discussion?._id, page]);
 
   // Voting state (client-only)
   const [votes, setVotes] = useState<Record<string, number>>({});
@@ -238,7 +267,7 @@ export default function DiscussionDetailPage() {
             <ul className="divide-y divide-gray-200">
               {replies?.map((r) => (
                 <li
-                  key={r._id.toString()}
+                  key={r.createdAt.toString()}
                   className="p-4 flex items-start gap-3"
                 >
                   <div className="flex flex-col items-center gap-1">

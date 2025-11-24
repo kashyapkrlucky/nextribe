@@ -6,6 +6,7 @@ import { ApiCommunity } from "@/types/api.types";
 import Link from "next/link";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function CommunityListPage() {
   const [query, setQuery] = useState("");
@@ -136,7 +137,9 @@ export default function CommunityListPage() {
 
         <div className="bg-white border border-gray-200 rounded-xl">
           {loading ? (
-            <div className="p-8 text-center text-slate-600">Loading...</div>
+            <div className="p-8 text-center">
+              <Spinner />
+            </div>
           ) : error ? (
             <div className="p-8 text-center text-red-600 text-sm">{error}</div>
           ) : pageData.length === 0 ? (

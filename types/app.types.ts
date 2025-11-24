@@ -14,6 +14,7 @@ export interface Author {
 export interface Discussion {
   _id: string;
   title: string;
+  slug: string;
   content: string;
   community: Community;
   author: Author;

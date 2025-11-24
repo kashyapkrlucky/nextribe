@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { SearchIcon, TrendingUpIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 import CreateDiscussionForm from "@/components/discussions/CreateDiscussionForm";
 import { ICommunity, IDiscussion } from "@/types/index.types";
 
@@ -136,7 +137,6 @@ export default function CommunityPage() {
     }
   }
 
-
   return (
     <Fragment>
       {/* Mid section */}
@@ -185,7 +185,7 @@ export default function CommunityPage() {
 
         <div className="bg-white border border-gray-200 rounded-xl">
           {loading ? (
-            <div className="p-8 text-center text-slate-600">Loading...</div>
+            <Spinner />
           ) : error ? (
             <div className="p-8 text-center text-red-600 text-sm">{error}</div>
           ) : pageData.length === 0 ? (
@@ -243,65 +243,59 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* Right sidebar */}
-      <aside className="flex flex-col lg:w-1/5 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-3">
-          <h3 className="text-sm font-semibold mb-2">About Community</h3>
-          <div className="text-sm text-slate-700 mb-6">
-            {community?.description || ""}
+      <>
+        <aside className="flex flex-col lg:w-1/5 gap-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-3">
+            <h3 className="text-sm font-semibold mb-2">About Community</h3>
+            <div className="text-sm text-slate-700 mb-6">
+              {community?.description || ""}
+            </div>
+
+            <button
+              onClick={onJoin}
+              className="inline-flex items-center gap-2 rounded-lg px-2 py-1 border border-blue-600 text-blue-600 text-sm"
+            >
+              Join Community
+            </button>
+            <div className="mt-3 text-xs text-slate-600">
+              {/* <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div> */}
+              {/* <div>ID: {community?._id}</div> */}
+            </div>
+            <div className="mt-3 text-xs text-slate-600">
+              {/* <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div> */}
+              {/* <div>ID: {community?._id}</div> */}
+            </div>
           </div>
 
-          <button
-            onClick={onJoin}
-            className="inline-flex items-center gap-2 rounded-lg px-2 py-1 border border-blue-600 text-blue-600 text-sm"
-          >
-            Join Community
-          </button>
-          <div className="mt-3 text-xs text-slate-600">
-            {/* <div>Topics: {Array.isArray(community?.topics) ? community!.topics!.length : 0}</div> */}
-            {/* <div>ID: {community?._id}</div> */}
+          <div className="bg-white border border-gray-200 rounded-xl p-3">
+            <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
+              <TrendingUpIcon className="w-4 h-4" /> Popular Discussions
+            </h3>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <ul className="space-y-2">
+                {popularItems.map((d) => (
+                  <li
+                    key={d.slug}
+                    className="flex items-center justify-between"
+                  >
+                    <Link
+                      href={`/discussion/${d.slug}`}
+                      className="text-sm hover:underline"
+                    >
+                      {d.title}
+                    </Link>
+                    <span className="text-xs text-slate-600">
+                      {(d.commentCount || 0).toLocaleString("en-US")}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-3">
-          <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
-            <TrendingUpIcon className="w-4 h-4" /> Popular Discussions
-          </h3>
-          <ul className="space-y-2">
-            {popularItems.map((d) => (
-              <li key={d.slug} className="flex items-center justify-between">
-                <Link
-                  href={`/discussion/${d.slug}`}
-                  className="text-sm hover:underline"
-                >
-                  {d.title}
-                </Link>
-                <span className="text-xs text-slate-600">
-                  {(d.commentCount || 0).toLocaleString("en-US")}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-3">
-          <h3 className="text-sm font-semibold mb-2">Useful Links</h3>
-          <ul className="space-y-1">
-            {externalLinks.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
+        </aside>
+      </>
       {showCreateDiscussion && (
         <CreateDiscussionForm
           setShowCreateDiscussion={setShowCreateDiscussion}
