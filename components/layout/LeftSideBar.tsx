@@ -14,9 +14,7 @@ interface SideBarProps {
   user?: { name: string; email: string; id: string };
 }
 
-export default function LeftSideBar({
-  user,
-}: SideBarProps) {
+export default function LeftSideBar({ user }: SideBarProps) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
@@ -34,20 +32,22 @@ export default function LeftSideBar({
             </Link>
           ))}
 
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowCreate(true);
-            }}
-            className="inline-flex items-center gap-2 rounded-lg px-2 py-2 bg-blue-600 text-white text-sm"
-          >
-            <PlusIcon className="w-4 h-4" /> Create Community
-          </Link>
+          {user && (
+            <Link
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowCreate(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-lg px-2 py-2 bg-blue-600 text-white text-sm"
+            >
+              <PlusIcon className="w-4 h-4" /> Create Community
+            </Link>
+          )}
         </nav>
       </div>
-
-      {user?.email && <MyCommunities />}
+      
+      {user?.id && <MyCommunities />}
       {/* Create Community Modal */}
       {showCreate ? (
         <CreateCommunityForm setShowCreate={setShowCreate} />

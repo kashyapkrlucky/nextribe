@@ -80,7 +80,6 @@ export async function POST(
     if (!discussion) return NextResponse.json({ error: "Discussion not found" }, { status: 404 });
 
     const bodyJson = await req.json();
-    console.log(bodyJson);
     
     const body: string | undefined = bodyJson?.body;
     const tag: string | undefined = bodyJson?.tag;
@@ -113,7 +112,6 @@ export async function POST(
       tag,
       parent: parentId,
     });
-    console.log(reply);
     
     // Update discussion metadata
     await Discussion.updateOne(

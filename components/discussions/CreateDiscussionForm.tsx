@@ -22,7 +22,6 @@ export default function CreateDiscussionForm({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(form);
     setCreateError(null);
     if (!form.title.trim()) {
       setCreateError("Title is required");

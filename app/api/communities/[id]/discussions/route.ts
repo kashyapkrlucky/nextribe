@@ -55,7 +55,6 @@ export async function GET(
     } else {
       community = await Community.findOne({ slug: id }).lean()
     }
-    console.log(community);
     
    if (!community) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });

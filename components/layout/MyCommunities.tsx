@@ -19,9 +19,10 @@ const MyCommunities: React.FC = () => {
     <div className="bg-white border border-gray-200 rounded-xl p-3">
       <h3 className="text-sm font-semibold  inline-flex items-center gap-2">
         <MessagesSquareIcon className="w-4 h-4" /> My Communities (
-        {communities?.length})
+        {communities?.length || '0'})
       </h3>
-      <ul className="mt-2 space-y-1">
+      
+      {communities?.length > 0 && <ul className="mt-2 space-y-1">
         {communities?.map((c: Partial<ICommunity>) => (
           <li key={c?._id?.toString()}>
             <Link
@@ -32,7 +33,7 @@ const MyCommunities: React.FC = () => {
             </Link>
           </li>
         ))}
-      </ul>
+      </ul>}
     </div>
   );
 };
