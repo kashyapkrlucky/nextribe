@@ -1,22 +1,17 @@
 "use client";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import {
-  SearchIcon,
-  TrendingUpIcon,
-  ArrowBigUp,
-  ArrowBigDown,
-  SendHorizonal,
-} from "lucide-react";
+import { ArrowBigUp, ArrowBigDown, SendHorizonal, TrendingUp as TrendingUpIcon, SearchIcon } from "lucide-react";
 import { IDiscussion, IReply } from "@/types/index.types";
 import { formatDate } from "@/utils/helpers";
-import { Spinner } from "@/components/ui/Spinner";
+import { getUserIdFromToken } from "@/lib/auth-client";
+import { Types } from "mongoose";
 
 export default function DiscussionDetailPage() {
   const params = useParams();
   const [discussion, setDiscussion] = useState<IDiscussion | null>(null);
   const [replies, setReplies] = useState<IReply[]>([]);
-
+  const userId = getUserIdFromToken();
   // Add answer box
   const [answer, setAnswer] = useState("");
   const [answerTag, setAnswerTag] = useState<"answer" | "tip" | "question">(
@@ -32,23 +27,6 @@ export default function DiscussionDetailPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   const pageSize = 2;
-
-  const filtered = useMemo(() => {
-    let list = replies ? [...replies] : [];
-    if (query.trim()) {
-      const q = query.toLowerCase();
-      list = list.filter((r) => r.body.toLowerCase().includes(q));
-    }
-    if (tag !== "all") {
-      list = list.filter((r) => r.tag === tag);
-    }
-    // if (sort === "top") list.sort((a, b) => b.score - a.score);
-    // else list.sort((a, b) => b.createdAt?.localeCompare(a.createdAt));
-    return list;
-  }, [replies, query, tag, sort]);
-
-  // const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  // const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const id = (params?.id as string) || "1";
 
@@ -93,7 +71,7 @@ export default function DiscussionDetailPage() {
   // Fetch discussion on mount
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchDiscussion = async () => {
       try {
         await getDiscussion(id);
@@ -103,12 +81,12 @@ export default function DiscussionDetailPage() {
           setPage(1);
         }
       } catch (error) {
-        console.error('Error fetching discussion:', error);
+        console.error("Error fetching discussion:", error);
       }
     };
-    
+
     fetchDiscussion();
-    
+
     return () => {
       isMounted = false;
     };
@@ -117,26 +95,19 @@ export default function DiscussionDetailPage() {
   // Fetch replies when discussion or page changes
   useEffect(() => {
     if (!discussion?._id) return;
-    
+
     const fetchReplies = async () => {
       try {
         await getReplies(discussion._id.toString(), page, pageSize);
       } catch (error) {
-        console.error('Error fetching replies:', error);
+        console.error("Error fetching replies:", error);
       }
     };
-    
+
     fetchReplies();
   }, [discussion?._id, page]);
 
   // Voting state (client-only)
-  const [votes, setVotes] = useState<Record<string, number>>({});
-  const applyVote = (replyId: string, delta: 1 | -1) => {
-    setVotes((prev) => ({
-      ...prev,
-      [replyId]: Math.max(-1, Math.min(1, (prev[replyId] ?? 0) + delta)),
-    }));
-  };
   // const getDisplayScore = (r: Reply) =>
   //   (r.score + (votes[r.id] ?? 0)).toLocaleString("en-US");
 
@@ -170,6 +141,36 @@ export default function DiscussionDetailPage() {
       setAnswerTag("answer");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const onVote = async (type: "up" | "down", replyId: string) => {
+    try {
+      const response = await fetch(`/api/replies/${replyId}/vote`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update vote');
+      }
+
+      const updatedReply = await response.json();
+      
+      // Update the UI with the updated reply
+      setReplies(prev => 
+        prev.map(reply => 
+          reply._id.toString() === replyId ? updatedReply : reply
+        )
+      );
+    } catch (error) {
+      console.error('Vote error:', error);
+      // Optionally show an error toast to the user
+      // toast.error(error.message || 'Failed to update vote');
     }
   };
 
@@ -272,21 +273,30 @@ export default function DiscussionDetailPage() {
                 >
                   <div className="flex flex-col items-center gap-1">
                     <button
-                      className="p-1 rounded hover:bg-gray-50 border border-gray-200"
+                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors ${
+                        r.upVotes?.includes(new Types.ObjectId(userId!)) 
+                          ? 'text-blue-500 border-blue-200 bg-blue-50' 
+                          : 'border-gray-200 text-gray-500 hover:text-blue-500'
+                      }`}
                       aria-label="Upvote"
                       type="button"
+                      onClick={() => onVote("up", r._id.toString())}
                     >
+                      <span className="text-xs font-medium text-slate-700">{r.upVoteCount}</span>
                       <ArrowBigUp className="w-5 h-5" />
-                    </button>
-                    <div className="text-xs font-medium text-slate-700 min-w-6 text-center">
-                      {/* {getDisplayScore(r)} */}
-                    </div>
+                    </button> 
                     <button
-                      className="p-1 rounded hover:bg-gray-50 border border-gray-200"
+                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors ${
+                        r.downVotes?.includes(new Types.ObjectId(userId!)) 
+                          ? 'text-red-500 border-red-200 bg-red-50' 
+                          : 'border-gray-200 text-gray-500 hover:text-red-500'
+                      }`}
                       aria-label="Downvote"
                       type="button"
+                      onClick={() => onVote("down", r._id.toString())}
                     >
                       <ArrowBigDown className="w-5 h-5" />
+                      <span className="text-xs font-medium text-slate-700">{r.downVoteCount}</span>
                     </button>
                   </div>
 

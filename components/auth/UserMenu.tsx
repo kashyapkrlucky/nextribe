@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { User, Settings, LogOut } from 'lucide-react';
 
 interface UserMenuProps {
-  user: { name?: string; email?: string };
+  user: { name: string; email: string; id: string };
 }
 
 export function UserMenu({ user }: UserMenuProps) {

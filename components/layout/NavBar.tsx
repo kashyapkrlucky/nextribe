@@ -1,9 +1,8 @@
 import Link from "next/link";
-import React from "react";
 import { UserMenu } from "../auth/UserMenu";
 
 interface NavBarProps {
-  user?: { name?: string; email?: string };
+  user?: { name: string; email: string; id: string };
 }
 
 const navigation = [

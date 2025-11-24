@@ -3,6 +3,11 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { signToken, setAuthCookie } from "@/lib/auth";
+import { IUser } from "@/types/index.types";
+
+interface UserInfo extends IUser {
+  passwordHash: string;
+}
 
 export async function POST(req: Request) {
   try {
@@ -12,8 +17,7 @@ export async function POST(req: Request) {
     }
 
     await connectToDatabase();
-
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.toLowerCase() }) as UserInfo;
     if (!user) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }

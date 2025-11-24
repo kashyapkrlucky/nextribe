@@ -68,7 +68,7 @@ export async function POST(
       : context.params;
     const id = params.id.trim();
 
-    const userId = await getUserIdFromCookie(req);
+    const userId = await getUserIdFromCookie();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid discussion id" }, { status: 400 });

@@ -1,9 +1,9 @@
 import { getUserIdFromRequest } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const userId = await getUserIdFromRequest(req);
+    const userId = await getUserIdFromRequest();
     console.log(userId);
     
     if (!userId)

@@ -3,12 +3,35 @@ import { IReply } from "@/types/index.types";
 
 const ReplySchema = new Schema<IReply>(
   {
-    discussion: { type: Schema.Types.ObjectId, ref: "Discussion", required: true, index: true },
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    discussion: {
+      type: Schema.Types.ObjectId,
+      ref: "Discussion",
+      required: true,
+      index: true,
+    },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     body: { type: String, required: true },
-    parent: { type: Schema.Types.ObjectId, ref: "Reply", default: null, index: true },
-    tag: { type: String, enum: ["answer", "tip", "question"], default: "answer" },
+    parent: {
+      type: Schema.Types.ObjectId,
+      ref: "Reply",
+      default: null,
+      index: true,
+    },
+    tag: {
+      type: String,
+      enum: ["answer", "tip", "question"],
+      default: "answer",
+    },
     isDeleted: { type: Boolean, default: false, index: true },
+    upVoteCount: { type: Number, default: 0 },
+    upVotes: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
+    downVoteCount: { type: Number, default: 0 },
+    downVotes: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
   },
   { timestamps: true }
 );

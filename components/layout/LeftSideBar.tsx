@@ -3,7 +3,6 @@ import Link from "next/link";
 import { HomeIcon, CompassIcon, PlusIcon } from "lucide-react";
 import MyCommunities from "@/components/layout/MyCommunities";
 import { useState } from "react";
-import { IUser } from "@/types/index.types";
 import CreateCommunityForm from "../community/CreateCommunityForm";
 
 // Left sidebar data
@@ -11,12 +10,13 @@ const importantLinks = [
   { href: "/", label: "Home", icon: HomeIcon },
   { href: "/community/list", label: "Explore", icon: CompassIcon },
 ];
+interface SideBarProps {
+  user?: { name: string; email: string; id: string };
+}
 
 export default function LeftSideBar({
   user,
-}: {
-  user: IUser & { _id: string };
-}) {
+}: SideBarProps) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
@@ -47,7 +47,7 @@ export default function LeftSideBar({
         </nav>
       </div>
 
-      {user && <MyCommunities />}
+      {user?.email && <MyCommunities />}
       {/* Create Community Modal */}
       {showCreate ? (
         <CreateCommunityForm setShowCreate={setShowCreate} />

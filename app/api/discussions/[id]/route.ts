@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Discussion } from "@/models/Discussion";
 import mongoose from "mongoose";
-import { jwtVerify } from "jose";
+import { getUserIdFromCookie } from "@/lib/auth";
 
 function slugify(input: string) {
   return input
@@ -11,27 +11,6 @@ function slugify(input: string) {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
-}
-
-async function getUserIdFromCookie(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split(";")
-      .map((c) => c.trim())
-      .find((c) => c.startsWith("token="))
-      ?.split("=")[1];
-    if (!token) return null;
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return null;
-    const key = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, key);
-    const sub = payload.sub;
-    if (typeof sub !== "string") return null;
-    return sub;
-  } catch {
-    return null;
-  }
 }
 
 export async function GET(
@@ -66,7 +45,7 @@ export async function PATCH(
       : context.params;
     const id = params.id.trim();
 
-    const userId = await getUserIdFromCookie(req);
+    const userId = await getUserIdFromCookie();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
@@ -115,7 +94,7 @@ export async function DELETE(
       : context.params;
     const id = params.id.trim();
 
-    const userId = await getUserIdFromCookie(req);
+    const userId = await getUserIdFromCookie();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });

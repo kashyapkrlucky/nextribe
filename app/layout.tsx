@@ -25,10 +25,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getUserFromCookie();
+  const userinfo = {
+    email: user?.email || "",
+    name: user?.name || "",
+    id: user?._id.toString() || "",
+  };
   return (
     <html lang="en">
       <body className={`flex flex-col ${geistSans} ${geistMono}`}>
-        <NavBar user={user ?? undefined} />
+        <NavBar user={userinfo} />
         {children}
       </body>
     </html>

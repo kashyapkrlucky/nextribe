@@ -15,7 +15,7 @@ export async function POST(
       : context.params;
     const id = params.id.trim();
 
-    const userId = await getUserIdFromRequest(req);
+    const userId = await getUserIdFromRequest();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });

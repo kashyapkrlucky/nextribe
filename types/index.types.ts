@@ -3,9 +3,10 @@ import { Types } from "mongoose";
 export type CommunityMemberRole = "owner" | "admin" | "member";
 
 export interface IUser {
+  _id: Types.ObjectId;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
   bio?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -57,6 +58,10 @@ export interface IReply {
   parent?: Types.ObjectId | null; // ref: Reply
   isDeleted?: boolean; // soft delete flag
   tag: "answer" | "tip" | "question";
+  upVoteCount: number;
+  downVoteCount: number;
+  upVotes: Types.ObjectId[]; // ref: User[]
+  downVotes: Types.ObjectId[]; // ref: User[]
   createdAt: Date;
   updatedAt: Date;
 }
