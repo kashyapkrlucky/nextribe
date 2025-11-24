@@ -20,7 +20,7 @@ const NavBar = ({ user }: NavBarProps) => {
           </Link>
         </div>
         <div className="lg:w-1/2 flex flex-row p-4 lg:p-0 gap-8 items-center justify-center lg:justify-end">
-          {user ? (
+          {user?.id ? (
             <div className="flex items-center">
               <UserMenu user={user} />
             </div>

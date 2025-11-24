@@ -32,7 +32,7 @@ export default function LeftSideBar({ user }: SideBarProps) {
             </Link>
           ))}
 
-          {user && (
+          {user?.id && (
             <Link
               href="#"
               onClick={(e) => {
