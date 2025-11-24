@@ -7,13 +7,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
-import { Discussion } from "@/types/app.types";
+import { IDiscussion } from "@/types/index.types";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import { Spinner } from "@/components/ui/Spinner";
 
 export default function Home() {
-  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [discussions, setDiscussions] = useState<IDiscussion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
@@ -60,9 +60,9 @@ export default function Home() {
           <div className="bg-white rounded-lg shadow-xs p-2 divide-y divide-gray-100">
             {discussions.length > 0 ? (
               <>
-                {discussions.map((discussion: Discussion) => (
+                {discussions.map((discussion: IDiscussion) => (
                 // Design a discussion card component
-                <div key={discussion._id} className="p-4">
+                <div key={discussion._id.toString()} className="p-4">
                   <header className="flex flex-row justify-between mb-2">
                     <Link
                       href={`/community/${discussion.community.slug}`}
@@ -92,7 +92,7 @@ export default function Home() {
                     <Link href={`/discussion/${discussion.slug}`} className="flex-1">
                       <h3 className="font-medium">{discussion.title}</h3>
                       <p className="text-sm text-gray-500">
-                        {discussion.content}
+                        {discussion.body}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <button className="text-xs text-gray-500 hover:text-gray-700">

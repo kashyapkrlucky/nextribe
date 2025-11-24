@@ -1,121 +1,159 @@
 import { Types } from "mongoose";
 
+/**
+ * Represents the possible roles a member can have in a community
+ */
 export type CommunityMemberRole = "owner" | "admin" | "member";
 
+/**
+ * Represents a user in the system
+ */
 export interface IUser {
+  /** Unique identifier for the user */
   _id: Types.ObjectId;
+  /** User's full name */
   name: string;
+  /** User's email address (must be unique) */
   email: string;
+  /** Hashed password (not returned in API responses) */
   passwordHash?: string;
+  /** Short biography or description */
   bio?: string;
+  /** When the user account was created */
   createdAt?: Date;
+  /** When the user account was last updated */
   updatedAt?: Date;
 }
 
+/**
+ * Represents a community where users can interact and discuss topics
+ */
 export interface ICommunity {
+  /** Unique identifier for the community */
   _id: Types.ObjectId;
+  /** Display name of the community */
   name: string;
+  /** URL-friendly version of the name for routing */
   slug: string;
+  /** Detailed description of the community */
   description?: string;
+  /** Reference to the user who owns the community */
   owner: Types.ObjectId; // ref: User
+  /** Whether the community is private (requires approval to join) */
   isPrivate?: boolean;
+  /** List of topics associated with this community */
   topics?: Types.ObjectId[]; // ref: Topic[]
+  /** When the community was created */
   createdAt?: Date;
+  /** When the community was last updated */
   updatedAt?: Date;
+  /** Number of members in the community */
   memberCount?: number;
 }
 
 
+/**
+ * Represents the relationship between a user and a community
+ */
 export interface ICommunityMember {
+  /** Reference to the community */
   community: Types.ObjectId; // ref: Community
+  /** Reference to the user who is a member */
   user: Types.ObjectId; // ref: User
+  /** The user's role within the community */
   role: CommunityMemberRole;
+  /** When the user joined the community */
   createdAt?: Date;
+  /** When the membership was last updated */
   updatedAt?: Date;
 }
 
+/**
+ * Represents a discussion thread within a community
+ */
 export interface IDiscussion {
+  /** Unique identifier for the discussion */
   _id: Types.ObjectId;
+  /** Title of the discussion */
   title: string;
+  /** URL-friendly version of the title */
   slug: string;
+  /** Main content of the discussion */
   body: string;
+  /** Author of the discussion */
   author: IUser;
-  community: Types.ObjectId;
+  /** Community this discussion belongs to */
+  community: ICommunity;
+  /** Whether the discussion is locked (no new replies) */
   isLocked?: boolean;
+  /** Number of comments in the discussion */
   commentCount?: number;
+  /** When the discussion was last active */
   lastActivityAt?: Date;
+  /** When the discussion was created */
   createdAt?: Date;
+  /** When the discussion was last updated */
   updatedAt?: Date;
+  /** Number of replies to the discussion */
   replyCount?: number;
 }
 
 
+/**
+ * Represents a reply to a discussion or another reply
+ */
 export interface IReply {
+  /** Unique identifier for the reply */
   _id: Types.ObjectId;
+  /** Reference to the parent discussion */
   discussion: Types.ObjectId; // ref: Discussion
+  /** Author of the reply */
   author: IUser; // ref: User
+  /** Content of the reply */
   body: string;
+  /** Reference to the parent reply if this is a nested reply */
   parent?: Types.ObjectId | null; // ref: Reply
-  isDeleted?: boolean; // soft delete flag
+  /** Soft delete flag */
+  isDeleted?: boolean;
+  /** Type of reply */
   tag: "answer" | "tip" | "question";
+  /** Number of upvotes */
   upVoteCount: number;
+  /** Number of downvotes */
   downVoteCount: number;
+  /** Users who upvoted this reply */
   upVotes: Types.ObjectId[]; // ref: User[]
+  /** Users who downvoted this reply */
   downVotes: Types.ObjectId[]; // ref: User[]
+  /** When the reply was created */
   createdAt: Date;
+  /** When the reply was last updated */
   updatedAt: Date;
 }
 
 
+/**
+ * Represents a topic within a community for categorizing discussions
+ */
 export interface ITopic {
+  /** Display name of the topic */
   name: string;
+  /** URL-friendly version of the name */
   slug: string;
+  /** Description of the topic */
   description?: string;
+  /** Reference to the community this topic belongs to */
   community: Types.ObjectId; // ref: Community
+  /** User who created the topic */
   createdBy: Types.ObjectId; // ref: User
+  /** Whether the topic is archived */
   isArchived?: boolean;
+  /** Number of discussions in this topic */
   discussionCount?: number;
-  order?: number; // for manual ordering/pinning within community
+  /** Used for manual ordering/pinning within community */
+  order?: number;
+  /** When the topic was created */
   createdAt?: Date;
+  /** When the topic was last updated */
   updatedAt?: Date;
-}
-
-export interface MyCommunity {
-  _id: string;
-  name: string;
-  slug: string;
-}
-
-export interface ApiCommunity {
-  _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  membersCount: number;
-  topics: string[];
-}
-
-export interface Community {
-  name: string;
-  slug: string;
-  _id: string;
-}
-
-export interface Author {
-  name: string;
-  email: string;
-  _id: string;
-}
-
-export interface Discussion {
-  _id: string;
-  title: string;
-  content: string;
-  community: Community;
-  author: Author;
-  createdAt: string;
-  updatedAt: string;
-  replyCount?: number;
 }

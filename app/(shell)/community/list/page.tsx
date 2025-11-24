@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { FilterIcon, SearchIcon } from "lucide-react";
 
-import { ApiCommunity } from "@/types/api.types";
 import Link from "next/link";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import { Spinner } from "@/components/ui/Spinner";
+import { ICommunity } from "@/types/index.types";
 
 export default function CommunityListPage() {
   const [query, setQuery] = useState("");
@@ -14,7 +14,7 @@ export default function CommunityListPage() {
   const [sort, setSort] = useState<"popular" | "new">("popular");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [data, setData] = useState<ApiCommunity[]>([]);
+  const [data, setData] = useState<ICommunity[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,7 +150,7 @@ export default function CommunityListPage() {
             <ul className="divide-y divide-gray-200">
               {pageData.map((c) => (
                 <li
-                  key={c._id}
+                  key={c._id.toString()}
                   className="p-4 flex items-center justify-between"
                 >
                   <div>
@@ -161,14 +161,14 @@ export default function CommunityListPage() {
                       {c?.name}
                     </Link>
                     <div className="text-xs text-slate-600">
-                      {(c.membersCount || 0).toLocaleString("en-US")} members
+                      {(c.memberCount || 0).toLocaleString("en-US")} members
                       {Array.isArray(c.topics)
                         ? ` • ${c.topics.length} topics`
                         : ""}
                     </div>
                   </div>
                   <button
-                    onClick={() => onJoin(c._id)}
+                    onClick={() => onJoin(c._id.toString())}
                     className="text-xs border border-gray-200 rounded-md px-2 py-1"
                   >
                     Join
