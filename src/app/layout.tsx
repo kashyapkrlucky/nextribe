@@ -32,7 +32,7 @@ export default async function RootLayout({
   };
   return (
     <html lang="en">
-      <body className={`flex flex-col ${geistSans} ${geistMono}`}>
+      <body className={`flex flex-col h-dvh ${geistSans} ${geistMono}`}>
         <NavBar user={userinfo} />
         {children}
       </body>

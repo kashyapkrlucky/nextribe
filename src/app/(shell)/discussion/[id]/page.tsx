@@ -177,7 +177,7 @@ export default function DiscussionDetailPage() {
   return (
     <Fragment>
       {/* Mid section */}
-      <section className="flex flex-col lg:w-3/5 gap-4">
+      <section className="flex flex-col flex-1 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <h1 className="text-xl font-semibold mb-1">{discussion?.title}</h1>
           <p className="text-sm text-slate-700">{discussion?.body}</p>
@@ -332,7 +332,7 @@ export default function DiscussionDetailPage() {
       </section>
 
       {/* Right sidebar */}
-      <aside className="flex flex-col lg:w-1/5 gap-4">
+      <aside className="flex flex-col lg:w-1/4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-3">
           <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
             <TrendingUpIcon className="w-4 h-4" /> Top Replies
