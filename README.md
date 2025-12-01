@@ -1,36 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextRibe - Modern Community Discussion Platform
 
-## Getting Started
+NextRibe is a feature-rich community discussion platform built with Next.js, TypeScript, and MongoDB. It provides a modern, responsive interface for users to create communities, participate in discussions, and engage with content through voting and commenting.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **User Authentication**
+  - Secure JWT-based authentication
+  - Email/Password registration and login
+  - Protected routes and API endpoints
+
+- **Communities**
+  - Create and join communities
+  - Public and private community options
+  - Community-specific discussions and content
+
+- **Discussions & Replies**
+  - Create and participate in threaded discussions
+  - Rich text formatting support
+  - Upvote/downvote system
+  - Real-time updates
+
+- **User Profiles**
+  - Personalized user profiles
+  - Activity tracking
+  - Community memberships
+
+- **Responsive Design**
+  - Mobile-first approach
+  - Dark mode support
+  - Accessible UI components
+
+## 🛠️ Tech Stack
+
+- **Frontend**
+  - Next.js 14 (App Router)
+  - TypeScript
+  - Tailwind CSS
+  - Zustand (State Management)
+  - React Hook Form
+  <!-- - Zod (Schema Validation) -->
+
+- **Backend**
+  - Next.js API Routes
+  - MongoDB with Mongoose
+  - JWT Authentication
+  - Server Actions
+
+- **Development Tools**
+  - ESLint
+  - Prettier
+  - TypeScript
+  - Husky (Git Hooks)
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app/                  # App router pages
+│   ├── (auth)/           # Authentication routes
+│   ├── (shell)/          # Main application layout
+│   └── api/              # API routes
+├── components/           # Reusable UI components
+│   ├── auth/             # Authentication components
+│   ├── community/        # Community-related components
+│   └── discussions/      # Discussion components
+├── core/                 # Core application logic
+│   ├── config/           # App configuration
+│   ├── constants/        # App-wide constants
+│   └── types/            # TypeScript type definitions
+├── lib/                  # Utility functions
+│   ├── auth.ts           # Authentication helpers
+│   └── axios.ts          # API client configuration
+└── store/                # State management
+    ├── useUserStore.ts   # User state management
+    └── useDiscussionStore.ts # Discussions state
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+
+- MongoDB Atlas or local MongoDB instance
+- npm or yarn
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/nextribe.git
+   cd nextribe
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Install dependencies
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Set up environment variables
+   ```bash
+   cp .env.example .env.local
+   ```
 
-## Deploy on Vercel
+4. Configure your environment variables in `.env.local`:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_nextauth_secret
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. Run the development server
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 📚 Documentation
+
+### API Endpoints
+
+- `POST /api/auth/sign-up` - User registration
+- `POST /api/auth/sign-in` - User login
+- `GET /api/communities` - List all communities
+- `POST /api/communities` - Create a new community
+- `GET /api/discussions` - List all discussions
+- `POST /api/discussions` - Create a new discussion
+
+### State Management
+
+The application uses Zustand for state management with two main stores:
+
+1. **useUserStore** - Manages user authentication and profile data
+2. **useDiscussionStore** - Handles discussions and community data
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org) - The React Framework for Production
+- [MongoDB](https://www.mongodb.com) - The database for modern applications
+- [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework
+- [Zustand](https://zustand-demo.pmnd.rs/) - State management made simple
+
