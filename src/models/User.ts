@@ -27,7 +27,7 @@ const UserSchema = new Schema<IUser & Document>(
     passwordHash: { 
       type: String, 
       required: [true, 'Password hash is required'],
-      select: false // Never return password hash in queries by default
+      // select: false // Never return password hash in queries by default
     },
     bio: {
       type: String,

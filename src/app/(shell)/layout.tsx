@@ -20,11 +20,9 @@ export default async function RootLayout({
     id: user?._id.toString() || "",
   };
   return (
-    <main className="w-full flex-1 overflow-y-auto p-4">
-      <div className="w-full flex flex-col lg:flex-row gap-4 max-w-7xl mx-auto">
-        <LeftSideBar user={userinfo} />
-        {children}
-      </div>
+    <main className="w-full flex-1 flex flex-col lg:flex-row gap-6 p-6">
+      <LeftSideBar user={userinfo} />
+      {children}
     </main>
   );
 }

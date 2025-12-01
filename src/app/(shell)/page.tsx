@@ -40,7 +40,7 @@ export default function Home() {
       <section className="flex-1">
         {/* multiple dropdown filters */}
 
-        <div className="flex flex-row gap-4 mb-2">
+        <div className="flex flex-row gap-6 mb-2">
           <select className="p-1 text-xs outline-none">
             <option>Top</option>
             <option>Recent</option>
@@ -57,12 +57,12 @@ export default function Home() {
         {isLoading ? (
           <Spinner />
         ) : (
-          <div className="bg-white rounded-lg shadow-xs p-2 divide-y divide-gray-100">
+          <div className="flex flex-col gap-6">
             {discussions.length > 0 ? (
               <>
                 {discussions.map((discussion: IDiscussion) => (
                 // Design a discussion card component
-                <div key={discussion._id.toString()} className="p-4">
+                <div key={discussion._id.toString()} className="p-4 bg-white rounded-lg shadow-xs ">
                   <header className="flex flex-row justify-between mb-2">
                     <Link
                       href={`/community/${discussion.community.slug}`}

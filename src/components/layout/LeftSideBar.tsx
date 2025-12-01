@@ -18,7 +18,7 @@ export default function LeftSideBar({ user }: SideBarProps) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
-    <aside className="flex flex-col lg:w-1/5 gap-4">
+    <aside className="flex flex-col lg:w-1/5 gap-6">
       <div className="bg-white border border-gray-200 rounded-xl p-3">
         <nav className="flex flex-col gap-1">
           {importantLinks.map(({ href, label, icon: Icon }) => (
