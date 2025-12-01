@@ -140,7 +140,7 @@ export default function CommunityPage() {
   return (
     <Fragment>
       {/* Mid section */}
-      <section className="flex flex-col lg:w-3/5 gap-4">
+      <section className="flex flex-col flex-1 gap-6">
         <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-xl p-3">
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
             <h2 className="text-xl font-semibold">
@@ -244,7 +244,7 @@ export default function CommunityPage() {
       </section>
 
       <>
-        <aside className="flex flex-col lg:w-1/5 gap-4">
+        <aside className="flex flex-col lg:w-1/4 gap-6">
           <div className="bg-white border border-gray-200 rounded-xl p-3">
             <h3 className="text-sm font-semibold mb-2">About Community</h3>
             <div className="text-sm text-slate-700 mb-6">

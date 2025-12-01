@@ -177,7 +177,7 @@ export default function DiscussionDetailPage() {
   return (
     <Fragment>
       {/* Mid section */}
-      <section className="flex flex-col flex-1 gap-4">
+      <section className="flex flex-col flex-1 gap-6">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <h1 className="text-xl font-semibold mb-1">{discussion?.title}</h1>
           <p className="text-sm text-slate-700">{discussion?.body}</p>
@@ -265,40 +265,12 @@ export default function DiscussionDetailPage() {
               No replies found.
             </div>
           ) : (
-            <ul className="divide-y divide-gray-200">
+            <ul className="flex flex-col gap-3">
               {replies?.map((r) => (
                 <li
                   key={r.createdAt.toString()}
-                  className="p-4 flex items-start gap-3"
+                  className="p-4 flex flex-col items-start gap-3 border-b border-gray-200"
                 >
-                  <div className="flex flex-col items-center gap-1">
-                    <button
-                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors ${
-                        r.upVotes?.includes(new Types.ObjectId(userId!)) 
-                          ? 'text-blue-500 border-blue-200 bg-blue-50' 
-                          : 'border-gray-200 text-gray-500 hover:text-blue-500'
-                      }`}
-                      aria-label="Upvote"
-                      type="button"
-                      onClick={() => onVote("up", r._id.toString())}
-                    >
-                      <span className="text-xs font-medium text-slate-700">{r.upVoteCount}</span>
-                      <ArrowBigUp className="w-5 h-5" />
-                    </button> 
-                    <button
-                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors ${
-                        r.downVotes?.includes(new Types.ObjectId(userId!)) 
-                          ? 'text-red-500 border-red-200 bg-red-50' 
-                          : 'border-gray-200 text-gray-500 hover:text-red-500'
-                      }`}
-                      aria-label="Downvote"
-                      type="button"
-                      onClick={() => onVote("down", r._id.toString())}
-                    >
-                      <ArrowBigDown className="w-5 h-5" />
-                      <span className="text-xs font-medium text-slate-700">{r.downVoteCount}</span>
-                    </button>
-                  </div>
 
                   <div className="flex-1">
                     <div className="flex items-center gap-2 text-xs text-slate-600 mb-1">
@@ -313,6 +285,36 @@ export default function DiscussionDetailPage() {
                       {r.body}
                     </div>
                   </div>
+
+                  <div className="flex flex-row items-center gap-1">
+                    <button
+                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
+                        r.upVotes?.includes(new Types.ObjectId(userId!)) 
+                          ? 'text-blue-500 border-blue-200 bg-blue-50' 
+                          : 'border-gray-200 text-gray-500 hover:text-blue-500'
+                      }`}
+                      aria-label="Upvote"
+                      type="button"
+                      onClick={() => onVote("up", r._id.toString())}
+                    >
+                      <ArrowBigUp className="w-5 h-5" />
+                      <span className="text-xs font-medium text-slate-700">{r.upVoteCount}</span>
+                    </button> 
+                    <button
+                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
+                        r.downVotes?.includes(new Types.ObjectId(userId!)) 
+                          ? 'text-red-500 border-red-200 bg-red-50' 
+                          : 'border-gray-200 text-gray-500 hover:text-red-500'
+                      }`}
+                      aria-label="Downvote"
+                      type="button"
+                      onClick={() => onVote("down", r._id.toString())}
+                    >
+                      <ArrowBigDown className="w-5 h-5" />
+                      <span className="text-xs font-medium text-slate-700">{r.downVoteCount}</span>
+                    </button>
+                  </div>
+
                 </li>
               ))}
             </ul>
@@ -332,7 +334,7 @@ export default function DiscussionDetailPage() {
       </section>
 
       {/* Right sidebar */}
-      <aside className="flex flex-col lg:w-1/4 gap-4">
+      <aside className="flex flex-col lg:w-1/4 gap-6">
         <div className="bg-white border border-gray-200 rounded-xl p-3">
           <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
             <TrendingUpIcon className="w-4 h-4" /> Top Replies
