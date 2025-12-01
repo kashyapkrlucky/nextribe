@@ -56,33 +56,8 @@ export async function GET(
       return NextResponse.json({ error: "Community not found" }, { status: 404 });
     }
     
-    // Get topics for the community
-    const topics = await Topic.find({ 
-      community: community._id, 
-      isArchived: { $ne: true } 
-    })
-    .sort({ order: 1, name: 1 })
-    .lean();
     
-    // Create a new object with the community and its topics
-    const communityWithTopics = {
-      ...community,
-      topics: topics.map(topic => ({
-        _id: topic._id,
-        name: topic.name,
-        slug: topic.slug,
-        description: topic.description,
-        community: topic.community,
-        createdBy: topic.createdBy,
-        isArchived: topic.isArchived,
-        discussionCount: topic.discussionCount,
-        order: topic.order,
-        createdAt: topic.createdAt,
-        updatedAt: topic.updatedAt
-      }))
-    };
-    
-    return NextResponse.json({ community: communityWithTopics });
+    return NextResponse.json({ community });
   } catch (error) {
     console.error('Error in GET /api/communities/[id]:', error);
     return NextResponse.json(

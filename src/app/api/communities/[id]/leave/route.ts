@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
-import { CommunityMember } from "@/models/CommunityMember";
+import { Member } from "@/models/Member";
 import mongoose from "mongoose";
 import { jwtVerify } from "jose";
 
@@ -50,7 +50,7 @@ export async function POST(
       return NextResponse.json({ error: "Owner cannot leave their own community" }, { status: 400 });
     }
 
-    await CommunityMember.deleteOne({ community: id, user: userId });
+    await Member.deleteOne({ community: id, user: userId });
 
     return NextResponse.json({ success: true });
   } catch (e) {

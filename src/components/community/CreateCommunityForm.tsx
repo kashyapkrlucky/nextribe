@@ -1,22 +1,77 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useTopicStore } from "@/store/useTopicStore";
 
 interface CreateCommunityFormProps {
   setShowCreate: (show: boolean) => void;
 }
 
-export default function CreateCommunityForm({ setShowCreate }: CreateCommunityFormProps) {
-
-
+export default function CreateCommunityForm({
+  setShowCreate,
+}: CreateCommunityFormProps) {
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const { topics, fetchTopics } = useTopicStore();
   const [form, setForm] = useState({
     name: "",
     slug: "",
     description: "",
     isPrivate: false,
+    topicIds: [] as string[],
   });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError(null);
+    if (!form.name.trim()) {
+      setCreateError("Name is required");
+      return;
+    }
+    try {
+      setCreateLoading(true);
+      const res = await fetch("/api/communities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          slug: form.slug.trim() || undefined,
+          description: form.description.trim() || undefined,
+          isPrivate: !!form.isPrivate,
+          topicIds: form.topicIds,
+        }),
+      });
+      if (res.status === 401) {
+        window.location.href = "/sign-in";
+        return;
+      }
+      const json = await res.json();
+
+      console.log("Create community response:", json);
+      
+      if (!res.ok) throw new Error(json?.error || "Failed to create");
+      // success
+      setShowCreate(false);
+      setForm({
+        name: "",
+        slug: "",
+        description: "",
+        isPrivate: false,
+        topicIds: [],
+      });
+      setShowCreate(false);
+      window.location.href = `/community/${json.community.slug}`;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to create";
+      setCreateError(msg);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopics();
+  }, [fetchTopics]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -29,51 +84,7 @@ export default function CreateCommunityForm({ setShowCreate }: CreateCommunityFo
         {createError ? (
           <div className="mb-3 text-sm text-red-600">{createError}</div>
         ) : null}
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setCreateError(null);
-            if (!form.name.trim()) {
-              setCreateError("Name is required");
-              return;
-            }
-            try {
-              setCreateLoading(true);
-              const res = await fetch("/api/communities", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  name: form.name,
-                  slug: form.slug.trim() || undefined,
-                  description: form.description.trim() || undefined,
-                  isPrivate: !!form.isPrivate,
-                }),
-              });
-              if (res.status === 401) {
-                window.location.href = "/sign-in";
-                return;
-              }
-              const json = await res.json();
-              if (!res.ok) throw new Error(json?.error || "Failed to create");
-              // success
-              setShowCreate(false);
-              setForm({
-                name: "",
-                slug: "",
-                description: "",
-                isPrivate: false,
-              });
-              setShowCreate(false);
-            } catch (err: unknown) {
-              const msg =
-                err instanceof Error ? err.message : "Failed to create";
-              setCreateError(msg);
-            } finally {
-              setCreateLoading(false);
-            }
-          }}
-          className="space-y-3"
-        >
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-sm font-medium mb-1">Name</label>
             <input
@@ -94,6 +105,32 @@ export default function CreateCommunityForm({ setShowCreate }: CreateCommunityFo
               placeholder="e.g., nextjs-builders"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Topics</label>
+            <select
+              multiple
+              value={form.topicIds}
+              onChange={(e) => {
+                const selected = Array.from(
+                  e.target.selectedOptions,
+                  (option) => option.value
+                );
+                setForm((f) => ({ ...f, topicIds: selected }));
+              }}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200 h-auto min-h-[100px]"
+            >
+              {topics.map((topic) => (
+                <option key={topic._id} value={topic._id}>
+                  {topic.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Hold down the Ctrl (Windows/Linux) or Command (Mac) button to
+              select multiple options.
+            </p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">
               Description

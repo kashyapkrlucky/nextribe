@@ -60,6 +60,7 @@ function SignIn() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                tabIndex={0}
               />
             </div>
 
@@ -68,9 +69,9 @@ function SignIn() {
                 <label className="text-sm font-medium" htmlFor="password">
                   Password
                 </label>
-                <Link href="#" className="text-xs text-blue-600 hover:underline">
+                {/* <Link href="#" className="text-xs text-blue-600 hover:underline">
                   Forgot password?
-                </Link>
+                </Link> */}
               </div>
               <input
                 id="password"
@@ -79,10 +80,11 @@ function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                tabIndex={0}
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <label className="inline-flex items-center gap-2 text-sm text-slate-700">
                 <input
                   type="checkbox"
@@ -92,12 +94,13 @@ function SignIn() {
                 />
                 Remember me
               </label>
-            </div>
+            </div> */}
 
             <button
               type="submit"
               disabled={loading}
               className="w-full inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
+              tabIndex={0}
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>

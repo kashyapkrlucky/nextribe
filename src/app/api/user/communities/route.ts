@@ -1,5 +1,5 @@
 import { getUserIdFromRequest } from "@/lib/auth";
-import { CommunityMember } from "@/models/CommunityMember";
+import { Member } from "@/models/Member";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export async function GET() {
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const list = await CommunityMember.aggregate([
+    const list = await Member.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $lookup: {

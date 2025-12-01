@@ -230,17 +230,7 @@ export default function DiscussionDetailPage() {
           <form onSubmit={submitAnswer} className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Add your answer</h3>
-              <select
-                value={answerTag}
-                onChange={(e) =>
-                  setAnswerTag(e.target.value as "answer" | "tip" | "question")
-                }
-                className="border border-gray-200 rounded-lg px-2 py-1 text-xs"
-              >
-                <option value="answer">answer</option>
-                <option value="tip">tip</option>
-                <option value="question">question</option>
-              </select>
+              
             </div>
             <textarea
               value={answer}
@@ -248,14 +238,27 @@ export default function DiscussionDetailPage() {
               placeholder="Share your knowledge..."
               className="w-full border border-gray-200 rounded-lg p-3 text-sm min-h-24 outline-none focus:ring-2 focus:ring-blue-200"
             />
+            <div className="flex justify-end items-center gap-2">
+            <select
+                value={answerTag}
+                onChange={(e) =>
+                  setAnswerTag(e.target.value as "answer" | "tip" | "question")
+                }
+                className="border border-gray-200 rounded-lg px-2 py-1 text-xs capitalize"
+              >
+                <option value="answer">answer</option>
+                <option value="tip">tip</option>
+                <option value="question">question</option>
+              </select>
             <button
               type="submit"
               disabled={submitting || !answer.trim()}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white rounded-lg px-3 py-2 text-sm disabled:opacity-60"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white rounded-lg px-4 py-2 text-xs disabled:opacity-60"
             >
               <SendHorizonal className="w-4 h-4" />{" "}
               {submitting ? "Posting..." : "Post answer"}
             </button>
+            </div>
           </form>
         </div>
 

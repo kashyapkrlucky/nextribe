@@ -17,7 +17,7 @@ export default function ListLoading<T extends { _id: Types.ObjectId }>({
   }
 
   if (!items.length) {
-    return <p>No items found</p>;
+    return <p className="px-2 py-2 text-xs text-gray-500">Nothing yet.</p>;
   }
 
   return (

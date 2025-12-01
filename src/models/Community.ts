@@ -66,7 +66,7 @@ CommunitySchema.index({
  * This is a virtual field that will be populated with the actual count of community members
  */
 CommunitySchema.virtual('memberCount', {
-  ref: 'CommunityMember',
+  ref: 'Member',
   localField: '_id',
   foreignField: 'community',
   count: true

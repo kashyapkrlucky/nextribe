@@ -12,7 +12,7 @@ export async function GET(
       : context.params;
     const slug = (params.slug || "").trim().toLowerCase();
     await connectToDatabase();
-    const community = await Community.findOne({ slug });
+    const community = await Community.findOne({ slug }).populate('topics', 'name slug');
     if (!community) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ community });
   } catch (e) {

@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
-import { CommunityMember } from "@/models/CommunityMember";
+import { Member } from "@/models/Member";
 import mongoose from "mongoose";
 import { getUserIdFromRequest } from "@/lib/auth";
 
@@ -25,7 +25,7 @@ export async function POST(
     const community = await Community.findById(id).lean();
     if (!community) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    await CommunityMember.updateOne(
+    await Member.updateOne(
       { community: id, user: userId },
       { $setOnInsert: { role: "member" } },
       { upsert: true }

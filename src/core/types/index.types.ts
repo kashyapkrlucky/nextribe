@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 /**
  * Represents the possible roles a member can have in a community
  */
-export type CommunityMemberRole = "owner" | "admin" | "member";
+export type MemberRole = "owner" | "admin" | "member";
 
 /**
  * Represents a user in the system
@@ -55,13 +55,13 @@ export interface ICommunity {
 /**
  * Represents the relationship between a user and a community
  */
-export interface ICommunityMember {
+export interface IMember {
   /** Reference to the community */
   community: Types.ObjectId; // ref: Community
   /** Reference to the user who is a member */
   user: Types.ObjectId; // ref: User
   /** The user's role within the community */
-  role: CommunityMemberRole;
+  role: MemberRole;
   /** When the user joined the community */
   createdAt?: Date;
   /** When the membership was last updated */
@@ -136,22 +136,18 @@ export interface IReply {
  * Represents a topic within a community for categorizing discussions
  */
 export interface ITopic {
-  /** Display name of the topic */
+  /** Unique identifier for the topic */
+  _id: string;
+  /** Name of the topic */
   name: string;
   /** URL-friendly version of the name */
   slug: string;
   /** Description of the topic */
   description?: string;
-  /** Reference to the community this topic belongs to */
-  community: Types.ObjectId; // ref: Community
-  /** User who created the topic */
-  createdBy: Types.ObjectId; // ref: User
   /** Whether the topic is archived */
   isArchived?: boolean;
-  /** Number of discussions in this topic */
-  discussionCount?: number;
-  /** Used for manual ordering/pinning within community */
-  order?: number;
+  /** Number of communities using this topic */
+  communityCount?: number;
   /** When the topic was created */
   createdAt?: Date;
   /** When the topic was last updated */

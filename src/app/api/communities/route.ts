@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Community } from "@/models/Community";
-import { CommunityMember } from "@/models/CommunityMember";
+import { Member } from "@/models/Member";
 import { jwtVerify } from "jose";
 import mongoose from "mongoose";
 
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
       { $match: match },
       {
         $lookup: {
-          from: "communitymembers",
+          from: "members",
           localField: "_id",
           foreignField: "community",
           as: "_members",
@@ -100,6 +100,7 @@ export async function POST(req: Request) {
     const providedSlug: string | undefined = body?.slug;
     const description: string | undefined = body?.description;
     const isPrivate: boolean | undefined = body?.isPrivate;
+    const topicIds: string[] | undefined = body?.topicIds;
 
     if (!name || name.trim().length === 0) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -120,10 +121,10 @@ export async function POST(req: Request) {
       description: description || undefined,
       owner: new mongoose.Types.ObjectId(userId),
       isPrivate: Boolean(isPrivate),
-      topics: [],
+      topics: topicIds?.map(id => new mongoose.Types.ObjectId(id)) || [],
     });
 
-    await CommunityMember.updateOne(
+    await Member.updateOne(
       { community: community._id, user: userId },
       { $setOnInsert: { role: "owner" } },
       { upsert: true }

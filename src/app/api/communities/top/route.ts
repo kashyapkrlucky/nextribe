@@ -1,12 +1,12 @@
 import { connectToDatabase } from "@/lib/mongodb";
-import { CommunityMember } from "@/models/CommunityMember";
+import { Member } from "@/models/Member";
 
 export async function GET() {
     try {
         await connectToDatabase();
         
         // Find top communities by member count
-        const topCommunities = await CommunityMember.aggregate([
+        const topCommunities = await Member.aggregate([
             {
                 $group: {
                     _id: "$community",
