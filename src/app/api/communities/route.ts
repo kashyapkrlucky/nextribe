@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 import { Member } from "@/models/Member";
 import { jwtVerify } from "jose";

@@ -1,5 +1,5 @@
 import { getUserIdFromCookie } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/core/config/database";
 import { Reply } from "@/models/Reply";
 import { IReply } from "@/core/types/index.types";
 import mongoose from "mongoose";

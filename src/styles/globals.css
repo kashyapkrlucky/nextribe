@@ -33,3 +33,7 @@ a {
     color-scheme: dark;
   }
 }
+
+body ::-webkit-scrollbar, body ::-webkit-scrollbar-track, body ::-webkit-scrollbar-thumb {
+  display: none;
+}

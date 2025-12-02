@@ -1,5 +1,5 @@
 import { getUserFromCookie } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/core/config/database";
 import { Discussion } from "@/models/Discussion";
 import { NextResponse, NextRequest } from "next/server";
 
