@@ -1,7 +1,8 @@
-export class Skeleton extends React.Component {
-    render() {
-        return (
-            <div className="space-y-4">
+import React from "react";
+
+export function Skeleton({ className = '', ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    return (
+            <div className={`space-y-4 ${className}`} {...props}>
                 {[...Array(1)].map((_, i) => (
                     <div key={i} className="bg-white rounded-lg p-4 shadow animate-pulse">
                         <div className="flex justify-between">
@@ -20,5 +21,4 @@ export class Skeleton extends React.Component {
                 ))}
             </div>
         );
-    }
 }
