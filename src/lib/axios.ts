@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
+console.log(process.env.NEXT_PUBLIC_APP_URL);
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_APP_URL,
   headers: {
     'Content-Type': 'application/json',
   },

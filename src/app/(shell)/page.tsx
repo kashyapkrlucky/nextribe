@@ -23,12 +23,12 @@ export default function Home() {
             <option>Recent</option>
           </select>
 
-          <select className="p-1 text-xs outline-none">
+          {/* <select className="p-1 text-xs outline-none">
             <option>India</option>
             <option>Germany</option>
             <option>Canada</option>
             <option>Australia</option>
-          </select>
+          </select> */}
         </div>
         <ListLoading 
           isLoading={isLoading} 
