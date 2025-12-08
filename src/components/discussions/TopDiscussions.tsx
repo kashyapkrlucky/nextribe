@@ -1,3 +1,4 @@
+"use client";
 import { IDiscussion } from "@/core/types/index.types";
 import { TrendingUpIcon } from "lucide-react";
 import Link from "next/link";

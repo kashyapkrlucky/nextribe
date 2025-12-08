@@ -46,8 +46,6 @@ export default function CreateCommunityForm({
         return;
       }
       const json = await res.json();
-
-      console.log("Create community response:", json);
       
       if (!res.ok) throw new Error(json?.error || "Failed to create");
       // success

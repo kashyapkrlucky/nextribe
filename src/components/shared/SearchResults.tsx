@@ -1,71 +1,24 @@
-// src/app/(shell)/search/SearchResults.tsx
-'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
-import Link from 'next/link';
-import { Skeleton } from '@/components/ui/Skeloton';
-
-interface SearchResult {
-  users: Array<{
-    _id: string;
-    name: string;
-    email: string;
-  }>;
-  communities: Array<{
-    _id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    memberCount: number;
-  }>;
-  discussions: Array<{
-    _id: string;
-    title: string;
-    slug: string;
-    community: {
-      _id: string;
-      name: string;
-      slug: string;
-    };
-  }>;
-}
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeloton";
+import { useSearchStore } from "@/store/useSearchStore";
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-  const [results, setResults] = useState<SearchResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = searchParams.get("q") || "";
+
+  const { loading, error, results, getSearchResults } = useSearchStore();
 
   useEffect(() => {
     if (!query.trim()) {
-      setLoading(false);
       return;
     }
-
-    const fetchResults = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
-          credentials: 'same-origin'
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch search results');
-        }
-        const data = await response.json();
-        setResults(data.data);
-      } catch (err) {
-        console.error('Search error:', err);
-        setError('Failed to load search results');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [query]);
+    getSearchResults(query);
+  }, [query, getSearchResults]);
 
   if (loading) {
     return <Skeleton />;
@@ -84,7 +37,7 @@ export default function SearchResults() {
       <div className="flex items-center space-x-2 text-gray-700 mb-6">
         <Search className="h-5 w-5" />
         <h1 className="text-2xl font-semibold">
-          {query ? `Results for "${query}"` : 'Search'}
+          {query ? `Results for "${query}"` : "Search"}
         </h1>
       </div>
 
@@ -116,7 +69,9 @@ export default function SearchResults() {
           {/* Communities Section */}
           {results?.communities && results.communities.length > 0 && (
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Communities</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Communities
+              </h2>
               <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
                 {results.communities.map((community) => (
                   <Link
@@ -133,9 +88,9 @@ export default function SearchResults() {
                           </p>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      {community.memberCount && <div className="text-sm text-gray-500">
                         {community.memberCount} members
-                      </div>
+                      </div>}
                     </div>
                   </Link>
                 ))}
@@ -146,7 +101,9 @@ export default function SearchResults() {
           {/* Discussions Section */}
           {results?.discussions && results.discussions.length > 0 && (
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Discussions</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Discussions
+              </h2>
               <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
                 {results.discussions.map((discussion) => (
                   <Link
@@ -165,10 +122,10 @@ export default function SearchResults() {
           )}
 
           {/* No Results */}
-          {results && 
-            (!results.users?.length && 
-             !results.communities?.length && 
-             !results.discussions?.length) && (
+          {results &&
+            !results.users?.length &&
+            !results.communities?.length &&
+            !results.discussions?.length && (
               <div className="text-center py-12 text-gray-500">
                 No results found for &quot;{query}&quot;
               </div>

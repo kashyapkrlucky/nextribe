@@ -91,7 +91,6 @@ export const useUserStore = create<UserState>((set) => ({
         isLoading: false 
       });
     } catch (error) {
-      console.log(error);
       set({ 
         user: null,
         isAuthenticated: false,

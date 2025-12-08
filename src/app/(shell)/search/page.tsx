@@ -2,7 +2,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import SearchResults from './SearchResults';
+import SearchResults from '@/components/shared/SearchResults';
 import { Skeleton } from '@/components/ui/Skeloton';
 
 function SearchResultsSkeleton() {

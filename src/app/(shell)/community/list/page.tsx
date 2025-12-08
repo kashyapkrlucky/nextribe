@@ -1,8 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-
-import { PopularCommunities } from "@/components/community/PopularCommunities";
-import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import { useCommunityStore } from "@/store/useCommunityStore";
 import ListLoading from "@/components/ui/ListLoading";
 import Pagination from "@/components/ui/Pagination";
@@ -74,10 +71,6 @@ export default function CommunityListPage() {
         </div>
       </section>
 
-      <aside className="flex flex-col lg:w-1/4 gap-6">
-        <PopularCommunities />
-        <TopDiscussions />
-      </aside>
     </>
   );
 }

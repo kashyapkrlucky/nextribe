@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getUserFromCookie } from "@/lib/auth";
 import LeftSideBar from "@/components/layout/LeftSideBar";
+import { PopularCommunities } from "@/components/community/PopularCommunities";
+import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 
 export const metadata: Metadata = {
   title: "Nextribe | Home",
@@ -25,6 +27,11 @@ export default async function RootLayout({
       <section className="flex-1 flex flex-row gap-6 overflow-y-auto">
       {children}
       </section>
+
+      <aside className="lg:w-1/5 gap-6 hidden lg:flex flex-col">
+        <PopularCommunities />
+        <TopDiscussions />
+      </aside>
     </main>
   );
 }

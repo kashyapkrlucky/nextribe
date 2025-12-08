@@ -51,7 +51,6 @@ export interface ICommunity {
   memberCount?: number;
 }
 
-
 /**
  * Represents the relationship between a user and a community
  */
@@ -98,7 +97,6 @@ export interface IDiscussion {
   replyCount?: number;
 }
 
-
 /**
  * Represents a reply to a discussion or another reply
  */
@@ -131,7 +129,6 @@ export interface IReply {
   updatedAt: Date;
 }
 
-
 /**
  * Represents a topic within a community for categorizing discussions
  */
@@ -152,4 +149,29 @@ export interface ITopic {
   createdAt?: Date;
   /** When the topic was last updated */
   updatedAt?: Date;
+}
+
+export interface SearchResultResponse {
+  users: {
+    _id: string;
+    name: string;
+    email: string;
+  }[];
+  communities: {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    memberCount: number;
+  }[];
+  discussions: {
+    _id: string;
+    title: string;
+    slug: string;
+    community: {
+      _id: string;
+      name: string;
+      slug: string;
+    };
+  }[];
 }

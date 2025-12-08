@@ -8,6 +8,7 @@ interface DiscussionState {
   isLoading: boolean;
   error: string | null;
   fetchDiscussion: (id: string) => Promise<void>;
+  fetchDiscussionBySlug: (slug: string) => Promise<void>;
   fetchDiscussionList: () => Promise<void>;
   fetchDiscussionsByCommunity: (communityId: string) => Promise<void>;
   addDiscussion: (
@@ -56,11 +57,25 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       set({ isLoading: false });
     }
   },
+  fetchDiscussionBySlug: async (slug: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await axios.get(`/discussions/slug/${slug}`);
+      set({ discussion: data || [], isLoading: false });
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      set({
+        error: err.response?.data?.message || "Failed to fetch discussions",
+        isLoading: false,
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   fetchDiscussionsByCommunity: async (communityId: string) => {
     try {
       set({ isLoading: true, error: null });
       const { data } = await axios.get(`/communities/${communityId}/discussions`);
-      console.log(data);
       
       set({
         discussionList: data.discussions,

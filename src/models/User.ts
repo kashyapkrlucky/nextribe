@@ -92,7 +92,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword: string): 
   // In a real implementation, this would use bcrypt.compare()
   // For example: return await bcrypt.compare(candidatePassword, this.passwordHash);
   // For now, we'll just log that this is a placeholder
-  console.log('Password comparison would happen here with:', candidatePassword);
+  // console.log('Password comparison would happen here with:', candidatePassword);
   return true;
 };
 

@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios';
-console.log(process.env.NEXT_PUBLIC_APP_URL);
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_URL,
