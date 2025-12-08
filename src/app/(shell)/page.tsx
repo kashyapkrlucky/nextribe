@@ -7,11 +7,11 @@ import DiscussionCard from "@/components/discussions/DiscussionCard";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
 
 export default function Home() {
-  const { discussions, isLoading, fetchDiscussions } = useDiscussionStore();
+  const { discussionList, isLoading, fetchDiscussionList } = useDiscussionStore();
 
   useEffect(() => {
-    fetchDiscussions();
-  }, [fetchDiscussions]);
+    fetchDiscussionList();
+  }, [fetchDiscussionList]);
 
   return (
     <Fragment>
@@ -32,7 +32,7 @@ export default function Home() {
         </div>
         <ListLoading 
           isLoading={isLoading} 
-          items={discussions}
+          items={discussionList}
         >
           {(item) => <DiscussionCard item={item} />}
         </ListLoading>

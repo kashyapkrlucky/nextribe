@@ -10,6 +10,8 @@ interface CommunityState {
   currentPage: number;
   totalPages: number;
   fetchCommunities: (params?: string) => Promise<void>;
+  fetchCommunityByID: (id: string) => Promise<void>;
+  fetchCommunityBySlug: (name: string) => Promise<void>;
   onCommunityJoin: (communityId: string) => void;
 }
 
@@ -22,6 +24,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   totalPages: 1,
   fetchCommunities: async (params = "") => {
     try {
+      set({ isLoading: true, error: null });
       const { data } = await axios.get(`/api/communities?${params}`);
       set({
         communities: data.communities || [],
@@ -37,6 +40,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   },
   onCommunityJoin: async (communityId: string) => {
     try {
+      set({ isLoading: true, error: null });
       const res = await axios.post(`/api/communities/${communityId}/join`);
       if (res.status === 401) {
         window.location.href = "/sign-in";
@@ -45,6 +49,34 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     } catch (e) {
       console.error(e);
       alert("Failed to join community");
+    }
+  },
+  fetchCommunityByID: async (id: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await axios.get(`/api/communities/${id}`);
+      set({ community: data.community || null });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch community";
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  fetchCommunityBySlug: async (name: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await axios.get(
+        `/api/communities/slug/${encodeURIComponent(name)}`
+      );
+      set({ community: data.community || null });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch community";
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

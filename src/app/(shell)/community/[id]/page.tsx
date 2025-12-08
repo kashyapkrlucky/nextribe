@@ -1,22 +1,31 @@
 "use client";
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { SearchIcon, TrendingUpIcon } from "lucide-react";
+import { TrendingUpIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
 import CreateDiscussionForm from "@/components/discussions/CreateDiscussionForm";
-import { ICommunity, IDiscussion, ITopic } from "@/core/types/index.types";
 import ListLoading from "@/components/ui/ListLoading";
+import { useCommunityStore } from "@/store/useCommunityStore";
+import { useDiscussionStore } from "@/store/useDiscussionStore";
+import Pagination from "@/components/ui/Pagination";
+import DiscussionFilters from "@/components/discussions/DiscussionFilters";
+import DiscussionCardMini from "@/components/discussions/DiscussionCardMini";
 
 export default function CommunityPage() {
   const params = useParams();
   const communityId = (params?.id as string) || "";
-
-  const [community, setCommunity] = useState<ICommunity | null>(null);
-  const [allDiscussions, setAllDiscussions] = useState<IDiscussion[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    community,
+    fetchCommunityByID,
+    fetchCommunityBySlug,
+    isLoading: communityLoading,
+  } = useCommunityStore();
+  const {
+    isLoading: discussionsLoading,
+    discussionList,
+    fetchDiscussionsByCommunity,
+  } = useDiscussionStore();
 
   const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
 
@@ -30,61 +39,22 @@ export default function CommunityPage() {
     return /^[a-fA-F0-9]{24}$/.test(s);
   }
 
-  const getDiscussions = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/communities/${communityId}/discussions`, {
-        cache: "no-store",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setAllDiscussions(data.discussions || []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch discussions:", error);
-    }
-  }, [communityId]);
-
   useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        setLoading(true);
-        setError(null);
-        // community (by id or slug)
-        let cRes: Response;
-        if (isObjectIdLike(communityId)) {
-          cRes = await fetch(`/api/communities/${communityId}`, {
-            cache: "no-store",
-          });
-        } else {
-          cRes = await fetch(
-            `/api/communities/slug/${encodeURIComponent(communityId)}`,
-            { cache: "no-store" }
-          );
-        }
-        const cJson = await cRes.json();
-        if (!cRes.ok)
-          throw new Error(cJson?.error || "Failed to load community");
-
-        if (cancelled) return;
-        setCommunity(cJson.community as ICommunity);
-        getDiscussions();
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Failed to load";
-        if (!cancelled) setError(msg);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+    if (isObjectIdLike(communityId)) {
+      fetchCommunityByID(communityId);
+    } else {
+      fetchCommunityBySlug(communityId);
     }
-
-    if (communityId) load();
-    return () => {
-      cancelled = true;
-    };
-  }, [communityId, getDiscussions]);
+    fetchDiscussionsByCommunity(communityId);
+  }, [
+    communityId,
+    fetchCommunityByID,
+    fetchCommunityBySlug,
+    fetchDiscussionsByCommunity,
+  ]);
 
   const filtered = useMemo(() => {
-    let list = [...allDiscussions];
+    let list = [...discussionList];
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter(
@@ -102,19 +72,22 @@ export default function CommunityPage() {
       );
     }
     return list;
-  }, [allDiscussions, query, sort]);
+  }, [discussionList, query, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   // Right sidebar data
   const popularItems = filtered.slice(0, 5);
-  // const topDiscussions = filtered.slice(0, 5);
-  const externalLinks = [
-    { href: "https://nextjs.org", label: "Next.js Docs" },
-    { href: "https://tailwindcss.com", label: "Tailwind CSS" },
-    { href: "https://lucide.dev", label: "Lucide Icons" },
-  ];
+
+  const onQuery = (query: string) => {
+    setQuery(query);
+    setPage(1);
+  };
+
+  const onSortChange = (newSort: "popular" | "new") => {
+    setSort(newSort);
+    setPage(1);
+  };
 
   async function onJoin() {
     try {
@@ -144,9 +117,9 @@ export default function CommunityPage() {
       <section className="flex flex-col flex-1 gap-6">
         <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-xl p-3">
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-            <h2 className="text-xl font-semibold">
+            {!communityLoading && <h2 className="text-xl font-semibold">
               {community?.name || "Community"}
-            </h2>
+            </h2>}
             <div className="flex items-center gap-2">
               <Button
                 onClick={() => setShowCreateDiscussion(true)}
@@ -157,90 +130,25 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Search discussions"
-                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-200"
-              />
-            </div>
-            <select
-              value={sort}
-              onChange={(e) => {
-                setSort(e.target.value as "popular" | "new");
-                setPage(1);
-              }}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="popular">Most popular</option>
-              <option value="new">Newest</option>
-            </select>
-          </div>
+          <DiscussionFilters
+            query={query}
+            onQuery={onQuery}
+            sort={sort}
+            onSortChange={onSortChange}
+          />
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl">
-          {loading ? (
-            <Spinner />
-          ) : error ? (
-            <div className="p-8 text-center text-red-600 text-sm">{error}</div>
-          ) : pageData.length === 0 ? (
-            <div className="p-8 text-center text-slate-600">
-              No discussions found.
-            </div>
-          ) : (
-            <ul className="divide-y divide-gray-200">
-              {pageData.map((d) => (
-                <li
-                  key={d.slug}
-                  className="p-4 flex items-center justify-between"
-                >
-                  <div>
-                    <Link
-                      href={`/discussion/${d.slug}`}
-                      className="font-medium hover:underline"
-                    >
-                      {d.title}
-                    </Link>
-                    <div className="text-xs text-slate-600">
-                      {(d.commentCount || 0).toLocaleString("en-US")} replies
-                    </div>
-                  </div>
-                  <Link href={`/discussion/${d.slug}`} className="text-xs border border-gray-200 rounded-md px-2 py-1">
-                    Reply
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ListLoading isLoading={discussionsLoading} items={discussionList}>
+            {(item) => <DiscussionCardMini item={item} />}
+          </ListLoading>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between p-3 border-t border-gray-200 text-sm">
-            <div>
-              Page {page} of {totalPages}
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                className="px-3 py-1 border border-gray-200 rounded-md disabled:opacity-50"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                Prev
-              </button>
-              <button
-                className="px-3 py-1 border border-gray-200 rounded-md disabled:opacity-50"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </section>
 
@@ -301,7 +209,7 @@ export default function CommunityPage() {
             <TrendingUpIcon className="w-4 h-4" /> Popular Discussions
           </h3>
 
-          <ListLoading isLoading={loading} items={popularItems}>
+          <ListLoading isLoading={false} items={popularItems}>
             {(item) => (
               <div
                 key={item.slug}
@@ -327,7 +235,7 @@ export default function CommunityPage() {
           setShowCreateDiscussion={setShowCreateDiscussion}
           onClose={() => {
             setShowCreateDiscussion(false);
-            getDiscussions();
+            // getDiscussions();
           }}
           communityId={community?._id?.toString() || ""}
         />

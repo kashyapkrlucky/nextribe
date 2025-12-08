@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 
+import "@/models/Topic";
+
 export async function GET(
   req: NextRequest,
   context: { params: { slug: string } } | { params: Promise<{ slug: string }> }
