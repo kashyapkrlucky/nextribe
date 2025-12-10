@@ -67,7 +67,7 @@ export default function CreateDiscussionForm({
         className="absolute inset-0 bg-black/40"
         onClick={() => setShowCreateDiscussion(false)}
       />
-      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg mx-4 p-5">
+      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-lg mx-4 p-5">
         <h3 className="text-lg font-semibold mb-3">Create Discussion</h3>
         {createError ? (
           <div className="mb-3 text-sm text-red-600">{createError}</div>
@@ -78,7 +78,7 @@ export default function CreateDiscussionForm({
             <input
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               placeholder="e.g., What's on your mind?"
             />
           </div>
@@ -91,7 +91,7 @@ export default function CreateDiscussionForm({
               onChange={(e) =>
                 setForm((f) => ({ ...f, body: e.target.value }))
               }
-              className="w-full min-h-[120px] border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200 resize-none"
+              className="w-full min-h-[120px] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200 resize-none"
               rows={3}
               placeholder="Write your discussion content..."
             />
@@ -100,7 +100,7 @@ export default function CreateDiscussionForm({
             <button
               type="button"
               onClick={() => setShowCreateDiscussion(false)}
-              className="px-3 py-2 text-sm border border-gray-200 rounded-lg"
+              className="px-3 py-2 text-sm border border-gray-200 rounded-lg dark:border-gray-600"
               disabled={createLoading}
             >
               Cancel
@@ -108,7 +108,7 @@ export default function CreateDiscussionForm({
             <button
               type="submit"
               disabled={createLoading}
-              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg disabled:opacity-60"
+              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg disabled:opacity-60"
             >
               {createLoading ? "Creating..." : "Create"}
             </button>

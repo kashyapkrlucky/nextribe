@@ -20,7 +20,7 @@ export default function CommunityCardMini({ community }: Props) {
         >
           {community?.name}
         </Link>
-        <div className="text-xs text-slate-600">
+        <div className="text-xs text-slate-600 dark:text-gray-400">
           {(community.memberCount || 0).toLocaleString("en-US")} members
           {Array.isArray(community.topics)
             ? ` • ${community.topics.length} topics`
@@ -29,7 +29,7 @@ export default function CommunityCardMini({ community }: Props) {
       </div>
       <button
         onClick={() => onCommunityJoin(community._id.toString())}
-        className="text-xs border border-gray-200 rounded-md px-2 py-1"
+        className="text-xs border border-gray-200 rounded-md px-2 py-1 dark:border-gray-700"
       >
         Join
       </button>

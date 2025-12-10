@@ -10,72 +10,72 @@ export default async function SettingsPage() {
   }
 
   return ( 
-      <div className="w-full bg-white rounded-xl border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+      <div className="w-full bg-white dark:bg-gray-800 p-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Settings</h1>
         
         <div className="space-y-8">
-          <div className="border-b border-gray-200 pb-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Profile</h2>
+          <div className="border-b border-gray-200 dark:border-gray-600 pb-8">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">Profile</h2>
             <div className="flex items-center space-x-4">
-              <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                 <UserButton />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Update your photo</p>
-                <p className="text-sm text-gray-500">JPG, GIF or PNG. Max size 2MB</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-200">Update your photo</p>
+                <p className="text-sm text-gray-500 dark:text-gray-200">JPG, GIF or PNG. Max size 2MB</p>
               </div>
             </div>
           </div>
 
-          <div className="border-b border-gray-200 pb-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Account</h2>
+          <div className="border-b border-gray-200 dark:border-gray-600 pb-8">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">Account</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Name
                 </label>
                 <input
                   type="text"
                   id="name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   defaultValue={user.name}
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   defaultValue={user.email}
                 />
               </div>
             </div>
           </div>
 
-          <div className="border-b border-gray-200 pb-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Notifications</h2>
+          <div className="border-b border-gray-200 dark:border-gray-600 pb-8">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Email notifications</p>
-                  <p className="text-sm text-gray-500">Receive email notifications</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-200">Email notifications</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-200">Receive email notifications</p>
                 </div>
                 <label className="inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <div className="relative w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Push notifications</p>
-                  <p className="text-sm text-gray-500">Receive push notifications</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-200">Push notifications</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-200">Receive push notifications</p>
                 </div>
                 <label className="inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" />
-                  <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <div className="relative w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
               </div>
             </div>
@@ -84,13 +84,13 @@ export default async function SettingsPage() {
           <div className="flex justify-end space-x-3">
             <button
               type="button"
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Save
             </button>

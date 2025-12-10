@@ -22,7 +22,7 @@ export function PopularCommunities() {
   }, []);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3">
+    <div className="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
       <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
         <TrendingUpIcon className="w-4 h-4" /> Popular Communities
       </h3>
@@ -41,7 +41,7 @@ export function PopularCommunities() {
               >
                 {c.name}
               </Link>
-              <span className="text-xs text-slate-600">
+              <span className="text-xs text-slate-600 dark:text-slate-400">
                 {c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"}
               </span>
             </li>

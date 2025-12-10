@@ -22,7 +22,7 @@ export function TopDiscussions() {
   }, []);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3">
+    <div className="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
       <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
         <TrendingUpIcon className="w-4 h-4 mr-1" /> Top Discussions
       </h3>
@@ -37,7 +37,7 @@ export function TopDiscussions() {
               <Link href={`/discussion/${d._id}`} className="hover:underline">
                 {d.title}
               </Link>
-              <div className="text-xs text-slate-600">
+              <div className="text-xs text-slate-600 dark:text-slate-400">
                 {d.replyCount ?? 0} replies
               </div>
             </li>

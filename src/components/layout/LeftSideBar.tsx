@@ -19,13 +19,13 @@ export default function LeftSideBar({ user }: SideBarProps) {
 
   return (
     <aside className="flex flex-col lg:w-1/5 gap-6">
-      <div className="bg-white border border-gray-200 rounded-xl p-3">
+      <div className="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
         <nav className="flex flex-col gap-1">
           {importantLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={label}
               href={href}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 text-sm text-slate-700"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-slate-700 dark:text-slate-400"
             >
               <Icon className="w-4 h-4" />
               <span>{label}</span>
@@ -39,7 +39,7 @@ export default function LeftSideBar({ user }: SideBarProps) {
                 e.preventDefault();
                 setShowCreate(true);
               }}
-              className="inline-flex items-center gap-2 rounded-lg px-2 py-2 bg-blue-600 text-white text-sm"
+              className="inline-flex items-center gap-2 rounded-lg px-2 py-2 bg-indigo-600 text-white text-sm dark:bg-indigo-500"
             >
               <PlusIcon className="w-4 h-4" /> Create Community
             </Link>

@@ -26,15 +26,15 @@ export default function SearchResults() {
 
   if (error) {
     return (
-      <div className="w-full bg-white rounded-md border border-gray-200 p-6">
+      <div className="w-full bg-white dark:bg-gray-800 rounded-md border border-gray-200 p-6">
         <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-white rounded-md border border-gray-200 p-6">
-      <div className="flex items-center space-x-2 text-gray-700 mb-6">
+    <div className="w-full bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-600 p-6">
+      <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 mb-6">
         <Search className="h-5 w-5" />
         <h1 className="text-2xl font-semibold">
           {query ? `Results for "${query}"` : "Search"}
@@ -50,13 +50,13 @@ export default function SearchResults() {
           {/* Users Section */}
           {results?.users && results.users.length > 0 && (
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Users</h2>
-              <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">Users</h2>
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg divide-y divide-gray-200">
                 {results.users.map((user) => (
                   <Link
                     key={user._id}
                     href={`/users/${user._id}`}
-                    className="block p-4 hover:bg-gray-50 transition-colors"
+                    className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="font-medium">{user.name}</div>
                     <div className="text-sm text-gray-500">{user.email}</div>
@@ -69,15 +69,15 @@ export default function SearchResults() {
           {/* Communities Section */}
           {results?.communities && results.communities.length > 0 && (
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">
                 Communities
               </h2>
-              <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg divide-y divide-gray-200">
                 {results.communities.map((community) => (
                   <Link
                     key={community._id}
                     href={`/community/${community.slug}`}
-                    className="block p-4 hover:bg-gray-50 transition-colors"
+                    className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex justify-between items-center">
                       <div>
@@ -101,15 +101,15 @@ export default function SearchResults() {
           {/* Discussions Section */}
           {results?.discussions && results.discussions.length > 0 && (
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-200 mb-4">
                 Discussions
               </h2>
-              <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg divide-y divide-gray-200">
                 {results.discussions.map((discussion) => (
                   <Link
                     key={discussion._id}
                     href={`/discussion/${discussion.slug}`}
-                    className="block p-4 hover:bg-gray-50 transition-colors"
+                    className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="font-medium">{discussion.title}</div>
                     <div className="text-sm text-gray-500">

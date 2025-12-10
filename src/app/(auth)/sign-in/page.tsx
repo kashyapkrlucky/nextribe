@@ -38,9 +38,9 @@ function SignIn() {
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
           <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
-          <p className="text-sm text-slate-600 mb-6">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
             Sign in to continue to NextTribe.
           </p>
 
@@ -59,7 +59,7 @@ function SignIn() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
                 tabIndex={0}
               />
             </div>
@@ -69,7 +69,7 @@ function SignIn() {
                 <label className="text-sm font-medium" htmlFor="password">
                   Password
                 </label>
-                {/* <Link href="#" className="text-xs text-blue-600 hover:underline">
+                {/* <Link href="#" className="text-xs text-indigo-600 hover:underline">
                   Forgot password?
                 </Link> */}
               </div>
@@ -79,7 +79,7 @@ function SignIn() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
                 tabIndex={0}
               />
             </div>
@@ -90,7 +90,7 @@ function SignIn() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="h-4 w-4 rounded border border-gray-200"
+                  className="h-4 w-4 rounded border border-gray-200 dark:border-gray-600"
                 />
                 Remember me
               </label>
@@ -99,16 +99,16 @@ function SignIn() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
+              className="w-full inline-flex items-center justify-center bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
               tabIndex={0}
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          <div className="mt-6 text-sm text-slate-700">
+          <div className="mt-6 text-sm text-slate-700 dark:text-slate-400">
             Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="text-blue-600 hover:underline">
+            <Link href="/sign-up" className="text-indigo-600 hover:underline dark:text-indigo-400">
               Create one
             </Link>
           </div>

@@ -46,7 +46,7 @@ export function UserMenu({ user }: UserMenuProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-500 text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
@@ -54,42 +54,42 @@ export function UserMenu({ user }: UserMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white border border-gray-200 ring-opacity-5 z-10">
+        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 ring-opacity-5 z-10">
           <div className="py-1" role="menu" aria-orientation="vertical">
-            <div className="px-4 py-2 border-b border-gray-100">
-              <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
-              <p className="text-xs text-gray-500 truncate">{user?.email || ''}</p>
+            <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-600">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">{user?.name || 'User'}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || ''}</p>
             </div>
             
             <Link
               href="/profile"
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               role="menuitem"
               onClick={() => setIsOpen(false)}
             >
-              <User className="mr-3 h-5 w-5 text-gray-400" />
+              <User className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-200" />
               Your Profile
             </Link>
             
             <Link
               href="/settings"
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               role="menuitem"
               onClick={() => setIsOpen(false)}
             >
-              <Settings className="mr-3 h-5 w-5 text-gray-400" />
+              <Settings className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-200" />
               Settings
             </Link>
             
-            <div className="border-t border-gray-100 my-1"></div>
+            <div className="border-t border-gray-100 dark:border-gray-600 my-1"></div>
             
             <form action="/api/auth/logout" method="post" className="w-full">
               <button
                 type="submit"
-                className="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                className="w-full text-left flex items-center px-4 py-2 text-sm text-red-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 role="menuitem"
               >
-                <LogOut className="mr-3 h-5 w-5 text-red-400" />
+                <LogOut className="mr-3 h-5 w-5 text-red-300 dark:text-red-200" />
                 Sign out
               </button>
             </form>

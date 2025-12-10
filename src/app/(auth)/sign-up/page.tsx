@@ -43,12 +43,12 @@ function SignUp() {
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
           <h1 className="text-2xl font-semibold mb-1">Create your account</h1>
-          <p className="text-sm text-slate-600 mb-6">Join NextTribe today.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Join NextTribe today.</p>
 
           {error ? (
-            <div className="mb-4 text-sm text-red-600">{error}</div>
+            <div className="mb-4 text-sm text-red-600 dark:text-red-400">{error}</div>
           ) : null}
 
           <form onSubmit={onSubmit} className="space-y-4">
@@ -62,7 +62,7 @@ function SignUp() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </div>
 
@@ -76,7 +76,7 @@ function SignUp() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </div>
 
@@ -90,7 +90,7 @@ function SignUp() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </div>
 
@@ -104,32 +104,32 @@ function SignUp() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="••••••••"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </div>
 
-            <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+            <label className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-400">
               <input
                 type="checkbox"
                 checked={agree}
                 onChange={(e) => setAgree(e.target.checked)}
-                className="h-4 w-4 rounded border border-gray-200"
+                className="h-4 w-4 rounded border border-gray-200 dark:border-gray-600"
               />
-              I agree to the <a className="text-blue-600 hover:underline" href="#">Terms</a> and <a className="text-blue-600 hover:underline" href="#">Privacy</a>
+              I agree to the <a className="text-indigo-600 hover:underline dark:text-indigo-400" href="#">Terms</a> and <a className="text-indigo-600 hover:underline dark:text-indigo-400" href="#">Privacy</a>
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
+              className="w-full inline-flex items-center justify-center bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
 
-          <div className="mt-6 text-sm text-slate-700">
+          <div className="mt-6 text-sm text-slate-700 dark:text-slate-400">
             Already have an account?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:underline">
+            <Link href="/sign-in" className="text-indigo-600 hover:underline dark:text-indigo-400">
               Sign in
             </Link>
           </div>

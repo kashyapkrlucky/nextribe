@@ -77,7 +77,7 @@ export default function CreateCommunityForm({
         className="absolute inset-0 bg-black/40"
         onClick={() => setShowCreate(false)}
       />
-      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-md mx-4 p-5">
+      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 p-5">
         <h3 className="text-lg font-semibold mb-3">Create Community</h3>
         {createError ? (
           <div className="mb-3 text-sm text-red-600">{createError}</div>
@@ -88,7 +88,7 @@ export default function CreateCommunityForm({
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               placeholder="e.g., Next.js Builders"
             />
           </div>
@@ -99,7 +99,7 @@ export default function CreateCommunityForm({
             <input
               value={form.slug}
               onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               placeholder="e.g., nextjs-builders"
             />
           </div>
@@ -115,7 +115,7 @@ export default function CreateCommunityForm({
                 );
                 setForm((f) => ({ ...f, topicIds: selected }));
               }}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200 h-auto min-h-[100px]"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200 h-auto min-h-[100px]"
             >
               {topics.map((topic) => (
                 <option key={topic._id} value={topic._id}>
@@ -138,7 +138,7 @@ export default function CreateCommunityForm({
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               rows={3}
               placeholder="Describe the community"
             />
@@ -150,7 +150,7 @@ export default function CreateCommunityForm({
               onChange={(e) =>
                 setForm((f) => ({ ...f, isPrivate: e.target.checked }))
               }
-              className="h-4 w-4 rounded border border-gray-300"
+              className="h-4 w-4 rounded border border-gray-300 dark:border-gray-600"
             />
             Private community
           </label>
@@ -158,7 +158,7 @@ export default function CreateCommunityForm({
             <button
               type="button"
               onClick={() => setShowCreate(false)}
-              className="px-3 py-2 text-sm border border-gray-200 rounded-lg"
+              className="px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg"
               disabled={createLoading}
             >
               Cancel
@@ -166,7 +166,7 @@ export default function CreateCommunityForm({
             <button
               type="submit"
               disabled={createLoading}
-              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg disabled:opacity-60"
+              className="px-3 py-2 text-sm bg-indigo-600 text-white dark:bg-indigo-500 rounded-lg disabled:opacity-60"
             >
               {createLoading ? "Creating..." : "Create"}
             </button>

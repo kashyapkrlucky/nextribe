@@ -16,7 +16,7 @@ const MyCommunities: React.FC = () => {
     fetchCommunities();
   }, []);
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-3">
       <h3 className="text-sm font-semibold  inline-flex items-center gap-2">
         <MessagesSquareIcon className="w-4 h-4" /> My Communities (
         {communities?.length || '0'})
@@ -27,7 +27,7 @@ const MyCommunities: React.FC = () => {
           <li key={c?._id?.toString()}>
             <Link
               href={`/community/${c?.slug}`}
-              className="text-sm text-slate-700 hover:underline"
+              className="text-sm text-slate-700 hover:underline dark:text-slate-400"
             >
               {c?.name}
             </Link>

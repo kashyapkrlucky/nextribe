@@ -19,15 +19,15 @@ export default function CommunityFilters({
 }: Props) {
   const topics = ["all", "tech", "design", "startup", "health"] as const;
   return (
-    <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-xl p-3">
+    <div className="flex flex-col gap-3 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <h2 className="text-xl font-semibold">Discover Communities</h2>
         <div className="flex items-center gap-2">
           <button
-            className="inline-flex items-center justify-center bg-white rounded-lg border border-gray-200 px-2 py-2"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-400 dark:text-gray-400 px-2 py-2"
             title="Filters"
           >
-            <FilterIcon className="w-5 h-5 text-slate-700" />
+            <FilterIcon className="w-5 h-5 text-slate-700 dark:text-gray-400" />
           </button>
         </div>
       </div>
@@ -39,13 +39,13 @@ export default function CommunityFilters({
             value={query}
             onChange={(e) => onQuery(e.target.value)}
             placeholder="Search communities"
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-200"
+            className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-200"
           />
         </div>
         <select
           value={topic}
           onChange={(e) => onTopicChange(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm dark:border-gray-600 dark:text-gray-400"
         >
           {topics.map((t) => (
             <option key={t} value={t}>
@@ -56,7 +56,7 @@ export default function CommunityFilters({
         <select
           value={sort}
           onChange={(e) => onSortChange(e.target.value as "popular" | "new")}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm dark:border-gray-600 dark:text-gray-400"
         >
           <option value="popular">Most popular</option>
           <option value="new">Newest</option>

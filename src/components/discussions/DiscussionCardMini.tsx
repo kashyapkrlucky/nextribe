@@ -13,13 +13,13 @@ export default function DiscussionCardMini({item}: Props) {
         >
           {item.title}
         </Link>
-        <div className="text-xs text-slate-600">
+        <div className="text-xs text-slate-600 dark:text-gray-400">
           {(item.commentCount || 0).toLocaleString("en-US")} replies
         </div>
       </div>
       <Link
         href={`/discussion/${item.slug}`}
-        className="text-xs border border-gray-200 rounded-md px-2 py-1"
+        className="text-xs border border-gray-200 rounded-md px-2 py-1 dark:border-gray-700"
       >
         Reply
       </Link>
