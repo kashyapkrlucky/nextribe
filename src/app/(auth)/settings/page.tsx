@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { UserButton } from "@/components/auth/user-button";
+import { UserButton } from "@/components/auth/UserButton";
 import { getCurrentUser } from "@/lib/auth";
 
 export default async function SettingsPage() {

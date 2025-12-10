@@ -34,6 +34,8 @@ a {
   }
 }
 
-body ::-webkit-scrollbar, body ::-webkit-scrollbar-track, body ::-webkit-scrollbar-thumb {
+body ::-webkit-scrollbar,
+body ::-webkit-scrollbar-track,
+body ::-webkit-scrollbar-thumb {
   display: none;
 }
