@@ -19,30 +19,30 @@ export default function LeftSideBar({ user }: SideBarProps) {
 
   return (
     <aside className="flex flex-col lg:w-1/5 gap-6">
-      <div className="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-sm">
         <nav className="flex flex-col gap-1">
           {importantLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={label}
               href={href}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-slate-700 dark:text-slate-400"
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
             >
-              <Icon className="w-4 h-4" />
-              <span>{label}</span>
+              <Icon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" />
+              <span className="font-medium">{label}</span>
             </Link>
           ))}
 
           {user?.id && (
-            <Link
-              href="#"
+            <button
               onClick={(e) => {
                 e.preventDefault();
                 setShowCreate(true);
               }}
-              className="inline-flex items-center gap-2 rounded-lg px-2 py-2 bg-indigo-600 text-white text-sm dark:bg-indigo-500"
+              className="inline-flex items-center gap-3 rounded-xl px-3 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
             >
-              <PlusIcon className="w-4 h-4" /> Create Community
-            </Link>
+              <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" /> 
+              Create Community
+            </button>
           )}
         </nav>
       </div>

@@ -27,45 +27,46 @@ const NavBar = ({ user }: NavBarProps) => {
   };
 
   return (
-    <header className="bg-indigo-600 h-16 w-full flex flex-row justify-between p-2 lg:px-4">
-      <div className="lg:w-1/4 flex flex-col lg:flex-row gap-8 items-center py-4">
-        <Link className="font-bold text-xl text-gray-100 mr-4" href={"/"}>
+    <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 h-16 w-full flex flex-row justify-between items-center px-4 lg:px-6">
+      <div className="flex items-center gap-8">
+        <Link className="font-bold text-xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" href={"/"}>
           NextTribe
         </Link>
       </div>
+      
       {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-4">
-        <div className="flex flex-row items-center bg-indigo-500 text-white py-1 px-4 rounded-md focus-within:ring-2 focus-within:ring-indigo-600">
-          <Search className="h-5 w-5 text-gray-200" aria-hidden="true" />
+      <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
           <input
             ref={searchRef}
             type="search"
             name="q"
-            className="block w-full px-4 py-2 border-none bg-transparent leading-5 placeholder-indigo-200 focus:outline-none sm:text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl text-sm placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             placeholder="Search communities, users, discussions..."
           />
         </div>
       </form>
-        <div className="lg:w-1/4 flex flex-row p-4 lg:p-0 gap-8 items-center justify-center lg:justify-end">
-          {user?.id ? (
-            <div className="flex items-center">
-              <UserMenu user={user} />
-            </div>
-          ) : (
-            <>
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm/6 font-medium text-gray-100"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </>
-          )}
-        </div>
-       
+      
+      <div className="flex items-center gap-4">
+        {user?.id ? (
+          <div className="flex items-center">
+            <UserMenu user={user} />
+          </div>
+        ) : (
+          <>
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </>
+        )}
+      </div>
     </header>
   );
 };

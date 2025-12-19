@@ -22,26 +22,34 @@ export function PopularCommunities() {
   }, []);
 
   return (
-    <div className="bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl p-3">
-      <h3 className="text-sm font-semibold mb-2 inline-flex items-center gap-2">
-        <TrendingUpIcon className="w-4 h-4" /> Popular Communities
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-sm">
+      <h3 className="text-sm font-bold mb-4 inline-flex items-center gap-2 text-gray-900 dark:text-gray-100">
+        <div className="w-5 h-5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
+          <TrendingUpIcon className="w-3 h-3 text-white" />
+        </div>
+        Popular Communities
       </h3>
       {list.length === 0 ? (
-        <p className="text-xs text-slate-500 text-center py-2">No communities found</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">No communities found</p>
       ) : (
-        <ul className="space-y-2">
-          {list?.map((c) => (
+        <ul className="space-y-3">
+          {list?.map((c, index) => (
             <li
               key={c._id.toString()}
-              className="flex items-center justify-between"
+              className="flex items-center justify-between group"
             >
-              <Link
-                href={`/community/${c.slug}`}
-                className="text-sm hover:underline"
-              >
-                {c.name}
-              </Link>
-              <span className="text-xs text-slate-600 dark:text-slate-400">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+                  {index + 1}
+                </div>
+                <Link
+                  href={`/community/${c.slug}`}
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 truncate"
+                >
+                  {c.name}
+                </Link>
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium ml-2">
                 {c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"}
               </span>
             </li>

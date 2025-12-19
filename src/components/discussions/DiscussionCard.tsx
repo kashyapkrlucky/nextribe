@@ -9,47 +9,55 @@ import Link from "next/link";
 
 export default function DiscussionCard({ item }: { item: IDiscussion }) {
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-xs ">
-      <header className="flex flex-row justify-between">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+      <header className="flex flex-row justify-between items-center p-4 pb-2">
         <Link
           href={`/community/${item.community.slug}`}
-          className="text-xs text-indigo-700 dark:text-indigo-400 font-medium flex items-center gap-1"
+          className="flex items-center gap-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
         >
-          <MessageCircleIcon className="w-3 h-3" />
-          <span className="ml-1">{item.community.name}</span>
+          <div className="w-5 h-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+            <MessageCircleIcon className="w-3 h-3 text-white" />
+          </div>
+          <span>{item.community.name}</span>
         </Link>
         <Link
           href={`/users/${item.author._id}`}
-          className="text-xs text-gray-500 hover:text-gray-300 flex items-center"
+          className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
         >
-          <UserIcon className="w-3 h-3 mr-1" />
+          <UserIcon className="w-3 h-3" />
           {item.author.name}
         </Link>
       </header>
-      <section className="flex flex-col items-start gap-3 py-4">
-        <Link href={`/discussion/${item.slug}`} className="flex-1 font-medium">
+      
+      <section className="px-4 pb-3">
+        <Link 
+          href={`/discussion/${item.slug}`} 
+          className="block font-semibold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200 mb-2 line-clamp-2"
+        >
           {item.title}
         </Link>
-        <p className="text-sm text-gray-500">{item.body}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+          {item.body}
+        </p>
       </section>
-      <footer className="flex flex-row items-center gap-1 justify-between">
-        <div className="flex items-center gap-2 mt-1">
-          <button className="p-1 flex items-center gap-1 rounded hover:bg-gray-100">
-            <ArrowBigUpIcon className="w-4 h-4" />
-            <span className="text-xs font-medium">0</span>
+      
+      <footer className="flex flex-row items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-1">
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group">
+            <ArrowBigUpIcon className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors duration-200" />
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">0</span>
           </button>
-          <button className="p-1 flex items-center gap-1 rounded hover:bg-gray-100">
-            <ArrowBigDownIcon className="w-4 h-4" />
-            <span className="text-xs font-medium">0</span>
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group">
+            <ArrowBigDownIcon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">0</span>
           </button>
         </div>
-        <div className="flex items-center gap-6 mt-1">
-          <button className="text-xs text-gray-500 hover:text-gray-300">
+        
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+            <MessageCircleIcon className="w-4 h-4" />
             Reply
           </button>
-          {/* <button className="text-xs text-gray-500 hover:text-gray-700">
-            Share
-          </button> */}
         </div>
       </footer>
     </div>
