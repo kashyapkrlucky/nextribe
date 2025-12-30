@@ -7,13 +7,12 @@ interface UserState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
   register: (userData: { 
     name: string; 
     email: string; 
     password: string; 
-    username: string;
-  }) => Promise<void>;
+  }) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   clearError: () => void;
@@ -34,6 +33,7 @@ export const useUserStore = create<UserState>((set) => ({
         isAuthenticated: true,
         isLoading: false 
       });
+      return data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       set({ 
@@ -53,6 +53,7 @@ export const useUserStore = create<UserState>((set) => ({
         isAuthenticated: true,
         isLoading: false 
       });
+      return data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       set({ 
@@ -91,6 +92,7 @@ export const useUserStore = create<UserState>((set) => ({
         isLoading: false 
       });
     } catch (error) {
+      console.error('auth error:', error);
       set({ 
         user: null,
         isAuthenticated: false,

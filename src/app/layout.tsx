@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "@/styles/globals.css";
-import { getUserFromCookie } from "@/lib/auth";
 import NavBar from "@/components/layout/NavBar";
 import { APP_OPENGRAPH_DESCRIPTION, APP_OPENGRAPH_TITLE, APP_OPENGRAPH_TYPE, APP_URL } from "@/core/constants/app";
 
-const geistSans = Geist();
-const geistMono = Geist_Mono();
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: APP_OPENGRAPH_TITLE,
@@ -24,16 +25,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUserFromCookie();
-  const userinfo = {
-    email: user?.email || "",
-    name: user?.name || "",
-    id: user?._id.toString() || "",
-  };
   return (
     <html lang="en">
-      <body className={`flex flex-col h-dvh ${geistSans} ${geistMono}`}>
-        <NavBar user={userinfo} />
+      <body className={`flex flex-col h-screen ${openSans.className}`}>
+        <NavBar />
         {children}
       </body>
     </html>

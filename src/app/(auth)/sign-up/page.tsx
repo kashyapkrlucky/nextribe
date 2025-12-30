@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useUserStore } from "@/store/useUserStore";
+import { useAuth } from "@/hooks/useAuth";
 
 function SignUp() {
   const [name, setName] = useState("");
@@ -10,6 +12,8 @@ function SignUp() {
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { register } = useUserStore();
+  const { login } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -20,18 +24,14 @@ function SignUp() {
 
   try {
     setLoading(true);
-    const res = await fetch("/api/auth/sign-up", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data?.error || "Sign up failed.");
-      return;
+    const result = await register({ name, email, password });
+    console.log("Register result:", result);
+    
+    if (result.status === 200 && result.data?.user && result.data?.token) {
+      console.log("Registration successful, logging in...");
+      login(result.data.user, result.data.token);
+      window.location.href = "/";
     }
-    // Redirect to sign-in after successful sign up
-    window.location.href = "/sign-in";
   } catch (e) {
     console.log(e);
     setError("Sign up failed. Please try again.");

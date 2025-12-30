@@ -72,7 +72,7 @@ export default function CreateCommunityForm({
   }, [fetchTopics]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed h-screen w-screen inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/40"
         onClick={() => setShowCreate(false)}

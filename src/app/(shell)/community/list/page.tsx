@@ -5,6 +5,8 @@ import ListLoading from "@/components/ui/ListLoading";
 import Pagination from "@/components/ui/Pagination";
 import CommunityFilters from "@/components/community/CommunityFilters";
 import CommunityCardMini from "@/components/community/CommunityCardMini";
+import { PopularCommunities } from "@/components/community/PopularCommunities";
+import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 
 export default function CommunityListPage() {
   const [query, setQuery] = useState("");
@@ -41,7 +43,7 @@ export default function CommunityListPage() {
   }, [query, sort, page, fetchCommunities]);
 
   return (
-    <>
+    <div className="max-w-7xl mx-auto w-full flex flex-row gap-4">
       <section className="flex flex-col flex-1 gap-6">
         <CommunityFilters
           sort={sort}
@@ -70,7 +72,11 @@ export default function CommunityListPage() {
           />
         </div>
       </section>
-
-    </>
+      
+      <aside className="lg:w-1/4 gap-6 hidden lg:flex flex-col">
+        <PopularCommunities />
+        <TopDiscussions />
+      </aside>
+    </div>
   );
 }

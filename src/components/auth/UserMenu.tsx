@@ -2,14 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, UserIcon } from 'lucide-react';
+import axios from '@/lib/axios';
+import { useAuth } from '@/hooks/useAuth';
 
-interface UserMenuProps {
-  user: { name: string; email: string; id: string };
-}
-
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Generate initials from user's name or email
@@ -27,6 +26,21 @@ export function UserMenu({ user }: UserMenuProps) {
     }
     return 'U';
   };
+
+
+  const handleLogout = async () => {
+    try {
+      // Call API to clear server-side auth cookie
+      await axios.post("/logout");
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // Always clear client-side data and redirect
+      logout();
+      window.location.href = "/";
+    }
+  };
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -61,6 +75,16 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
           
           <Link
+            href="/profile"
+            className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+          >
+            <UserIcon className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-400" />
+            Profile
+          </Link>
+          <div className="border-t border-gray-100 dark:border-gray-700"></div>
+          <Link
             href="/settings"
             className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
             role="menuitem"
@@ -70,18 +94,15 @@ export function UserMenu({ user }: UserMenuProps) {
             Account Settings
           </Link>
           
-          <div className="border-t border-gray-100 dark:border-gray-700 my-2"></div>
           
-          <form action="/api/auth/logout" method="post" className="w-full">
-            <button
-              type="submit"
-              className="w-full text-left flex items-center px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
-              role="menuitem"
-            >
-              <LogOut className="mr-3 h-5 w-5 text-red-500 dark:text-red-400" />
-              Sign out
-            </button>
-          </form>
+          <button
+            onClick={handleLogout}
+            className="w-full text-left flex items-center px-4 py-3 border-t border-gray-100 dark:border-gray-700  text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+            role="menuitem"
+          >
+            <LogOut className="mr-3 h-5 w-5 text-red-500 dark:text-red-400" />
+            Sign out
+          </button>
         </div>
       )}
     </div>

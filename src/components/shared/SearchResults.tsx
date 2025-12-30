@@ -33,7 +33,7 @@ export default function SearchResults() {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-600 p-6">
+    <div className="max-w-7xl mx-auto w-full bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-600 p-6">
       <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 mb-6">
         <Search className="h-5 w-5" />
         <h1 className="text-2xl font-semibold">

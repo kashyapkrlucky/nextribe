@@ -18,7 +18,7 @@ export default function ProfilePage() {
 
 
   return ( 
-      <div className="w-full bg-white dark:bg-gray-800">
+      <div className="max-w-7xl mx-auto w-full bg-white dark:bg-gray-800">
         {/* Enhanced Profile Header with Cover */}
         <div className="relative">
           {/* Cover Photo */}

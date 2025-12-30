@@ -29,7 +29,6 @@ export default function SettingsPage() {
     name: "",
     email: "",
     bio: "",
-    username: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
@@ -71,8 +70,7 @@ export default function SettingsPage() {
             ...prev,
             name: userData?.user?.name || "",
             email: userData?.user?.email || "",
-            bio: userData?.user?.bio || "",
-            username: userData?.user?.name?.toLowerCase().replace(/\s+/g, '') || ""
+            bio: userData?.user?.bio || ""  
           }));
         } else {
           redirect("/sign-in");
@@ -201,7 +199,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{user?.name}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">@{formData.username}</p>
+                      {/* <p className="text-sm text-gray-500 dark:text-gray-400">@{formData.username}</p> */}
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
                     </div>
                   </div>
@@ -217,17 +215,6 @@ export default function SettingsPage() {
                           type="text"
                           value={formData.name}
                           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Username
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.username}
-                          onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
                           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         />
                       </div>

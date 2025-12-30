@@ -8,7 +8,7 @@ export type MemberRole = "owner" | "admin" | "member";
 /**
  * Represents a user in the system
  */
-export interface IUser {
+export interface UserModel {
   /** Unique identifier for the user */
   _id: Types.ObjectId;
   /** User's full name */
@@ -23,12 +23,23 @@ export interface IUser {
   createdAt?: Date;
   /** When the user account was last updated */
   updatedAt?: Date;
+  /** Password reset token and expiration */
+  passwordReset?: {
+    token?: string;
+    expiresAt?: Date;
+    usedAt?: Date;
+  };
+  /** Creates a password reset token and returns the raw token */
+  createPasswordResetToken(): string;
+  /** Compares a candidate password with the stored hash */
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
 
 /**
  * Represents a community where users can interact and discuss topics
  */
-export interface ICommunity {
+export interface CommunityModel {
   /** Unique identifier for the community */
   _id: Types.ObjectId;
   /** Display name of the community */
@@ -54,7 +65,7 @@ export interface ICommunity {
 /**
  * Represents the relationship between a user and a community
  */
-export interface IMember {
+export interface MemberModel {
   /** Reference to the community */
   community: Types.ObjectId; // ref: Community
   /** Reference to the user who is a member */
@@ -70,7 +81,7 @@ export interface IMember {
 /**
  * Represents a discussion thread within a community
  */
-export interface IDiscussion {
+export interface DiscussionModel {
   /** Unique identifier for the discussion */
   _id: Types.ObjectId;
   /** Title of the discussion */
@@ -80,9 +91,9 @@ export interface IDiscussion {
   /** Main content of the discussion */
   body: string;
   /** Author of the discussion */
-  author: IUser;
+  author: UserModel;
   /** Community this discussion belongs to */
-  community: ICommunity;
+  community: CommunityModel;
   /** Whether the discussion is locked (no new replies) */
   isLocked?: boolean;
   /** Number of comments in the discussion */
@@ -100,13 +111,13 @@ export interface IDiscussion {
 /**
  * Represents a reply to a discussion or another reply
  */
-export interface IReply {
+export interface ReplyModel {
   /** Unique identifier for the reply */
   _id: Types.ObjectId;
   /** Reference to the parent discussion */
   discussion: Types.ObjectId; // ref: Discussion
   /** Author of the reply */
-  author: IUser; // ref: User
+  author: UserModel; // ref: User
   /** Content of the reply */
   body: string;
   /** Reference to the parent reply if this is a nested reply */
@@ -132,9 +143,9 @@ export interface IReply {
 /**
  * Represents a topic within a community for categorizing discussions
  */
-export interface ITopic {
+export interface TopicModel {
   /** Unique identifier for the topic */
-  _id: string;
+  _id: Types.ObjectId;
   /** Name of the topic */
   name: string;
   /** URL-friendly version of the name */
@@ -149,29 +160,4 @@ export interface ITopic {
   createdAt?: Date;
   /** When the topic was last updated */
   updatedAt?: Date;
-}
-
-export interface SearchResultResponse {
-  users: {
-    _id: string;
-    name: string;
-    email: string;
-  }[];
-  communities: {
-    _id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    memberCount: number;
-  }[];
-  discussions: {
-    _id: string;
-    title: string;
-    slug: string;
-    community: {
-      _id: string;
-      name: string;
-      slug: string;
-    };
-  }[];
 }

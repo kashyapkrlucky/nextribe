@@ -1,30 +1,34 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { User } from "@/models/User";
-import bcrypt from "bcryptjs";
 import { signToken, setAuthCookie } from "@/lib/auth";
-import { IUser } from "@/core/types/index.types";
-
-interface UserInfo extends IUser {
-  passwordHash: string;
-}
+import { SuccessResponse } from "@/core/utils/responses";
 
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
     if (!email || !password) {
-      return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing credentials" },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
-    const user = await User.findOne({ email: email.toLowerCase() }) as UserInfo;
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
+    const ok = await user.comparePassword(password);
     if (!ok) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
 
     const token = await signToken({
@@ -32,12 +36,18 @@ export async function POST(req: Request) {
       email: user.email,
       name: user.name,
     });
-    const res = NextResponse.json({ success: true });
-    setAuthCookie(res, token);
 
+    const res = SuccessResponse({
+      user: { id: user._id, email: user.email, name: user.name },
+      token,
+    });
+    setAuthCookie(res, token);
     return res;
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

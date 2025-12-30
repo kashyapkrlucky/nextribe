@@ -1,37 +1,29 @@
-import type { Metadata } from "next";
-import { getUserFromCookie } from "@/lib/auth";
-import LeftSideBar from "@/components/layout/LeftSideBar";
-import { PopularCommunities } from "@/components/community/PopularCommunities";
-import { TopDiscussions } from "@/components/discussions/TopDiscussions";
+"use client";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import { Spinner } from "@/components/ui/Spinner";
 
-export const metadata: Metadata = {
-  title: "Nextribe | Home",
-  description: "Connect and collaborate with communities",
-};
-
-export default async function RootLayout({
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUserFromCookie();
+  const { isAuthenticated, loading } = useAuth();
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      console.log("Home page - Not authenticated, redirecting to sign-in");
+      window.location.replace("/sign-in");
+    }
+  }, [isAuthenticated, loading]);
 
-  const userinfo = {
-    email: user?.email || "",
-    name: user?.name || "",
-    id: user?._id.toString() || "",
-  };
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
-    <main className="w-full flex-1 flex flex-col lg:flex-row gap-6 p-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
-      <LeftSideBar user={userinfo} />
-      <section className="flex-1 flex flex-row gap-6 overflow-y-auto">
-      {children}
-      </section>
-
-      <aside className="lg:w-1/5 gap-6 hidden lg:flex flex-col">
-        <PopularCommunities />
-        <TopDiscussions />
-      </aside>
+    <main className="w-full flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto h-screen py-4">
+        {children}    
     </main>
   );
 }

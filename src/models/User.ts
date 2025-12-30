@@ -1,11 +1,13 @@
 import mongoose, { Schema, models, Model, Document } from "mongoose";
-import { IUser } from "@/core/types/index.types";
+import { UserModel } from "@/core/types/database.types";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 /**
  * Mongoose schema for the User model
  * Defines the structure and validation rules for user accounts in the database
  */
-const UserSchema = new Schema<IUser & Document>(
+const UserSchema = new Schema<UserModel & Document>(
   {
     name: { 
       type: String, 
@@ -24,7 +26,7 @@ const UserSchema = new Schema<IUser & Document>(
         'Please provide a valid email address'
       ]
     },
-    passwordHash: { 
+    password: { 
       type: String, 
       required: [true, 'Password hash is required'],
       // select: false // Never return password hash in queries by default
@@ -33,17 +35,15 @@ const UserSchema = new Schema<IUser & Document>(
       type: String,
       maxlength: [500, 'Bio cannot be longer than 500 characters'],
       trim: true
-    }
+    },
+    passwordReset: {
+      token: { type: String, index: true },
+      expiresAt: { type: Date },
+      usedAt: { type: Date },
+    },
   },
   { 
     timestamps: true,
-    toJSON: { 
-      virtuals: true,
-      transform: function(doc, ret) {
-        delete ret.passwordHash; // Always remove passwordHash when converting to JSON
-        return ret;
-      }
-    }
   }
 );
 
@@ -88,17 +88,28 @@ UserSchema.statics.findByEmail = async function(email: string) {
  * @param candidatePassword - The password to compare against the stored hash
  * @returns Promise that resolves to true if the password matches, false otherwise
  */
-UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
   // In a real implementation, this would use bcrypt.compare()
-  // For example: return await bcrypt.compare(candidatePassword, this.passwordHash);
-  // For now, we'll just log that this is a placeholder
-  // console.log('Password comparison would happen here with:', candidatePassword);
-  return true;
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+UserSchema.methods.createPasswordResetToken = async function () {
+  const rawToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordReset = {
+    token: crypto.createHash("sha256").update(rawToken).digest("hex"),
+    expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 min
+  };
+
+  await this.save(); // Save the document to MongoDB
+  return rawToken; // send via email
 };
 
 /**
  * Mongoose model for the User collection
  * Uses existing model if it exists, otherwise creates a new one
  */
-export const User: Model<IUser & Document> = 
-  models.User || mongoose.model<IUser & Document>("User", UserSchema);
+export const User: Model<UserModel & Document> = 
+  models.User || mongoose.model<UserModel & Document>("User", UserSchema);
