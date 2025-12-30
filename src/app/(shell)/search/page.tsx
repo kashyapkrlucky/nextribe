@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/Skeloton';
 
 function SearchResultsSkeleton() {
   return (
-    <div className="w-full bg-white dark:bg-gray-800 rounded-md border border-gray-200 p-6 space-y-6">
+    <div className="max-w-7xl w-full mx-auto bg-white dark:bg-gray-800 rounded-md border border-gray-200 p-6 space-y-6">
       <div className="flex items-center space-x-2">
         <Skeleton className="h-5 w-5" />
         <Skeleton className="h-7 w-64" />

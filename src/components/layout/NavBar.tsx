@@ -7,13 +7,7 @@ import { PlusIcon, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import CreateCommunityForm from "../community/CreateCommunityForm";
 import Image from "next/image";
-
-const navigation = [
-  { name: "Sign In", href: "/sign-in" },
-  { name: "Sign Up", href: "/sign-up" },
-  { name: "Create Community", href: "/create-community" },
-  { name: "Create", href: "/create-discussion" },
-];
+import Button from "../ui/Button";
 
 const NavBar = () => {
   const { user } = useAuth();
@@ -42,7 +36,7 @@ const NavBar = () => {
         </div>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
+        {user && <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
           <div className="relative">
             <Search
               className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
@@ -56,12 +50,12 @@ const NavBar = () => {
               placeholder="Search communities, users, discussions..."
             />
           </div>
-        </form>
+        </form>}
 
         <div className="flex items-center gap-4">
           {user ? (
-            <div className="flex items-center gap-4">
-              <button
+            <>
+              <Button
                 onClick={(e) => {
                   e.preventDefault();
                   setShowCreate(true);
@@ -70,20 +64,23 @@ const NavBar = () => {
               >
                 <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
                 Create Community
-              </button>
+              </Button>
               <UserMenu />
-            </div>
+            </>
           ) : (
             <>
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
-                >
-                  {item.name}
-                </Link>
-              ))}
+              <Link
+                href="/sign-in"
+                className="rounded-lg border-2 border-indigo-600 dark:border-indigo-600 px-4 py-2 text-sm font-semibold text-indigo-600 dark:text-gray-300 hover:border-indigo-700 dark:hover:border-indigo-700 transition-colors duration-200"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/sign-up"
+                className="rounded-lg border-2 border-indigo-600 dark:border-indigo-600 px-4 py-2 text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-200"
+              >
+                Sign Up
+              </Link>
             </>
           )}
         </div>

@@ -115,8 +115,8 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
@@ -563,6 +563,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 }
