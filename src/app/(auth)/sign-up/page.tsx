@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 import { useAuth } from "@/hooks/useAuth";
+import { CheckIcon, MailIcon, UserIcon, XIcon } from "lucide-react";
+import InputWithIcon from "@/components/ui/InputWithIcon";
 
 function SignUp() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -15,56 +17,203 @@ function SignUp() {
   const { register } = useUserStore();
   const { login } = useAuth();
 
-  const onSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  if (!name || !email || !password || !confirm) { setError("Please fill in all fields."); return; }
-  if (password !== confirm) { setError("Passwords do not match."); return; }
-  if (!agree) { setError("You must accept the Terms to continue."); return; }
+  const [usernameStatus, setUsernameStatus] = useState<{
+    available: boolean | null;
+    checking: boolean;
+    message: string;
+    suggestions: string[];
+  }>({
+    available: null,
+    checking: false,
+    message: "",
+    suggestions: [],
+  });
 
-  try {
-    setLoading(true);
-    const result = await register({ name, email, password });
-    console.log("Register result:", result);
-    
-    if (result.status === 200 && result.data?.user && result.data?.token) {
-      console.log("Registration successful, logging in...");
-      login(result.data.user, result.data.token);
-      window.location.href = "/";
+  // Debounced username check function
+  const checkUsernameAvailability = useCallback(async (username: string) => {
+    if (username.length < 7) {
+      setUsernameStatus({
+        available: null,
+        checking: false,
+        message: "",
+        suggestions: [],
+      });
+      return;
     }
-  } catch (e) {
-    console.log(e);
-    setError("Sign up failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setUsernameStatus((prev) => ({ ...prev, checking: true }));
+
+    try {
+      const response = await fetch(
+        `/api/auth/username?username=${encodeURIComponent(username)}`
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        setUsernameStatus({
+          available: data.available,
+          checking: false,
+          message: data.message,
+          suggestions: data.suggestions || [],
+        });
+      } else {
+        setUsernameStatus({
+          available: null,
+          checking: false,
+          message: data.error || "Error checking username",
+          suggestions: [],
+        });
+      }
+    } catch {
+      setUsernameStatus({
+        available: null,
+        checking: false,
+        message: "Network error",
+        suggestions: [],
+      });
+    }
+  }, []);
+
+  // Debounce effect for username checking
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (username.length >= 7) {
+        checkUsernameAvailability(username);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [username, checkUsernameAvailability]);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!username || !email || !password || !confirm) {
+      setError("Please fill in all fields.");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (!agree) {
+      setError("You must accept the Terms to continue.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await register({ username, email, password });
+      console.log("Register result:", result);
+
+      if (result.status === 200 && result.data?.user && result.data?.token) {
+        console.log("Registration successful, logging in...");
+        login(result.data.user, result.data.token);
+        window.location.href = "/";
+      }
+    } catch (e) {
+      console.log(e);
+      setError("Sign up failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
           <h1 className="text-2xl font-semibold mb-1">Create your account</h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Join NextTribe today.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+            Join NextTribe today.
+          </p>
 
           {error ? (
-            <div className="mb-4 text-sm text-red-600 dark:text-red-400">{error}</div>
+            <div className="mb-4 text-sm text-red-600 dark:text-red-400">
+              {error}
+            </div>
           ) : null}
 
           <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="name">
-                Full name
+            {/* <div className="space-y-1">
+              <label className="text-sm font-medium" htmlFor="username">
+                Username
               </label>
               <input
-                id="name"
+                id="username"
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="johndoe123"
                 className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
               />
-            </div>
+            </div> */}
+
+            <InputWithIcon
+              icon={<UserIcon className="w-4 h-4" />}
+              label="Username"
+              error={error}
+              className="w-full"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="johndoe123"
+            />
+
+            {username && (
+              <div className="px-1">
+                {usernameStatus.checking && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="animate-spin rounded-full h-3 w-3 border border-gray-300 border-t-transparent"></div>
+                    Checking availability...
+                  </div>
+                )}
+
+                {!usernameStatus.checking &&
+                  usernameStatus.available !== null && (
+                    <div className="space-y-1">
+                      <div
+                        className={`flex items-center gap-2 text-sm ${
+                          usernameStatus.available
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {usernameStatus.available ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <XIcon className="h-4 w-4" />
+                        )}
+                        {usernameStatus.message}
+                      </div>
+
+                      {/* Show suggestions if username is taken */}
+                      {!usernameStatus.available &&
+                        usernameStatus.suggestions.length > 0 && (
+                          <div className="text-sm text-gray-600">
+                            <span className="font-medium">Suggestions: </span>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {usernameStatus.suggestions.map(
+                                (suggestion, index) => (
+                                  <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => {
+                                      setUsername(suggestion);
+                                      setError("");
+                                    }}
+                                    className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs text-gray-700 transition-colors"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  )}
+              </div>
+            )}
 
             <div className="space-y-1">
               <label className="text-sm font-medium" htmlFor="email">
@@ -115,7 +264,20 @@ function SignUp() {
                 onChange={(e) => setAgree(e.target.checked)}
                 className="h-4 w-4 rounded border border-gray-200 dark:border-gray-600"
               />
-              I agree to the <a className="text-indigo-600 hover:underline dark:text-indigo-400" href="#">Terms</a> and <a className="text-indigo-600 hover:underline dark:text-indigo-400" href="#">Privacy</a>
+              I agree to the{" "}
+              <a
+                className="text-indigo-600 hover:underline dark:text-indigo-400"
+                href="#"
+              >
+                Terms
+              </a>{" "}
+              and{" "}
+              <a
+                className="text-indigo-600 hover:underline dark:text-indigo-400"
+                href="#"
+              >
+                Privacy
+              </a>
             </label>
 
             <button
@@ -129,7 +291,10 @@ function SignUp() {
 
           <div className="mt-6 text-sm text-slate-700 dark:text-slate-400">
             Already have an account?{" "}
-            <Link href="/sign-in" className="text-indigo-600 hover:underline dark:text-indigo-400">
+            <Link
+              href="/sign-in"
+              className="text-indigo-600 hover:underline dark:text-indigo-400"
+            >
               Sign in
             </Link>
           </div>
@@ -139,4 +304,4 @@ function SignUp() {
   );
 }
 
-export default SignUp
+export default SignUp;

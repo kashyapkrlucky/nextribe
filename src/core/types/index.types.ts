@@ -12,7 +12,7 @@ export interface IUser {
   /** Unique identifier for the user */
   _id: Types.ObjectId;
   /** User's full name */
-  name: string;
+  username: string;
   /** User's email address (must be unique) */
   email: string;
   /** Password (not returned in API responses) */
@@ -90,9 +90,9 @@ export interface IDiscussion {
   /** When the discussion was last active */
   lastActivityAt?: Date;
   /** When the discussion was created */
-  createdAt?: Date;
+  createdAt?: string;
   /** When the discussion was last updated */
-  updatedAt?: Date;
+  updatedAt?: string;
   /** Number of replies to the discussion */
   replyCount?: number;
 }
@@ -124,9 +124,9 @@ export interface IReply {
   /** Users who downvoted this reply */
   downVotes: Types.ObjectId[]; // ref: User[]
   /** When the reply was created */
-  createdAt: Date;
+  createdAt: string;
   /** When the reply was last updated */
-  updatedAt: Date;
+  updatedAt: string;
 }
 
 /**

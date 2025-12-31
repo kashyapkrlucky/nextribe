@@ -4,12 +4,15 @@ import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { signToken, setAuthCookie } from "@/lib/auth";
 import { SuccessResponse } from "@/core/utils/responses";
+import { SendEmail } from "@/core/mailer";
+import { SIGNUP_TEMPLATE } from "@/core/mailer/templates";
+import { Profile } from "@/models/Profile";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { username, email, password } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -28,19 +31,25 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
-      name,
+      username,
       email: email.toLowerCase(),
       password: hashedPassword,
     });
 
-    const token = await signToken({
-      sub: String(user._id),
-      email: user.email,
-      name: user.name,
+    const profile = await Profile.create({
+      username: username,
     });
 
+    await profile.save();
+
+    const token = await signToken({
+      sub: String(user._id),
+    });
+
+    await SendEmail(email, "Welcome to Nextribe!", 'signup');
+
     const res = SuccessResponse({
-      user: { id: user._id, email: user.email, name: user.name },
+      user: { id: user._id, email: user.email, username: user.username },
       token,
     });
     setAuthCookie(res, token);

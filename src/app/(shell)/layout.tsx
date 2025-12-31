@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import NavBar from "@/components/layout/NavBar";
 
@@ -18,16 +18,16 @@ export default function HomeLayout({
     }
   }, [isAuthenticated, loading]);
 
-  if (loading) {
+  if (loading || !isAuthenticated) {
     return <Spinner />;
   }
 
   return (
-    <>
+    <Suspense fallback={<Spinner />}>
       <NavBar />
       <main className="flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto py-4">
         {children}
       </main>
-    </>
+    </Suspense>
   );
 }

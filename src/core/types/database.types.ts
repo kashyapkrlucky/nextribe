@@ -9,20 +9,16 @@ export type MemberRole = "owner" | "admin" | "member";
  * Represents a user in the system
  */
 export interface UserModel {
-  /** Unique identifier for the user */
-  _id: Types.ObjectId;
   /** User's full name */
   name: string;
+  /** User's username (must be unique) */
+  username: string;
   /** User's email address (must be unique) */
   email: string;
   /** Password (not returned in API responses) */
   password?: string;
   /** Short biography or description */
-  bio?: string;
-  /** When the user account was created */
-  createdAt?: Date;
-  /** When the user account was last updated */
-  updatedAt?: Date;
+  avatar?: string;
   /** Password reset token and expiration */
   passwordReset?: {
     token?: string;
@@ -35,6 +31,22 @@ export interface UserModel {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
+export interface ProfileModel {
+  username: string;
+  bio?: string;
+  dob?: Date;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  isPublic?: boolean;
+  urlWebsite?: string;
+  urlLinkedIn?: string;
+  urlTwitter?: string;
+  urlGithub?: string;
+  urlInstagram?: string;
+  urlDribbble?: string;
+}
 
 /**
  * Represents a community where users can interact and discuss topics

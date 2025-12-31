@@ -13,8 +13,8 @@ export function UserMenu() {
 
   // Generate initials from user's name or email
   const getInitials = () => {
-    if (user?.name) {
-      return user.name
+    if (user?.username) {
+      return user.username
         .split(' ')
         .map((n) => n[0])
         .join('')
@@ -70,7 +70,7 @@ export function UserMenu() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 ring-opacity-5 z-50 overflow-hidden">
           <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-200 truncate">{user?.name || 'User'}</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-200 truncate">{user?.username || 'User'}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || ''}</p>
           </div>
           

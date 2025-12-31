@@ -4,8 +4,8 @@ import ProfileTabs from "@/components/profile/ProfileTabs";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SocialLinks from "@/components/profile/SocialLinks";
 import AchievementBadges from "@/components/profile/AchievementBadges";
-import SkillsTags from "@/components/profile/SkillsTags";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
   const user = {
@@ -14,8 +14,10 @@ export default function ProfilePage() {
     createdAt: new Date(),
     
   }
-  const { discussionList } = useDiscussionStore();
-
+  const { discussionList, fetchDiscussionList } = useDiscussionStore();
+  useEffect(() => {
+    fetchDiscussionList();
+  }, []);
 
   return ( 
       <div className="max-w-7xl mx-auto w-full bg-white dark:bg-gray-800">
@@ -116,9 +118,6 @@ export default function ProfilePage() {
           
           {/* Achievement Badges */}
           <AchievementBadges />
-          
-          {/* Skills Tags */}
-          <SkillsTags />
 
           {/* Tabs for Posts and Activity */}
           <ProfileTabs discussions={discussionList} />

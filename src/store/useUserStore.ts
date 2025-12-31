@@ -9,8 +9,8 @@ interface UserState {
   error: string | null;
   passwordLinkSent: boolean;
   login: (email: string, password: string) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
-  register: (userData: { 
-    name: string; 
+  register: (userData: {  
+    username: string; 
     email: string; 
     password: string; 
   }) => Promise<{ status: number; data?: { user: IUser, token: string } }>;

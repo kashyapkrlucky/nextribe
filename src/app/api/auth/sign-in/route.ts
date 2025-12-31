@@ -32,13 +32,11 @@ export async function POST(req: Request) {
     }
 
     const token = await signToken({
-      sub: String(user._id),
-      email: user.email,
-      name: user.name,
+      sub: String(user._id)
     });
 
     const res = SuccessResponse({
-      user: { id: user._id, email: user.email, name: user.name },
+      user: { id: user._id, email: user.email, username: user.username },
       token,
     });
     setAuthCookie(res, token);

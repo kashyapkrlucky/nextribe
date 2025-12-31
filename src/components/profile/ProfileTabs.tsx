@@ -89,22 +89,22 @@ export default function ProfileTabs({ discussions }: ProfileTabsProps) {
       {/* Tab Content */}
       {activeTab === "posts" && (
         <div className="space-y-4">
-          {discussions.length > 0 ? (
-            discussions.map((discussion) => (
+          {discussions?.length > 0 ? (
+            discussions?.map((discussion) => (
               <div
                 key={discussion._id.toString()}
                 className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium text-gray-900 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer">
-                    {discussion.title}
+                    {discussion?.title}
                   </h3>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {discussion.createdAt?.toDateString() }
+                    {new Date(discussion?.createdAt || "")?.toDateString()}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
-                  {discussion.body}
+                  {discussion?.body}
                 </p>
                 <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <span className="flex items-center gap-1">

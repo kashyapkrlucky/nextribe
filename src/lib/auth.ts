@@ -1,7 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers';
-import { IUser } from '@/core/types/index.types';
 import { Types } from "mongoose";
 
 // Constants
@@ -26,18 +25,16 @@ const getJwtKey = () => {
 // Types
 type TokenPayload = {
   sub: string;
-  email: string;
-  name?: string;
 };
 
 type AuthResult = {
-  user: IUser | null;
+  user: { _id: Types.ObjectId } | null;
   isAuthenticated: boolean;
   error?: string;
 };
 
 // Token operations
-export const signToken = async (payload: { sub: string; email: string; name?: string }): Promise<string> => {
+export const signToken = async (payload: { sub: string;}): Promise<string> => {
   const key = getJwtKey();
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
@@ -100,7 +97,7 @@ export const getUserIdFromCookie = async (): Promise<string | null> => {
   }
 };
 
-export const getUserFromCookie = async (): Promise<IUser | null> => {
+export const getUserFromCookie = async (): Promise<{ _id: Types.ObjectId } | null> => {
   const token = await getTokenFromRequest();
   if (!token) return null;
 
@@ -113,8 +110,6 @@ export const getUserFromCookie = async (): Promise<IUser | null> => {
   // Mock implementation
   return {
     _id: new Types.ObjectId(payload.sub),
-    email: payload.email,
-    name: payload.name || 'Anonymous',
   };
 };
 
@@ -147,7 +142,7 @@ export const getUserIdFromRequest = async (): Promise<string | null> => {
   return payload.sub;
 };
 
-const getUserFromRequest = async (): Promise<IUser | null> => {
+const getUserFromRequest = async (): Promise<{ _id: Types.ObjectId } | null> => {
   const token = await getTokenFromRequest();
   if (!token) return null;
 
@@ -160,8 +155,6 @@ const getUserFromRequest = async (): Promise<IUser | null> => {
   // Mock implementation
   return {
     _id: new Types.ObjectId(payload.sub),
-    email: payload.email,
-    name: payload.name || 'Anonymous',
   };
 };
 
@@ -181,9 +174,6 @@ export async function getServerUser() {
     
     return {
       id: typeof payload.sub === "string" ? payload.sub : undefined,
-      email: typeof payload.email === "string" ? payload.email : undefined,
-      name: typeof payload.name === "string" ? payload.name : undefined,
-      bio: typeof payload.bio === "string" ? payload.bio : undefined,
     };
   } catch (error) {
     console.error('Error getting server user:', error);

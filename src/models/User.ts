@@ -9,32 +9,39 @@ import crypto from "crypto";
  */
 const UserSchema = new Schema<UserModel & Document>(
   {
-    name: { 
-      type: String, 
-      required: [true, 'Name is required'],
-      trim: true, 
-      maxlength: [120, 'Name cannot be longer than 120 characters']
+    username: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [
+        /^[a-zA-Z0-9_]{3,30}$/,
+        "Username must be 3-30 characters, alphanumeric and underscores only",
+      ],
     },
-    email: { 
-      type: String, 
-      required: [true, 'Email is required'],
-      unique: true, 
-      lowercase: true, 
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
       trim: true,
       match: [
         /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-        'Please provide a valid email address'
-      ]
+        "Please provide a valid email address",
+      ],
     },
-    password: { 
-      type: String, 
-      required: [true, 'Password hash is required'],
-      // select: false // Never return password hash in queries by default
-    },
-    bio: {
+    password: {
       type: String,
-      maxlength: [500, 'Bio cannot be longer than 500 characters'],
-      trim: true
+      required: [true, "Password hash is required"],
+    },
+    avatar: {
+      type: String,
+      validate: {
+        validator: function (v: string) {
+          return !v || /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(v);
+        },
+        message: "Avatar must be a valid image URL",
+      },
     },
     passwordReset: {
       token: { type: String, index: true },
@@ -42,7 +49,7 @@ const UserSchema = new Schema<UserModel & Document>(
       usedAt: { type: Date },
     },
   },
-  { 
+  {
     timestamps: true,
   }
 );
@@ -50,38 +57,10 @@ const UserSchema = new Schema<UserModel & Document>(
 /**
  * Index for text search on user names and emails
  */
-UserSchema.index({ 
-  name: 'text',
-  email: 'text'
-}, {
-  weights: {
-    name: 2,
-    email: 1
-  }
+UserSchema.index({
+  username: "text",
+  email: "text",
 });
-
-/**
- * Virtual for user's full profile URL
- */
-UserSchema.virtual('profileUrl').get(function() {
-  return `/users/${this._id}`;
-});
-
-/**
- * Middleware to handle cleanup when a user is deleted
- */
-UserSchema.pre('deleteOne', { document: true }, async function(next: (err?: Error) => void) {
-  // This middleware will be used to clean up related documents
-  // when a user is deleted (e.g., their posts, comments, etc.)
-  next();
-});
-
-/**
- * Static method to find a user by email
- */
-UserSchema.statics.findByEmail = async function(email: string) {
-  return this.findOne({ email }).select('+passwordHash');
-};
 
 /**
  * Instance method to compare password hashes
@@ -111,5 +90,5 @@ UserSchema.methods.createPasswordResetToken = async function () {
  * Mongoose model for the User collection
  * Uses existing model if it exists, otherwise creates a new one
  */
-export const User: Model<UserModel & Document> = 
+export const User: Model<UserModel & Document> =
   models.User || mongoose.model<UserModel & Document>("User", UserSchema);

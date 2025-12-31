@@ -6,13 +6,13 @@ const COMMON_STYLES = `
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 50%, #fff7ed 100%); padding: 20px; }
         .container { margin: 0 auto; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
-        .header { background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #f97316 100%); padding: 40px 30px; text-align: center; }
+        .header { background: linear-gradient(135deg, #9333ea 0%, #7917d6 50%, #9809d5 100%); padding: 40px 30px; text-align: center; }
         .logo { width: 60px; height: 60px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; margin: 0 auto 20px; color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 60px; }
-        .header h1 { color: white; font-size: 32px; font-weight: 700; margin-bottom: 10px; }
+        .header h1 { color: white; font-size: 32px; font-weight: 700; margin-bottom: 20px; }
         .header p { color: rgba(255, 255, 255, 0.9); font-size: 16px; }
         .content { padding: 40px 30px; }
         .welcome-text { color: #1f2937; font-size: 18px; line-height: 1.6; margin-bottom: 30px; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #f97316 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 600; box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3); }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #9333ea 0%, #7917d6 50%, #9809d5 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 600; box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3); }
         .footer { padding: 30px; text-align: center; background: #f9fafb; border-top: 1px solid #e5e7eb; }
         .footer p { color: #6b7280; font-size: 14px; }
     </style>
@@ -33,7 +33,7 @@ ${COMMON_STYLES}
         </div>
         <div class="content">
             <p style="text-align: center; margin-bottom: 30px;">
-                <a href=${NEXT_PUBLIC_APP_URL}/dashboard class="cta-button">Start Creating Your Portfolio</a>
+                <a href=${NEXT_PUBLIC_APP_URL}/dashboard class="cta-button">Create your first post</a>
             </p>
         </div>
         <div class="footer">
