@@ -144,13 +144,13 @@ export default function CommunityPage() {
                     onClick={() => setShowCreateDiscussion(true)}
                     className="inline-flex items-center gap-2 rounded-lg px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 text-sm"
                   >
-                    Start a Discussion
+                    Start Discussion
                   </Button>
                   <Button
                     onClick={() => onCommunityJoin(communityId)}
                     className="inline-flex items-center gap-2 rounded-lg px-2 py-1 border border-indigo-600 text-indigo-600 dark:text-indigo-400 text-sm"
                   >
-                    Join Community
+                    Join
                   </Button>
                 </div>
               </div>

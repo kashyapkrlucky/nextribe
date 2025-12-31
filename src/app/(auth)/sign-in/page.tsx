@@ -40,8 +40,7 @@ function SignIn() {
 
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+      <div className="w-full max-w-md bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
           <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
             Sign in to continue to NextTribe.
@@ -73,8 +72,8 @@ function SignIn() {
 
             <div className="flex items-center justify-end">
               <Link
-                href="#"
-                className="text-xs text-indigo-600 hover:underline"
+                href="/forgot-password"
+                className="text-sm text-indigo-600 hover:underline"
               >
                 Forgot password?
               </Link>
@@ -83,7 +82,7 @@ function SignIn() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60"
+              className="w-full inline-flex items-center justify-center bg-indigo-600 text-white rounded-lg px-3 py-3 text-sm font-medium disabled:opacity-60"
               tabIndex={0}
             >
               {loading ? "Signing in..." : "Sign in"}
@@ -99,7 +98,7 @@ function SignIn() {
               Create one
             </Link>
           </div>
-        </div>
+         
       </div>
     </main>
   );

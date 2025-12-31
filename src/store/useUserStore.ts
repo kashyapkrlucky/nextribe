@@ -7,6 +7,7 @@ interface UserState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  passwordLinkSent: boolean;
   login: (email: string, password: string) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
   register: (userData: { 
     name: string; 
@@ -16,6 +17,9 @@ interface UserState {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   clearError: () => void;
+  forgotPassword: (email: string) => Promise<void>;
+  validateToken: (token: string) => Promise<boolean>;
+  resetPassword: (token: string, password: string) => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -23,7 +27,7 @@ export const useUserStore = create<UserState>((set) => ({
   isAuthenticated: false,
   isLoading: false,
   error: null,
-
+  passwordLinkSent: false,
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -102,4 +106,33 @@ export const useUserStore = create<UserState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
+    forgotPassword: async (email: string) => {
+    try {
+      set({ isLoading: true, passwordLinkSent: false });
+      await axios.post("/auth/forgot-password", { email });
+      set({ passwordLinkSent: true });
+    } catch (error) {
+      console.error(error);
+      set({ error: "Failed to send reset email" });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  validateToken: async (token: string) => {
+    try {
+      await axios.post("/auth/validate-token", { token });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+  resetPassword: async (token: string, password: string) => {
+    try {
+      await axios.post("/auth/reset-password", { token, password });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
 }));

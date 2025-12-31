@@ -2,6 +2,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { Spinner } from "@/components/ui/Spinner";
+import NavBar from "@/components/layout/NavBar";
 
 export default function HomeLayout({
   children,
@@ -22,8 +23,11 @@ export default function HomeLayout({
   }
 
   return (
-    <main className="w-full flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto h-screen py-4">
-        {children}    
-    </main>
+    <>
+      <NavBar />
+      <main className="flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto py-4">
+        {children}
+      </main>
+    </>
   );
 }

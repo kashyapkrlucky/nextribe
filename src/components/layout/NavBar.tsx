@@ -24,7 +24,7 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 h-16 w-full flex flex-row justify-between items-center px-4 lg:px-6">
+    <header className="sticky z-50 backdrop-blur-lg bg-white/10 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 h-16 w-full flex flex-row justify-between items-center px-4 lg:px-6">
       <div className="max-w-7xl mx-auto flex flex-row items-center justify-between w-full">
         <div className="flex items-center gap-8">
           <Link

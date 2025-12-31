@@ -39,9 +39,7 @@ export function PopularCommunities() {
               className="flex items-center justify-between group"
             >
               <div className="flex items-center gap-3 flex-1">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
-                  {index + 1}
-                </div>
+                
                 <Link
                   href={`/community/${c.slug}`}
                   className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 truncate"
@@ -49,9 +47,9 @@ export function PopularCommunities() {
                   {c.name}
                 </Link>
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium ml-2">
-                {c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"}
-              </span>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+                  {c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"}
+                </div>
             </li>
           ))}
         </ul>

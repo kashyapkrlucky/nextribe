@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "@/styles/globals.css";
-import NavBar from "@/components/layout/NavBar";
 import { APP_OPENGRAPH_DESCRIPTION, APP_OPENGRAPH_TITLE, APP_OPENGRAPH_TYPE, APP_URL } from "@/core/constants/app";
 
 const openSans = Open_Sans({
@@ -28,7 +27,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`flex flex-col h-screen ${openSans.className}`}>
-        <NavBar />
         {children}
       </body>
     </html>
