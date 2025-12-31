@@ -25,6 +25,31 @@ export interface IUser {
   updatedAt?: Date;
 }
 
+
+export interface IProfile {
+  /** Unique identifier for the profile */
+  _id: Types.ObjectId;
+  name: string;
+  username: string;
+  bio?: string;
+  dob?: Date;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  isPublic?: boolean;
+  urlWebsite?: string;
+  urlLinkedIn?: string;
+  urlTwitter?: string;
+  urlGithub?: string;
+  urlInstagram?: string;
+  urlDribbble?: string;
+  /** When the user account was created */
+  createdAt?: string;
+  /** When the user account was last updated */
+  updatedAt?: string;
+}
+
 /**
  * Represents a community where users can interact and discuss topics
  */
@@ -154,7 +179,7 @@ export interface ITopic {
 export interface SearchResultResponse {
   users: {
     _id: string;
-    name: string;
+    username: string;
     email: string;
   }[];
   communities: {

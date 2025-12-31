@@ -65,7 +65,7 @@ export default function SearchPage() {
                     href={`/users/${user._id}`}
                     className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
-                    <div className="font-medium">{user.name}</div>
+                    <div className="font-medium">{user.username}</div>
                     <div className="text-sm text-gray-500">{user.email}</div>
                   </Link>
                 ))}

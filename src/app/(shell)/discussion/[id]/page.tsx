@@ -188,7 +188,7 @@ export default function DiscussionDetailPage() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-200 mb-1">
-                    <span className="font-medium">{r?.author?.name}</span>
+                    <span className="font-medium">{r?.author?.username}</span>
                     <span>•</span>
                     <span>{formatDate(r.createdAt.toString())}</span>
                     <span className="ml-2 inline-flex items-center rounded uppercase font-medium bg-slate-100 dark:bg-slate-700 px-2 py-0.5">

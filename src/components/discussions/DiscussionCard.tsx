@@ -25,7 +25,7 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
           className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
         >
           <UserIcon className="w-3 h-3" />
-          {item.author.name}
+          {item.author.username}
         </Link>
       </header>
       

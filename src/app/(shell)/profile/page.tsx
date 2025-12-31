@@ -1,22 +1,19 @@
 "use client"
-import { User, MapPin, Link2, Calendar } from "lucide-react";
+import { User, MapPin, Calendar } from "lucide-react";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SocialLinks from "@/components/profile/SocialLinks";
 import AchievementBadges from "@/components/profile/AchievementBadges";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
 import { useEffect } from "react";
+import { useUserStore } from "@/store/useUserStore";
 
 export default function ProfilePage() {
-  const user = {
-    name: "Kashyap Lucky",
-    bio: "Passionate developer and community builder. Love sharing knowledge and helping others grow in their tech journey.",
-    createdAt: new Date(),
-    
-  }
+  const { profile, getProfile } = useUserStore();
   const { discussionList, fetchDiscussionList } = useDiscussionStore();
   useEffect(() => {
     fetchDiscussionList();
+    getProfile();
   }, []);
 
   return ( 
@@ -63,7 +60,7 @@ export default function ProfilePage() {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-200">
-                  {user.name || 'Anonymous User'}
+                  {profile?.name || 'Anonymous User'}
                 </h1>
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-medium">
@@ -75,31 +72,27 @@ export default function ProfilePage() {
                   </span>
                 </div>
               </div>
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-3">@{user.name?.toLowerCase().replace(/\s+/g, '') || 'user'}</p>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-3">@{profile?.username}</p>
               
               {/* Bio and Location */}
               <div className="mb-4">
                 <p className="text-gray-700 dark:text-gray-300 mb-3">
-                  {user?.bio || 'Passionate developer and community builder. Love sharing knowledge and helping others grow in their tech journey.'}
+                  {profile?.bio}
                 </p>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <span className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
-                    San Francisco, CA
+                    {profile?.country} {profile?.city}
                   </span>
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    Joined {user.createdAt ? user.createdAt.toDateString() : 'N/A'}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Link2 className="h-4 w-4" />
-                    <a href="#" className="text-indigo-600 dark:text-indigo-400 hover:underline">kashyap.dev</a>
+                    Joined {profile?.createdAt ? profile.createdAt : 'N/A'}
                   </span>
                 </div>
               </div>
 
               {/* Social Links */}
-              <SocialLinks />
+              {profile && <SocialLinks profile={profile} />}
             </div>
             
             {/* Action Buttons */}

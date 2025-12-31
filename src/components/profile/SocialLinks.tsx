@@ -1,44 +1,38 @@
 "use client";
 
-import { Github, Twitter, Linkedin, Globe, Mail } from "lucide-react";
+import { Github, Twitter, Linkedin, Globe } from "lucide-react";
+import { IProfile } from "@/core/types/index.types";
 
-export default function SocialLinks() {
+export default function SocialLinks({ profile }: { profile: IProfile }) {
   const socialLinks = [
     {
       name: "GitHub",
       icon: Github,
-      url: "https://github.com/kashyapkrlucky",
+      url: profile.urlGithub,
       color: "gray",
-      username: "@kashyapkrlucky"
+      username: profile.urlGithub
     },
     {
       name: "Twitter", 
       icon: Twitter,
-      url: "https://twitter.com/kashyapkrlucky",
+      url: profile.urlTwitter,
       color: "blue",
-      username: "@kashyapkrlucky"
+      username: profile.urlTwitter
     },
     {
       name: "LinkedIn",
       icon: Linkedin,
-      url: "https://linkedin.com/in/kashyapkrlucky",
+      url: profile.urlLinkedIn,
       color: "blue",
-      username: "kashyap lucky"
+      username: profile.urlLinkedIn
     },
     {
       name: "Website",
       icon: Globe,
-      url: "https://kashyap.dev",
+      url: profile.urlWebsite,
       color: "indigo",
-      username: "kashyap.dev"
+      username: profile.urlWebsite
     },
-    {
-      name: "Email",
-      icon: Mail,
-      url: "mailto:kashyap@example.com",
-      color: "green",
-      username: "kashyap@example.com"
-    }
   ];
 
   return (

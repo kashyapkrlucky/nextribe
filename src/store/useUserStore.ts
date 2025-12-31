@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import axios, { AxiosError } from '@/lib/axios';
-import { IUser } from '@/core/types/index.types';
+import { create } from "zustand";
+import axios, { AxiosError } from "@/lib/axios";
+import { IUser, IProfile } from "@/core/types/index.types";
 
 interface UserState {
   user: IUser | null;
@@ -8,18 +8,23 @@ interface UserState {
   isLoading: boolean;
   error: string | null;
   passwordLinkSent: boolean;
-  login: (email: string, password: string) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
-  register: (userData: {  
-    username: string; 
-    email: string; 
-    password: string; 
-  }) => Promise<{ status: number; data?: { user: IUser, token: string } }>;
+  profile: IProfile | null;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ status: number; data?: { user: IUser; token: string } }>;
+  register: (userData: {
+    username: string;
+    email: string;
+    password: string;
+  }) => Promise<{ status: number; data?: { user: IUser; token: string } }>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   clearError: () => void;
   forgotPassword: (email: string) => Promise<void>;
   validateToken: (token: string) => Promise<boolean>;
   resetPassword: (token: string, password: string) => Promise<void>;
+  getProfile: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -28,21 +33,22 @@ export const useUserStore = create<UserState>((set) => ({
   isLoading: false,
   error: null,
   passwordLinkSent: false,
+  profile: null,
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.post('/auth/sign-in', { email, password });
-      set({ 
+      const { data } = await axios.post("/auth/sign-in", { email, password });
+      set({
         user: data.data.user,
         isAuthenticated: true,
-        isLoading: false 
+        isLoading: false,
       });
       return data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      set({ 
-        error: err.response?.data?.message || 'Login failed',
-        isLoading: false 
+      set({
+        error: err.response?.data?.message || "Login failed",
+        isLoading: false,
       });
       throw error;
     }
@@ -51,18 +57,18 @@ export const useUserStore = create<UserState>((set) => ({
   register: async (userData) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.post('/auth/sign-up', userData);
-      set({ 
+      const { data } = await axios.post("/auth/sign-up", userData);
+      set({
         user: data.data.user,
         isAuthenticated: true,
-        isLoading: false 
+        isLoading: false,
       });
       return data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      set({ 
-        error: err.response?.data?.message || 'Registration failed',
-        isLoading: false 
+      set({
+        error: err.response?.data?.message || "Registration failed",
+        isLoading: false,
       });
       throw error;
     }
@@ -70,18 +76,18 @@ export const useUserStore = create<UserState>((set) => ({
 
   logout: async () => {
     try {
-      await axios.post('/auth/logout');
-      set({ 
-        user: null, 
+      await axios.post("/auth/logout");
+      set({
+        user: null,
         isAuthenticated: false,
-        error: null 
+        error: null,
       });
     } catch (error) {
-      console.error('Logout error:', error);
-      set({ 
-        error: 'Failed to logout',
+      console.error("Logout error:", error);
+      set({
+        error: "Failed to logout",
         user: null,
-        isAuthenticated: false
+        isAuthenticated: false,
       });
     }
   },
@@ -89,24 +95,24 @@ export const useUserStore = create<UserState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true });
     try {
-      const { data } = await axios.get('/auth/me');
-      set({ 
+      const { data } = await axios.get("/auth/me");
+      set({
         user: data.data,
         isAuthenticated: true,
-        isLoading: false 
+        isLoading: false,
       });
     } catch (error) {
-      console.error('auth error:', error);
-      set({ 
+      console.error("auth error:", error);
+      set({
         user: null,
         isAuthenticated: false,
-        isLoading: false 
+        isLoading: false,
       });
     }
   },
 
   clearError: () => set({ error: null }),
-    forgotPassword: async (email: string) => {
+  forgotPassword: async (email: string) => {
     try {
       set({ isLoading: true, passwordLinkSent: false });
       await axios.post("/auth/forgot-password", { email });
@@ -130,6 +136,19 @@ export const useUserStore = create<UserState>((set) => ({
   resetPassword: async (token: string, password: string) => {
     try {
       await axios.post("/auth/reset-password", { token, password });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  getProfile: async () => {
+    try {
+      const {
+        data: { data },
+      } = await axios.get("/auth/profile");
+      console.log(data);
+      
+      set({ profile: data });
     } catch (error) {
       console.error(error);
       throw error;
