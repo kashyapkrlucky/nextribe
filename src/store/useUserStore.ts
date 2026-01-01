@@ -25,6 +25,7 @@ interface UserState {
   validateToken: (token: string) => Promise<boolean>;
   resetPassword: (token: string, password: string) => Promise<void>;
   getProfile: () => Promise<void>;
+  updateProfile: (profileData: Partial<IProfile>) => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -147,11 +148,24 @@ export const useUserStore = create<UserState>((set) => ({
         data: { data },
       } = await axios.get("/auth/profile");
       console.log(data);
-      
+
       set({ profile: data });
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  },
+  updateProfile: async (profile: Partial<IProfile>) => {
+    try {
+      set({ isLoading: true });
+      await axios.patch("/auth/profile/update", profile);
+      set((state) => ({ 
+        profile: state.profile ? { ...state.profile, ...profile } : null 
+      }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

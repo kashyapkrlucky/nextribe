@@ -7,6 +7,11 @@ const profileSchema = new Schema<ProfileModel>(
       type: String,
       unique: true,
     },
+    name: {
+      type: String,
+      maxlength: [100, "Location cannot exceed 100 characters"],
+      trim: true,
+    },
     bio: {
       type: String,
       maxlength: [500, "Bio cannot exceed 500 characters"],
@@ -14,11 +19,6 @@ const profileSchema = new Schema<ProfileModel>(
     },
     phone: {
       type: String,
-      trim: true,
-    },
-    address: {
-      type: String,
-      maxlength: [100, "Location cannot exceed 100 characters"],
       trim: true,
     },
     city: {

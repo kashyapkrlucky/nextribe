@@ -40,7 +40,7 @@ export default function SocialLinks({ profile }: { profile: IProfile }) {
       {socialLinks.map((link) => {
         const Icon = link.icon;
         return (
-          <a
+          link.url && <a
             key={link.name}
             href={link.url}
             target="_blank"

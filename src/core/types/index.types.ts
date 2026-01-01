@@ -34,7 +34,6 @@ export interface IProfile {
   bio?: string;
   dob?: Date;
   phone?: string;
-  address?: string;
   city?: string;
   country?: string;
   isPublic?: boolean;

@@ -33,10 +33,10 @@ export interface UserModel {
 
 export interface ProfileModel {
   username: string;
+  name?: string;
   bio?: string;
   dob?: Date;
   phone?: string;
-  address?: string;
   city?: string;
   country?: string;
   isPublic?: boolean;
