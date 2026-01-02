@@ -1,5 +1,5 @@
 "use client";
-import { User, MapPin, Calendar, ImageIcon, CameraIcon } from "lucide-react";
+import { User, MapPin, Calendar, ImageIcon, CameraIcon, UserIcon } from "lucide-react";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SocialLinks from "@/components/profile/SocialLinks";
@@ -9,15 +9,26 @@ import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { formatRelativeTime } from "@/core/utils/helpers";
 import EditProfileForm from "@/components/profile/EditProfileForm";
+import { useParams } from "next/navigation";
 
 export default function ProfilePage() {
-  const { profile, getProfile } = useUserStore();
+  const { profile, getProfile, error } = useUserStore();
+  const { username } = useParams();
   const { discussionList, fetchDiscussionList } = useDiscussionStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isOwner = JSON.parse(localStorage.getItem('user') || '{}').username === profile?.username;
+  
   useEffect(() => {
-    fetchDiscussionList();
-    getProfile();
-  }, []);
+    // fetchDiscussionList();
+    getProfile(username as string);
+  }, [username, getProfile]);
+
+  if (error) {
+    return <div className="max-w-7xl mx-auto h-screen flex flex-col items-center justify-center">
+      <UserIcon className="h-16 w-16 text-gray-900 dark:text-gray-200" />
+      <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">{error}</p>
+    </div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto h-screen w-full bg-white dark:bg-gray-800 overflow-y-auto">
@@ -29,11 +40,11 @@ export default function ProfilePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
           </div>
           {/* Cover Photo Actions */}
-          <div className="absolute top-4 right-4 flex gap-2">
+          {isOwner && <div className="absolute top-4 right-4 flex gap-2">
             <button className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors">
               <ImageIcon />
             </button>
-          </div>
+          </div>}
         </div>
 
         {/* Avatar Section */}
@@ -103,11 +114,11 @@ export default function ProfilePage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          {isOwner && <div className="flex gap-3">
             <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors" onClick={() => setIsModalOpen(true)}>
               Edit Profile
             </button>
-          </div>
+          </div>}
         </div>
 
         {/* Profile Stats */}

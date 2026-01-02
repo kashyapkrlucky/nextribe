@@ -24,7 +24,7 @@ interface UserState {
   forgotPassword: (email: string) => Promise<void>;
   validateToken: (token: string) => Promise<boolean>;
   resetPassword: (token: string, password: string) => Promise<void>;
-  getProfile: () => Promise<void>;
+  getProfile: (username: string) => Promise<void>;
   updateProfile: (profileData: Partial<IProfile>) => Promise<void>;
 }
 
@@ -36,8 +36,8 @@ export const useUserStore = create<UserState>((set) => ({
   passwordLinkSent: false,
   profile: null,
   login: async (email: string, password: string) => {
-    set({ isLoading: true, error: null });
     try {
+      set({ isLoading: true, error: null });
       const { data } = await axios.post("/auth/sign-in", { email, password });
       set({
         user: data.data.user,
@@ -52,12 +52,14 @@ export const useUserStore = create<UserState>((set) => ({
         isLoading: false,
       });
       throw error;
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   register: async (userData) => {
-    set({ isLoading: true, error: null });
     try {
+      set({ isLoading: true, error: null });
       const { data } = await axios.post("/auth/sign-up", userData);
       set({
         user: data.data.user,
@@ -72,6 +74,8 @@ export const useUserStore = create<UserState>((set) => ({
         isLoading: false,
       });
       throw error;
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -90,6 +94,8 @@ export const useUserStore = create<UserState>((set) => ({
         user: null,
         isAuthenticated: false,
       });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -109,6 +115,8 @@ export const useUserStore = create<UserState>((set) => ({
         isAuthenticated: false,
         isLoading: false,
       });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -142,25 +150,29 @@ export const useUserStore = create<UserState>((set) => ({
       throw error;
     }
   },
-  getProfile: async () => {
+  getProfile: async (username: string) => {
     try {
+      set({ isLoading: true, error: null });
       const {
         data: { data },
-      } = await axios.get("/auth/profile");
-      console.log(data);
-
+      } = await axios.get(`/auth/profile/${username}`);
       set({ profile: data });
     } catch (error) {
-      console.error(error);
-      throw error;
+      const err = error as AxiosError<{ error: string }>;
+      set({
+        error: err.response?.data?.error,
+        isLoading: false,
+      });
+    } finally {
+      set({ isLoading: false });
     }
   },
   updateProfile: async (profile: Partial<IProfile>) => {
     try {
       set({ isLoading: true });
       await axios.patch("/auth/profile/update", profile);
-      set((state) => ({ 
-        profile: state.profile ? { ...state.profile, ...profile } : null 
+      set((state) => ({
+        profile: state.profile ? { ...state.profile, ...profile } : null,
       }));
     } catch (error) {
       console.log(error);

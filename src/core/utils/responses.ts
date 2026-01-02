@@ -1,38 +1,31 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/core/utils/logger";
 
-export const SuccessResponse = <T>(data: T) => {
-    return NextResponse.json({
-        status: 200,
-        data,
-    });
-};
+export const SuccessResponse = <T>(data: T, message?: string) =>
+  NextResponse.json({ data, status: true, message }, { status: 200 });
 
-//list responses
-export const ListResponse = <T>(data: T[], totalPages: number) => {
-    return NextResponse.json({
-        status: 200,
-        data,
-        totalPages,
-    });
-};
+export const ListResponse = <T>(data: T[], totalPages: number) =>
+  NextResponse.json({ data, totalPages }, { status: 200 });
 
-export const ErrorResponse = (error: string) => {
-    return NextResponse.json({
-        status: 500,
-        error,
-    });
+export const BadRequestResponse = (error: string) => {
+  logger.error(error);
+
+  return NextResponse.json({ error }, { status: 400 });
 };
 
 export const NotFoundResponse = (error: string) => {
-    return NextResponse.json({
-        status: 404,
-        error,
-    });
+  logger.error(error);
+  return NextResponse.json({ error }, { status: 404 });
 };
 
-export const BadRequestResponse = (error: string) => {
-    return NextResponse.json({
-        status: 400,
-        error,
-    });
+export const ErrorResponse = (error: unknown) => {
+  const message =
+    error instanceof Error ? error.message : "An unknown error occurred";
+  logger.error(message);
+  return NextResponse.json({ error: message }, { status: 500 });
+};
+
+export const UnauthorizedResponse = (error: string) => {
+  logger.error(error);
+  return NextResponse.json({ error }, { status: 401 });
 };

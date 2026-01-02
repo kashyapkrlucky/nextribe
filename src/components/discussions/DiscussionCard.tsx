@@ -21,7 +21,7 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
           <span>{item.community.name}</span>
         </Link>
         <Link
-          href={`/users/${item.author._id}`}
+          href={`/profile/${item.author.username}`}
           className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
         >
           <UserIcon className="w-3 h-3" />
@@ -54,10 +54,13 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
         </div>
         
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+          <Link
+          href={`/discussion/${item.slug}`}
+          className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
+          >
             <MessageCircleIcon className="w-4 h-4" />
-            Reply
-          </button>
+            {item.replyCount} Reply
+          </Link>
         </div>
       </footer>
     </div>

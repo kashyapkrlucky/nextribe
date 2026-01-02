@@ -39,7 +39,7 @@ export async function GET() {
         const discussions = await Discussion.find()
             .populate({
                 path: 'author',
-                select: 'name email',
+                select: 'username email',
                 model: 'User' // Explicitly specify the model
             })
             .populate({

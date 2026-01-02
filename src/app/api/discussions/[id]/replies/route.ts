@@ -46,7 +46,7 @@ export async function GET(
     
     const replies = await Reply.find(query)
       .sort({ createdAt: -1 })
-      .populate("author", "name")
+      .populate("author", "username")
       .skip((page - 1) * limit)
       .limit(limit)
       .lean();

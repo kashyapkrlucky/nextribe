@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import InputWithIcon from "@/components/ui/InputWithIcon";
-import { UserIcon } from "lucide-react";
+import { MailIcon } from "lucide-react";
 import PasswordWithIcon from "@/components/ui/PasswordWithIcon";
 import { useUserStore } from "@/store/useUserStore";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,7 +25,7 @@ function SignIn() {
     try {
       setLoading(true);
       const result = await login(email, password);
-      if (result.status === 200 && result.data?.user && result.data?.token) {
+      if (result.status && result.data?.user && result.data?.token) {
       console.log("Login successful, redirecting...");
       authLogin(result.data.user, result.data.token);
       window.location.href = "/";
@@ -52,7 +52,7 @@ function SignIn() {
 
           <form onSubmit={onSubmit} className="space-y-4">
             <InputWithIcon
-              icon={<UserIcon className="h-5 w-5 text-gray-400" />}
+              icon={<MailIcon className="h-5 w-5 text-gray-400" />}
               label="Email"
               type="text"
               name="email"

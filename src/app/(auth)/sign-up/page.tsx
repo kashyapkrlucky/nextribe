@@ -5,6 +5,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useAuth } from "@/hooks/useAuth";
 import { CheckIcon, MailIcon, UserIcon, XIcon } from "lucide-react";
 import InputWithIcon from "@/components/ui/InputWithIcon";
+import PasswordWithIcon from "@/components/ui/PasswordWithIcon";
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -215,47 +216,32 @@ function SignUp() {
               </div>
             )}
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="email">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-              />
-            </div>
+            <InputWithIcon
+              icon={<MailIcon className="h-5 w-5 text-gray-400" />}
+              label="Email"
+              type="text"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={error}
+              placeholder="Enter your email"
+            />
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="password">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-              />
-            </div>
+            <PasswordWithIcon
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              error={error}
+            />
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="confirm">
-                Confirm password
-              </label>
-              <input
-                id="confirm"
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                placeholder="••••••••"
-                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-              />
-            </div>
+            <PasswordWithIcon
+              label="Confirm Password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              name="confirm"
+              error={error}
+            />
 
             <label className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-400">
               <input
@@ -264,14 +250,14 @@ function SignUp() {
                 onChange={(e) => setAgree(e.target.checked)}
                 className="h-4 w-4 rounded border border-gray-200 dark:border-gray-600"
               />
-              I agree to the{" "}
+              I agree to the
               <a
                 className="text-indigo-600 hover:underline dark:text-indigo-400"
                 href="#"
               >
                 Terms
-              </a>{" "}
-              and{" "}
+              </a>
+              and
               <a
                 className="text-indigo-600 hover:underline dark:text-indigo-400"
                 href="#"
