@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import Button from "@/components/ui/Button";
+import PageLink from "@/components/ui/PageLink";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -26,8 +27,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="flex-1 w-full flex items-center justify-center p-4">
-      <div className="w-full max-w-lg h-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <main className="flex-1 w-full flex flex-col gap-4 items-center justify-center p-4">
+      
         <div className="bg-white rounded-3xl shadow-2xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <Link
@@ -36,9 +37,7 @@ export default function ForgotPasswordPage() {
             >
               <Lock className="w-10 h-10 text-white" />
             </Link>
-            <h1 className="text-4xl font-bold ">
-              Password Recovery
-            </h1>
+            <h1 className="text-4xl font-bold ">Password Recovery</h1>
             <p className="text-gray-600 text-sm">
               No worries! We&apos;ll send you reset instructions
             </p>
@@ -57,7 +56,7 @@ export default function ForgotPasswordPage() {
                     onChange={handleChange}
                     error={error}
                     placeholder="john@gmail.com"
-                    />
+                  />
                 </div>
 
                 <Button
@@ -78,14 +77,8 @@ export default function ForgotPasswordPage() {
 
               <div className="mt-8 text-center">
                 <div className="flex items-center justify-center gap-2 text-gray-600">
-                  
                   <span className="text-sm">Remember your password? </span>
-                  <Link
-                    href="/login"
-                    className="text-purple-600 hover:text-purple-200 font-medium transition-colors duration-200 hover:underline"
-                  >
-                    Sign In
-                  </Link>
+                  <PageLink url="/login" text="Sign In" />
                 </div>
               </div>
             </>
@@ -94,11 +87,10 @@ export default function ForgotPasswordPage() {
               <div className="mx-auto w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center">
                 <CheckCircle className="w-10 h-10 text-white" />
               </div>
-              <h2 className="text-2xl font-bold">
-                Check Your Email
-              </h2>
+              <h2 className="text-2xl font-bold">Check Your Email</h2>
               <p className="text-gray-700 text-sm">
-                We&apos;ve sent password reset instructions to <span className="font-medium">{email}</span>
+                We&apos;ve sent password reset instructions to{" "}
+                <span className="font-medium">{email}</span>
               </p>
               <p className="text-gray-500 text-sm">
                 Didn&apos;t receive the email? Check your spam folder or{" "}
@@ -111,23 +103,17 @@ export default function ForgotPasswordPage() {
                   Try again
                 </button>
               </p>
-              
             </div>
           )}
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="text-center">
           <p className="text-gray-400 text-sm">
             Need help?{" "}
-            <Link
-              href="/support"
-              className="text-purple-300 hover:text-purple-200 transition-colors duration-200"
-            >
-              Contact Support
-            </Link>
+            <PageLink url="/support" text="Contact Support" />
           </p>
         </div>
-      </div>
+       
     </main>
   );
 }

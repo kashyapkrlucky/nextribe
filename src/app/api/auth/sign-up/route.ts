@@ -1,11 +1,9 @@
-import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { signToken, setAuthCookie } from "@/lib/auth";
-import { SuccessResponse } from "@/core/utils/responses";
+import { BadRequestResponse, ErrorResponse, SuccessResponse } from "@/core/utils/responses";
 import { SendEmail } from "@/core/mailer";
-import { SIGNUP_TEMPLATE } from "@/core/mailer/templates";
 import { Profile } from "@/models/Profile";
 
 export async function POST(req: Request) {
@@ -13,20 +11,14 @@ export async function POST(req: Request) {
     const { username, email, password } = await req.json();
 
     if (!username || !email || !password) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return BadRequestResponse("Missing required fields");
     }
 
     await connectToDatabase();
 
     const existing = await User.findOne({ email: email.toLowerCase() }).lean();
     if (existing) {
-      return NextResponse.json(
-        { error: "Email already in use" },
-        { status: 409 }
-      );
+      return BadRequestResponse("Email already in use");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -37,6 +29,7 @@ export async function POST(req: Request) {
     });
 
     const profile = await Profile.create({
+      user: user._id,
       username: username,
     });
 
@@ -55,10 +48,6 @@ export async function POST(req: Request) {
     setAuthCookie(res, token);
     return res;
   } catch (e) {
-    console.error(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return ErrorResponse(e as Error);
   }
 }

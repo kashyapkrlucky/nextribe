@@ -9,7 +9,6 @@ export const ListResponse = <T>(data: T[], totalPages: number) =>
 
 export const BadRequestResponse = (error: string) => {
   logger.error(error);
-
   return NextResponse.json({ error }, { status: 400 });
 };
 

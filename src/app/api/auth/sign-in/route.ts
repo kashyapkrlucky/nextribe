@@ -1,34 +1,24 @@
-import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { User } from "@/models/User";
 import { signToken, setAuthCookie } from "@/lib/auth";
-import { SuccessResponse } from "@/core/utils/responses";
+import { BadRequestResponse, ErrorResponse, SuccessResponse, UnauthorizedResponse } from "@/core/utils/responses";
 
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
     if (!email || !password) {
-      return NextResponse.json(
-        { error: "Missing credentials" },
-        { status: 400 }
-      );
+      return BadRequestResponse("Missing credentials");
     }
 
     await connectToDatabase();
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
+      return UnauthorizedResponse("Invalid email or password");
     }
 
     const ok = await user.comparePassword(password);
     if (!ok) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
+      return UnauthorizedResponse("Invalid email or password");
     }
 
     const token = await signToken({
@@ -42,10 +32,6 @@ export async function POST(req: Request) {
     setAuthCookie(res, token);
     return res;
   } catch (e) {
-    console.error(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return ErrorResponse(e as Error);
   }
 }

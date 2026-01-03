@@ -31,7 +31,7 @@ const NavBar = () => {
             className="font-bold text-xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
             href={"/"}
           >
-            <Image src="/logo.jpeg" alt="NexTribe" width={110} height={20} />
+            <Image src="/logo.png" alt="NexTribe" width={110} height={20} />
           </Link>
         </div>
 

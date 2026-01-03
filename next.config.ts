@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  env: {
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+  },
+  images: {
+    domains: ['kgxaxhatvyhzxbenimqw.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'kgxaxhatvyhzxbenimqw.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

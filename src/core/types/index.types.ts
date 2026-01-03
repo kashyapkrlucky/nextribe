@@ -23,12 +23,14 @@ export interface IUser {
   createdAt?: Date;
   /** When the user account was last updated */
   updatedAt?: Date;
+  avatar?: string;
 }
 
 
 export interface IProfile {
   /** Unique identifier for the profile */
   _id: Types.ObjectId;
+  user: IUser;
   name: string;
   username: string;
   bio?: string;

@@ -32,6 +32,7 @@ export interface UserModel {
 }
 
 export interface ProfileModel {
+  user: Types.ObjectId;
   username: string;
   name?: string;
   bio?: string;

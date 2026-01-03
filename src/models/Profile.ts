@@ -3,6 +3,11 @@ import { ProfileModel } from "@/core/types/database.types";
 
 const profileSchema = new Schema<ProfileModel>(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     username: {
       type: String,
       unique: true,

@@ -26,6 +26,7 @@ interface UserState {
   resetPassword: (token: string, password: string) => Promise<void>;
   getProfile: (username: string) => Promise<void>;
   updateProfile: (profileData: Partial<IProfile>) => Promise<void>;
+  updateAvatar: (avatar: string) => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -173,6 +174,19 @@ export const useUserStore = create<UserState>((set) => ({
       await axios.patch("/auth/profile/update", profile);
       set((state) => ({
         profile: state.profile ? { ...state.profile, ...profile } : null,
+      }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateAvatar: async (avatar: string) => {
+    try {
+      set({ isLoading: true });
+      await axios.patch("/auth/user/update", { avatar });
+      set((state) => ({
+        profile: state.profile ? { ...state.profile, user: { ...state.profile.user, avatar } } : null,
       }));
     } catch (error) {
       console.log(error);
