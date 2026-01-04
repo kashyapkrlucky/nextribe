@@ -25,7 +25,7 @@ export default function HomeLayout({
   return (
     <Suspense fallback={<Spinner />}>
       <NavBar />
-      <main className="flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto py-4">
+      <main className="flex-1 flex flex-col lg:flex-row gap-6 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
         {children}
       </main>
     </Suspense>

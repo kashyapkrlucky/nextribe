@@ -1,10 +1,17 @@
 "use client";
 
-import { Github, Twitter, Linkedin, Globe } from "lucide-react";
+import { Github, Twitter, Linkedin, Globe, DribbbleIcon, InstagramIcon } from "lucide-react";
 import { IProfile } from "@/core/types/index.types";
 
 export default function SocialLinks({ profile }: { profile: IProfile }) {
   const socialLinks = [
+    {
+      name: "Website",
+      icon: Globe,
+      url: profile.urlWebsite,
+      color: "indigo",
+      username: profile.urlWebsite
+    },
     {
       name: "GitHub",
       icon: Github,
@@ -27,11 +34,18 @@ export default function SocialLinks({ profile }: { profile: IProfile }) {
       username: profile.urlLinkedIn
     },
     {
-      name: "Website",
-      icon: Globe,
-      url: profile.urlWebsite,
+      name: "Dribbble",
+      icon: DribbbleIcon,
+      url: profile.urlDribbble,
       color: "indigo",
-      username: profile.urlWebsite
+      username: profile.urlDribbble
+    },
+    {
+      name: "Instagram",
+      icon: InstagramIcon,
+      url: profile.urlInstagram,
+      color: "indigo",
+      username: profile.urlInstagram
     },
   ];
 
@@ -45,12 +59,10 @@ export default function SocialLinks({ profile }: { profile: IProfile }) {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
+            title={link.name}
             className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors group"
           >
             <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200" />
-            <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">
-              {link.username}
-            </span>
           </a>
         );
       })}
