@@ -1,99 +1,35 @@
 "use client";
-import {
-  User,
-  MapPin,
-  Calendar,
-  ImageIcon,
-  CameraIcon,
-  UserIcon,
-} from "lucide-react";
+import { User, MapPin, Calendar, ImageIcon, UserIcon } from "lucide-react";
 import ProfileTabs from "@/components/profile/ProfileTabs";
-import ProfileStats from "@/components/profile/ProfileStats";
 import SocialLinks from "@/components/profile/SocialLinks";
-import AchievementBadges from "@/components/profile/AchievementBadges";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { formatRelativeTime } from "@/core/utils/helpers";
 import EditProfileForm from "@/components/profile/EditProfileForm";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { v4 as uuidv4 } from "uuid";
-import { getSupabaseClient } from "@/core/config/supabase";
+import PageLoader from "@/components/ui/PageLoader";
+import ImageUploader from "@/components/profile/ImageUploader";
 
 export default function ProfilePage() {
-  const { profile, getProfile, error, updateAvatar } = useUserStore();
+  const { isLoading, profile, getProfile, error, updateAvatar, updateCover } =
+    useUserStore();
   const { username } = useParams();
-  const { discussionList, fetchDiscussionList } = useDiscussionStore();
+  const {
+    isLoading: discussionsLoading,
+    userDiscussions,
+    fetchDiscussionByUser,
+  } = useDiscussionStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isOwner =
     JSON.parse(localStorage.getItem("user") || "{}").username ===
     profile?.username;
-  const [userImage, setUserImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // const [userImageUrl, setUserImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // fetchDiscussionList();
     getProfile(username as string);
-  }, [username, getProfile]);
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUserImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const onUpload = async () => {
-    if (userImage) {
-      const fileExt = userImage.name.split(".").pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `/${profile?.username}/${fileName}`;
-
-      try {
-        const supabase = getSupabaseClient();
-        const { error: uploadError } = await supabase.storage
-          .from("nextribe")
-          .upload(filePath, userImage);
-
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-          throw uploadError;
-        }
-
-        console.log("✅ Upload successful");
-
-        // Get public URL
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("nextribe").getPublicUrl(filePath);
-
-        // setUserImageUrl(publicUrl);
-        updateAvatar(publicUrl);
-        setImagePreview(null);
-      } catch (error) {
-        console.error("❌ Upload failed:", error);
-        // You might want to show user-friendly error message here
-      }
-    }
-  };
-
-  const onRemove = () => {
-    setUserImage(null);
-    setImagePreview(null);
-    // setUserImageUrl(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+    fetchDiscussionByUser(username as string);
+  }, [username, getProfile, fetchDiscussionByUser]);
 
   if (error) {
     return (
@@ -106,25 +42,44 @@ export default function ProfilePage() {
     );
   }
 
+  if (isLoading || discussionsLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto h-screen w-full bg-white dark:bg-gray-800 overflow-y-auto">
       {/* Enhanced Profile Header with Cover */}
       <div className="relative">
-        {/* Cover Photo */}
-        <div className="h-48 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative rounded-t-lg">
-          <div className="absolute inset-0 bg-black/20">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-          </div>
-          {/* Cover Photo Actions */}
-          {isOwner && (
-            <div className="absolute top-4 right-4 flex gap-2">
-              <button className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors">
-                <ImageIcon />
-              </button>
-            </div>
-          )}
-        </div>
+        <div className="relative">
+          {/* Cover Photo */}
+          <div className="h-96 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative rounded-t-lg overflow-hidden">
+            {profile?.cover ? (
+              <Image
+                src={profile?.cover}
+                alt="Cover"
+                width={908}
+                height={400}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-black/20">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+              </div>
+            )}
 
+            {/* Cover Photo Actions */}
+            {isOwner && profile?.username && (
+              <div className="absolute bottom-4 right-4 flex gap-2 bg-white/20 rounded-lg text-white transition-colors">
+                <ImageUploader
+                  icon={<ImageIcon className="absolute top-3 left-3 cursor-pointer" />}
+                  username={profile?.username}
+                  type="cover"
+                  afterUpload={updateCover}
+                />
+              </div>
+            )}
+          </div>
+        </div>
         {/* Avatar Section */}
         <div className="absolute -bottom-16 left-6">
           <div className="relative">
@@ -143,17 +98,14 @@ export default function ProfilePage() {
             {/* Online Status Indicator */}
             {/* <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 border-2 border-white rounded-full"></div> */}
             {/* Avatar Actions */}
-            {isOwner && (
-              <button className="absolute bottom-0 right-0 p-1 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 transition-colors shadow-lg">
-                <CameraIcon className="absolute top-2 left-2" />
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="w-8 h-8 opacity-0"
+            {isOwner && profile?.username && (
+              <div className="absolute bottom-0 right-0 flex gap-2 bg-indigo-600 rounded-full text-white transition-colors">
+                <ImageUploader
+                  username={profile?.username}
+                  type="avatar"
+                  afterUpload={updateAvatar}
                 />
-              </button>
+              </div>
             )}
           </div>
         </div>
@@ -223,42 +175,16 @@ export default function ProfilePage() {
         </div>
 
         {/* Profile Stats */}
-        <ProfileStats discussions={discussionList} />
+        {/* <ProfileStats discussions={discussionList} /> */}
 
         {/* Achievement Badges */}
-        <AchievementBadges />
+        {/* <AchievementBadges /> */}
 
         {/* Tabs for Posts and Activity */}
-        <ProfileTabs discussions={discussionList} />
+        <ProfileTabs discussions={userDiscussions} />
 
         {/* Edit Profile Modal */}
         {isModalOpen && <EditProfileForm setIsModalOpen={setIsModalOpen} />}
-        {imagePreview && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white p-4 rounded-md w-md flex flex-col items-center gap-4">
-              <Image
-                src={imagePreview}
-                alt="Profile"
-                width={128}
-                height={128}
-              />
-              <div className="flex gap-2">
-                <button
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-                  onClick={onUpload}
-                >
-                  Upload
-                </button>
-                <button
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-                  onClick={onRemove}
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

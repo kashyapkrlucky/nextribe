@@ -7,10 +7,12 @@ interface DiscussionState {
   discussionList: IDiscussion[];
   isLoading: boolean;
   error: string | null;
+  userDiscussions: IDiscussion[];
   fetchDiscussion: (id: string) => Promise<void>;
   fetchDiscussionBySlug: (slug: string) => Promise<void>;
   fetchDiscussionList: () => Promise<void>;
   fetchDiscussionsByCommunity: (communityId: string) => Promise<void>;
+  fetchDiscussionByUser: (username: string) => Promise<void>;
   addDiscussion: (
     discussion: Omit<IDiscussion, "_id" | "createdAt" | "updatedAt">
   ) => Promise<void>;
@@ -26,7 +28,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   discussionList: [],
   isLoading: false,
   error: null,
-
+  userDiscussions: [],
   fetchDiscussionList: async () => {
     try {
       set({ isLoading: true, error: null });
@@ -75,8 +77,10 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   fetchDiscussionsByCommunity: async (communityId: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/communities/${communityId}/discussions`);
-      
+      const { data } = await axios.get(
+        `/communities/${communityId}/discussions`
+      );
+
       set({
         discussionList: data.discussions,
       });
@@ -85,6 +89,21 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       throw new Error(
         err.response?.data?.message || "Failed to get discussions"
       );
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  fetchDiscussionByUser: async (username: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await axios.get(`/discussions/user/${username}`);
+      set({ userDiscussions: data.data || [], isLoading: false });
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      set({
+        error: err.response?.data?.message || "Failed to fetch discussions",
+        isLoading: false,
+      });
     } finally {
       set({ isLoading: false });
     }

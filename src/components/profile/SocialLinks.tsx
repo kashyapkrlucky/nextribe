@@ -40,7 +40,7 @@ export default function SocialLinks({ profile }: { profile: IProfile }) {
       {socialLinks.map((link) => {
         const Icon = link.icon;
         return (
-          link.url && <a
+          link.url?.match(/^https?:\/\//) && <a
             key={link.name}
             href={link.url}
             target="_blank"

@@ -39,6 +39,7 @@ export interface IProfile {
   city?: string;
   country?: string;
   isPublic?: boolean;
+  cover?: string;
   urlWebsite?: string;
   urlLinkedIn?: string;
   urlTwitter?: string;
@@ -182,6 +183,7 @@ export interface SearchResultResponse {
     _id: string;
     username: string;
     email: string;
+    avatar: string;
   }[];
   communities: {
     _id: string;

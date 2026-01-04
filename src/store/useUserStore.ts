@@ -27,6 +27,7 @@ interface UserState {
   getProfile: (username: string) => Promise<void>;
   updateProfile: (profileData: Partial<IProfile>) => Promise<void>;
   updateAvatar: (avatar: string) => Promise<void>;
+  updateCover: (cover: string) => Promise<void>;    
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -187,6 +188,19 @@ export const useUserStore = create<UserState>((set) => ({
       await axios.patch("/auth/user/update", { avatar });
       set((state) => ({
         profile: state.profile ? { ...state.profile, user: { ...state.profile.user, avatar } } : null,
+      }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateCover: async (cover: string) => {
+    try {
+      set({ isLoading: true });
+      await axios.patch("/auth/profile/update", { cover });
+      set((state) => ({
+        profile: state.profile ? { ...state.profile, cover } : null,
       }));
     } catch (error) {
       console.log(error);

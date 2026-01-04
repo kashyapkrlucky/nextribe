@@ -41,7 +41,7 @@ export async function GET(request: Request) {
           { email: { $regex: searchRegex } }
         ]
       })
-      .select('name email')
+      .select('username email avatar')
       .limit(5)
       .lean(),
 

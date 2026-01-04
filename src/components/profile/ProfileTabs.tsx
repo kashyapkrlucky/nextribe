@@ -68,10 +68,10 @@ export default function ProfileTabs({ discussions }: ProfileTabsProps) {
         >
           <div className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            Posts ({discussions.length})
+            Discussions ({discussions.length})
           </div>
         </button>
-        <button
+        {/* <button
           onClick={() => setActiveTab("activity")}
           className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
             activeTab === "activity"
@@ -83,7 +83,7 @@ export default function ProfileTabs({ discussions }: ProfileTabsProps) {
             <Clock className="h-4 w-4" />
             Activity
           </div>
-        </button>
+        </button> */}
       </div>
 
       {/* Tab Content */}

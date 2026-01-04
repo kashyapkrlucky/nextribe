@@ -41,6 +41,7 @@ export interface ProfileModel {
   city?: string;
   country?: string;
   isPublic?: boolean;
+  cover?: string;
   urlWebsite?: string;
   urlLinkedIn?: string;
   urlTwitter?: string;

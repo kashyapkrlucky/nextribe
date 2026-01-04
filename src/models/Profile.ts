@@ -12,6 +12,9 @@ const profileSchema = new Schema<ProfileModel>(
       type: String,
       unique: true,
     },
+    cover: {
+      type: String,
+    },
     name: {
       type: String,
       maxlength: [100, "Location cannot exceed 100 characters"],
