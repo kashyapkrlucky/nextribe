@@ -21,6 +21,10 @@ export interface IUser {
   bio?: string;
   /** User's avatar image URL */
   avatar?: string;
+  /** When the reply was created */
+  createdAt: string;
+  /** When the reply was last updated */
+  updatedAt: string;
 }
 
 
@@ -43,6 +47,11 @@ export interface IProfile {
   urlGithub?: string;
   urlInstagram?: string;
   urlDribbble?: string;
+
+  /** When the reply was created */
+  createdAt: string;
+  /** When the reply was last updated */
+  updatedAt: string;
 }
 
 /**
@@ -71,6 +80,10 @@ export interface ICommunity {
   memberRole?: string;
   /** Community guidelines */
   guidelines?: string[];
+  /** When the reply was created */
+  createdAt: string;
+  /** When the reply was last updated */
+  updatedAt: string;
 }
 
 /**
