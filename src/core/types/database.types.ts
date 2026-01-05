@@ -74,6 +74,7 @@ export interface CommunityModel {
   updatedAt?: Date;
   /** Number of members in the community */
   memberCount?: number;
+  guidelines?: string[];
 }
 
 /**
@@ -86,10 +87,8 @@ export interface MemberModel {
   user: Types.ObjectId; // ref: User
   /** The user's role within the community */
   role: MemberRole;
-  /** When the user joined the community */
-  createdAt?: Date;
-  /** When the membership was last updated */
-  updatedAt?: Date;
+  /** Status of the membership */
+  status: 'invited' | 'pending' | 'active' | 'left' | 'suspended';
 }
 
 /**

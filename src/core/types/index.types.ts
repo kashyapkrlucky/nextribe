@@ -76,6 +76,12 @@ export interface ICommunity {
   updatedAt?: Date;
   /** Number of members in the community */
   memberCount?: number;
+  /** Whether the current user is a member of this community */
+  isMember?: boolean;
+  /** The role of the current user in this community (if member) */
+  memberRole?: string;
+  /** Community guidelines */
+  guidelines?: string[];
 }
 
 /**
@@ -88,6 +94,8 @@ export interface IMember {
   user: Types.ObjectId; // ref: User
   /** The user's role within the community */
   role: MemberRole;
+  /** Status of the membership */
+  status: 'invited' | 'pending' | 'active' | 'left' | 'suspended';
   /** When the user joined the community */
   createdAt?: Date;
   /** When the membership was last updated */

@@ -19,6 +19,7 @@ export default function CreateCommunityForm({
     description: "",
     isPrivate: false,
     topicIds: [] as string[],
+    guidelines: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,6 +40,7 @@ export default function CreateCommunityForm({
           description: form.description.trim() || undefined,
           isPrivate: !!form.isPrivate,
           topicIds: form.topicIds,
+          guidelines: form.guidelines.split(',').map(g => g.trim()).filter(g => g.length > 0),
         }),
       });
       if (res.status === 401) {
@@ -56,6 +58,7 @@ export default function CreateCommunityForm({
         description: "",
         isPrivate: false,
         topicIds: [],
+        guidelines: ""
       });
       setShowCreate(false);
       window.location.href = `/community/${json.community.slug}`;
@@ -143,6 +146,22 @@ export default function CreateCommunityForm({
               placeholder="Describe the community"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Guidelines
+            </label>
+            <textarea
+              value={form.guidelines}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, guidelines: e.target.value }))
+              }
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+              rows={3}
+              placeholder="Enter community guidelines (comma separated)"
+            />
+          </div>
+
           <label className="inline-flex items-center gap-2 text-sm">
             <input
               type="checkbox"

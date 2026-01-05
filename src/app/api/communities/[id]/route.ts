@@ -3,32 +3,14 @@ import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 import { Topic } from "@/models/Topic";
 import mongoose from "mongoose";
-import { jwtVerify } from "jose";
+// import { jwtVerify } from "jose";
+import { getUserIdFromCookie } from "@/lib/auth";
+import { Member } from "@/models/Member";
+import { BadRequestResponse, ErrorResponse, SuccessResponse } from "@/core/utils/responses";
 
 // Ensure Topic model is registered
 if (!mongoose.models.Topic) {
   mongoose.model("Topic", Topic.schema);
-}
-
-async function getUserIdFromCookie(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split(";")
-      .map((c) => c.trim())
-      .find((c) => c.startsWith("token="))
-      ?.split("=")[1];
-    if (!token) return null;
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return null;
-    const key = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, key);
-    const sub = payload.sub;
-    if (typeof sub !== "string") return null;
-    return sub;
-  } catch {
-    return null;
-  }
 }
 
 export async function GET(
@@ -36,34 +18,40 @@ export async function GET(
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = 'then' in context.params 
-      ? await context.params 
-      : context.params;
-      
+    const params =
+      "then" in context.params ? await context.params : context.params;
+
     const id = params.id.trim();
-    
+
+    // Find user ID from cookie
+    const userId = await getUserIdFromCookie();
+    if (!userId)
+      return ErrorResponse("Unauthorized");
+
+    // Connect to database
     await connectToDatabase();
-    
-    // First try to find by ID if it looks like an ObjectId
-    let community = await Community.findById(id).lean();
-    
-    // If not found by ID, try by slug
+    // Find community by slug
+    const community = await Community.findOne({
+      slug: id.toLowerCase(),
+    }).populate("topics", "slug name").lean();
+
     if (!community) {
-      community = await Community.findOne({ slug: id.toLowerCase() }).lean();
+      return BadRequestResponse("Community not found");
     }
-    
-    if (!community) {
-      return NextResponse.json({ error: "Community not found" }, { status: 404 });
-    }
-    
-    
-    return NextResponse.json({ community });
+
+    const member = await Member.findOne({
+      user: userId,
+      community: community._id,
+    }).lean();
+
+    return SuccessResponse({
+      ...community,
+      memberRole: member?.role || null,
+      isMember: member?.status === 'active',
+    });
   } catch (error) {
-    console.error('Error in GET /api/communities/[id]:', error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error("Error in GET /api/communities/[id]:", error);
+    return ErrorResponse("Internal Server Error");
   }
 }
 
@@ -72,12 +60,11 @@ export async function PATCH(
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = 'then' in context.params 
-      ? await context.params 
-      : context.params;
+    const params =
+      "then" in context.params ? await context.params : context.params;
     const id = params.id.trim();
 
-    const userId = await getUserIdFromCookie(req);
+    const userId = await getUserIdFromCookie();
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -87,10 +74,10 @@ export async function PATCH(
     await connectToDatabase();
     const community = await Community.findById(id);
     if (!community)
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return ErrorResponse("Not found");
 
     if (String(community.owner) !== String(userId)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return ErrorResponse("Forbidden");
     }
 
     const body = await req.json();
@@ -106,12 +93,9 @@ export async function PATCH(
 
     await Community.updateOne({ _id: id }, { $set: updates });
     const updated = await Community.findById(id).lean();
-    return NextResponse.json({ community: updated });
+    return SuccessResponse({ community: updated });
   } catch (e) {
     console.error(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return ErrorResponse("Internal Server Error");
   }
 }

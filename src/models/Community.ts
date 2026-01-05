@@ -42,6 +42,10 @@ const CommunitySchema = new Schema<ICommunity>(
       ref: "Topic", 
       index: true 
     }],
+    guidelines: [{
+      type: [String],
+      default: ["Be respectful and inclusive", "Follow community rules", "No spam or advertising"]
+    }]
   },
   { 
     timestamps: true,

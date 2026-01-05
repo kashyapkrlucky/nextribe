@@ -1,11 +1,12 @@
 import mongoose, { Schema, models, Model } from "mongoose";
-import { IMember } from "@/core/types/index.types";
+import { MemberModel } from "@/core/types/database.types";
 
-const MemberSchema = new Schema<IMember>(
+const MemberSchema = new Schema<MemberModel>(
   {
     community: { type: Schema.Types.ObjectId, ref: "Community", required: true, index: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     role: { type: String, enum: ["owner", "admin", "member"], default: "member", index: true },
+    status: { type: String, enum: ["invited", "pending", "active", "left", "suspended"], default: "active", index: true },
   },
   { timestamps: true }
 );
@@ -15,5 +16,5 @@ MemberSchema.index({ community: 1, user: 1 }, { unique: true });
 // Helpful secondary index for listing members by community by recency
 MemberSchema.index({ community: 1, createdAt: -1 });
 
-export const Member: Model<IMember> =
-  models.Member || mongoose.model<IMember>("Member", MemberSchema);
+export const Member: Model<MemberModel> =
+  models.Member || mongoose.model<MemberModel>("Member", MemberSchema);
