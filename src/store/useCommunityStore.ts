@@ -11,6 +11,9 @@ interface CommunityState {
   totalPages: number;
   fetchCommunities: (params?: string) => Promise<void>;
   fetchCommunity: (id: string) => Promise<void>;
+  createCommunity: (
+    payload: Omit<ICommunity, "_id" | "createdAt" | "updatedAt" | "members">
+  ) => Promise<{slug: string}>;
   fetchCommunityByID: (id: string) => Promise<void>;
   fetchCommunityBySlug: (name: string) => Promise<void>;
   onCommunityJoin: (communityId: string) => void;
@@ -58,6 +61,22 @@ export const useCommunityStore = create<CommunityState>((set) => ({
       set({ isLoading: false });
     }
   },
+  createCommunity: async (
+    payload: Omit<ICommunity, "_id" | "createdAt" | "updatedAt" | "members">
+  ) => {
+    try {
+      set({ isLoading: true, error: null });
+      const {
+        data: { data },
+      } = await axios.post(`/api/communities`, payload);
+      return data;
+    } catch (e) {
+      console.log(e);
+      
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   onCommunityJoin: async (communityId: string) => {
     try {
       set({ isLoading: true, error: null });
@@ -69,6 +88,8 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     } catch (e) {
       console.error(e);
       alert("Failed to join community");
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -85,7 +106,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
               community: {
                 ...state.community,
                 isMember: true,
-                memberRole: 'member'
+                memberRole: "member",
               },
             }
           : state

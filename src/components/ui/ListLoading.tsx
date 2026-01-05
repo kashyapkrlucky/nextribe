@@ -1,4 +1,4 @@
-import { Spinner } from "./Spinner";
+import InlineLoader from "./InlineLoader";
 import { Types } from "mongoose";
 
 interface ListLoadingProps<T> {
@@ -13,17 +13,17 @@ export default function ListLoading<T extends { _id: Types.ObjectId }>({
   items = [],
 }: ListLoadingProps<T>) {
   if (isLoading) {
-    return <Spinner />;
+    return <InlineLoader/>;
   }
 
   if (!items.length) {
-    return <p className="px-2 py-2 text-xs text-gray-500">Nothing yet.</p>;
+    return <div className="px-2 py-4 text-xs text-gray-500 text-center">Nothing yet.</div>;
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col divide-y divide-gray-100">
       {items.map((item) => (
-        <div key={item._id.toString()}>
+        <div key={item._id.toString()} className="py-2 first:pt-0 last:pb-0">
           {children(item)}
         </div>
       ))}

@@ -73,22 +73,26 @@ export default function CommunityPage() {
   return (
     <section className="max-w-7xl mx-auto flex flex-row flex-1 gap-4 py-4">
       <div className="w-3/4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-        <DiscussionFilters
-          query={query}
-          onQuery={onQuery}
-          sort={sort}
-          onSortChange={onSortChange}
-        />
+        {discussionList.length > 0 && (
+          <DiscussionFilters
+            query={query}
+            onQuery={onQuery}
+            sort={sort}
+            onSortChange={onSortChange}
+          />
+        )}
         <ListLoading isLoading={discussionsLoading} items={discussionList}>
           {(item) => <DiscussionCardMini item={item} />}
         </ListLoading>
 
         {/* Pagination */}
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </div>
 
       <div className="w-1/4">

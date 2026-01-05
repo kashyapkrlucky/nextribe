@@ -43,7 +43,7 @@ export default function CommunityListPage() {
   }, [query, sort, page, fetchCommunities]);
 
   return (
-    <div className="max-w-7xl mx-auto w-full flex flex-row gap-4">
+    <div className="max-w-7xl mx-auto w-full flex flex-row gap-4 py-6">
       <section className="flex flex-col flex-1 gap-6">
         <CommunityFilters
           sort={sort}

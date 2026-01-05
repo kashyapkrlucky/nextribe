@@ -4,6 +4,7 @@ import { Community } from "@/models/Community";
 import { Member } from "@/models/Member";
 import { jwtVerify } from "jose";
 import mongoose from "mongoose";
+import { ErrorResponse, SuccessResponse } from "@/core/utils/responses";
 
 function slugify(input: string) {
   return input
@@ -18,15 +19,24 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const q = (url.searchParams.get("q") || "").trim().toLowerCase();
-    const page = Math.max(parseInt(url.searchParams.get("page") || "1", 10) || 1, 1);
-    const pageSize = Math.min(Math.max(parseInt(url.searchParams.get("pageSize") || "10", 10) || 10, 1), 50);
+    const page = Math.max(
+      parseInt(url.searchParams.get("page") || "1", 10) || 1,
+      1
+    );
+    const pageSize = Math.min(
+      Math.max(parseInt(url.searchParams.get("pageSize") || "10", 10) || 10, 1),
+      50
+    );
     const sort = url.searchParams.get("sort") === "popular" ? "popular" : "new";
 
     await connectToDatabase();
 
     const match: Record<string, any> = {};
     if (q) {
-      match.name = { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
+      match.name = {
+        $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        $options: "i",
+      };
     }
 
     const pipeline: any[] = [
@@ -49,7 +59,10 @@ export async function GET(req: Request) {
       pipeline.push({ $sort: { createdAt: -1 } });
     }
 
-    const totalCursor = await Community.aggregate([{ $match: match }, { $count: "count" }]);
+    const totalCursor = await Community.aggregate([
+      { $match: match },
+      { $count: "count" },
+    ]);
     const total = totalCursor[0]?.count || 0;
 
     pipeline.push({ $skip: (page - 1) * pageSize }, { $limit: pageSize });
@@ -65,7 +78,10 @@ export async function GET(req: Request) {
     });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -93,7 +109,8 @@ async function getUserIdFromCookie(request: Request): Promise<string | null> {
 export async function POST(req: Request) {
   try {
     const userId = await getUserIdFromCookie(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
     const name: string | undefined = body?.name;
@@ -101,6 +118,7 @@ export async function POST(req: Request) {
     const description: string | undefined = body?.description;
     const isPrivate: boolean | undefined = body?.isPrivate;
     const topicIds: string[] | undefined = body?.topicIds;
+    const guidelines: string[] | undefined = body?.guidelines;
 
     if (!name || name.trim().length === 0) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -108,11 +126,18 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    const slug = (providedSlug && providedSlug.trim().length > 0 ? providedSlug : slugify(name)).toLowerCase();
+    const slug = (
+      providedSlug && providedSlug.trim().length > 0
+        ? providedSlug
+        : slugify(name)
+    ).toLowerCase();
 
     const existing = await Community.findOne({ slug }).lean();
     if (existing) {
-      return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Slug already in use" },
+        { status: 409 }
+      );
     }
 
     const community = await Community.create({
@@ -121,7 +146,8 @@ export async function POST(req: Request) {
       description: description || undefined,
       owner: new mongoose.Types.ObjectId(userId),
       isPrivate: Boolean(isPrivate),
-      topics: topicIds?.map(id => new mongoose.Types.ObjectId(id)) || [],
+      topics: topicIds?.map((id) => new mongoose.Types.ObjectId(id)) || [],
+      guidelines: guidelines?.length ? guidelines : undefined,
     });
 
     await Member.updateOne(
@@ -130,9 +156,8 @@ export async function POST(req: Request) {
       { upsert: true }
     );
 
-    return NextResponse.json({ community });
+    return SuccessResponse({ slug: community.slug });
   } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return ErrorResponse(e as Error);
   }
 }

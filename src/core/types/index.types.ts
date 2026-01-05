@@ -19,10 +19,7 @@ export interface IUser {
   password?: string;
   /** Short biography or description */
   bio?: string;
-  /** When the user account was created */
-  createdAt?: Date;
-  /** When the user account was last updated */
-  updatedAt?: Date;
+  /** User's avatar image URL */
   avatar?: string;
 }
 
@@ -46,10 +43,6 @@ export interface IProfile {
   urlGithub?: string;
   urlInstagram?: string;
   urlDribbble?: string;
-  /** When the user account was created */
-  createdAt?: string;
-  /** When the user account was last updated */
-  updatedAt?: string;
 }
 
 /**
@@ -65,15 +58,11 @@ export interface ICommunity {
   /** Detailed description of the community */
   description?: string;
   /** Reference to the user who owns the community */
-  owner: Types.ObjectId; // ref: User
+  owner?: IUser; // ref: User
   /** Whether the community is private (requires approval to join) */
   isPrivate?: boolean;
   /** List of topics associated with this community */
-  topics?: Types.ObjectId[]; // ref: Topic[]
-  /** When the community was created */
-  createdAt?: Date;
-  /** When the community was last updated */
-  updatedAt?: Date;
+  topics?: Partial<ITopic>[]; // ref: Topic[]
   /** Number of members in the community */
   memberCount?: number;
   /** Whether the current user is a member of this community */

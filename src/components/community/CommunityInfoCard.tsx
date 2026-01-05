@@ -15,11 +15,11 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
 
   return (
     <>
-      <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xs border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
         {/* Header with decorative gradient */}
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 bg-white">
           {/* Community Header */}
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
@@ -47,7 +47,7 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
                 <div className="flex flex-wrap gap-2">
                   {community.topics.map((topic) => (
                     <span
-                      key={topic._id.toString()}
+                      key={topic?._id?.toString()}
                       className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-700 rounded-full text-xs font-medium text-indigo-700 dark:text-indigo-300 transition-all duration-200 hover:from-indigo-100 hover:to-purple-100 dark:hover:from-indigo-900/30 dark:hover:to-purple-900/30"
                     >
                       {(topic as { name?: string })?.name || "Unnamed Topic"}
@@ -106,19 +106,17 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
                   </h3>
                 </div>
 
-                <div className="bg-amber-50 dark:bg-amber-900/10 rounded-xl p-4 border border-amber-200 dark:border-amber-800/30">
-                  <ul className="space-y-2">
-                    {community.guidelines.map((guideline, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
-                      >
-                        <div className="h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-amber-400 mt-2 flex-shrink-0"></div>
-                        <span>{guideline}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ul className="space-y-2">
+                  {community.guidelines.map((guideline, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
+                    >
+                      <div className="h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-amber-400 mt-2 flex-shrink-0"></div>
+                      <span>{guideline}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           )}

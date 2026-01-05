@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useTopicStore } from "@/store/useTopicStore";
+import { useCommunityStore } from "@/store/useCommunityStore";
 
 interface CreateCommunityFormProps {
   setShowCreate: (show: boolean) => void;
@@ -10,7 +11,6 @@ interface CreateCommunityFormProps {
 export default function CreateCommunityForm({
   setShowCreate,
 }: CreateCommunityFormProps) {
-  const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const { topics, fetchTopics } = useTopicStore();
   const [form, setForm] = useState({
@@ -19,8 +19,10 @@ export default function CreateCommunityForm({
     description: "",
     isPrivate: false,
     topicIds: [] as string[],
-    guidelines: ""
+    guidelines: "",
   });
+
+  const { isLoading, createCommunity } = useCommunityStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,27 +32,18 @@ export default function CreateCommunityForm({
       return;
     }
     try {
-      setCreateLoading(true);
-      const res = await fetch("/api/communities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          slug: form.slug.trim() || undefined,
-          description: form.description.trim() || undefined,
-          isPrivate: !!form.isPrivate,
-          topicIds: form.topicIds,
-          guidelines: form.guidelines.split(',').map(g => g.trim()).filter(g => g.length > 0),
-        }),
+      const data = await createCommunity({
+        name: form.name,
+        slug: form.slug.trim(),
+        description: form.description.trim() || undefined,
+        isPrivate: !!form.isPrivate,
+        topics: form.topicIds.map((id) => ({ _id: id })),
+        guidelines: form.guidelines
+          .split(",")
+          .map((g) => g.trim())
+          .filter((g) => g),
       });
-      if (res.status === 401) {
-        window.location.href = "/sign-in";
-        return;
-      }
-      const json = await res.json();
-      
-      if (!res.ok) throw new Error(json?.error || "Failed to create");
-      // success
+      console.log("Created community:", data);
       setShowCreate(false);
       setForm({
         name: "",
@@ -58,15 +51,15 @@ export default function CreateCommunityForm({
         description: "",
         isPrivate: false,
         topicIds: [],
-        guidelines: ""
+        guidelines: "",
       });
-      setShowCreate(false);
-      window.location.href = `/community/${json.community.slug}`;
+
+      window.location.href = `/community/${data.slug}`;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to create";
+      console.error("Error creating community:", err);
+      const msg =
+        err instanceof Error ? err.message : "Failed to create community";
       setCreateError(msg);
-    } finally {
-      setCreateLoading(false);
     }
   };
 
@@ -148,9 +141,7 @@ export default function CreateCommunityForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Guidelines
-            </label>
+            <label className="block text-sm font-medium mb-1">Guidelines</label>
             <textarea
               value={form.guidelines}
               onChange={(e) =>
@@ -178,16 +169,16 @@ export default function CreateCommunityForm({
               type="button"
               onClick={() => setShowCreate(false)}
               className="px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg"
-              disabled={createLoading}
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={createLoading}
+              disabled={isLoading}
               className="px-3 py-2 text-sm bg-indigo-600 text-white dark:bg-indigo-500 rounded-lg disabled:opacity-60"
             >
-              {createLoading ? "Creating..." : "Create"}
+              {isLoading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>

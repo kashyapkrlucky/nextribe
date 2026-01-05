@@ -60,11 +60,14 @@ const NavBar = () => {
                   e.preventDefault();
                   setShowCreate(true);
                 }}
-                className="inline-flex items-center gap-3 rounded-xl px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-200 group"
+                className="inline-flex items-center gap-1 rounded-xl px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-200 group"
               >
                 <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
                 Create Community
               </Button>
+              <Link href="/explore" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
+                Explore
+              </Link>
               <UserMenu />
             </>
           ) : (

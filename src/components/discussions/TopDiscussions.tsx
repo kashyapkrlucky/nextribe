@@ -36,14 +36,14 @@ export function TopDiscussions() {
       ) : (
         <ul className="space-y-3">
           {list?.map((d: IDiscussion) => (
-            <li key={d._id.toString()} className="group">
+            <li key={d._id.toString()} className="group flex items-center justify-between gap-2">
               <Link 
-                href={`/discussion/${d._id}`} 
+                href={`/discussion/${d.slug}`} 
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 line-clamp-2"
               >
                 {d.title}
               </Link>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 {d.replyCount ?? 0} replies
               </div>
             </li>
