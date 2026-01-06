@@ -125,6 +125,17 @@ export interface DiscussionModel {
   updatedAt?: Date;
   /** Number of replies to the discussion */
   replyCount?: number;
+  /** Number of up votes */
+  upVoteCount?: number;
+  /** Number of down votes */
+  downVoteCount?: number;
+}
+
+export interface DiscussionVoteModel {
+  _id: Types.ObjectId;
+  user: Types.ObjectId; // ref: User
+  discussion: Types.ObjectId; // ref: Discussion
+  vote: "up" | "down";
 }
 
 /**
@@ -157,6 +168,13 @@ export interface ReplyModel {
   createdAt: Date;
   /** When the reply was last updated */
   updatedAt: Date;
+}
+
+export interface ReplyVoteModel {
+  _id: Types.ObjectId;
+  user: Types.ObjectId; // ref: User
+  reply: Types.ObjectId; // ref: Reply
+  vote: "up" | "down";
 }
 
 /**

@@ -21,6 +21,7 @@ interface DiscussionState {
     updates: Partial<IDiscussion>
   ) => Promise<void>;
   deleteDiscussion: (id: string) => Promise<void>;
+  voteDiscussion: (id: string, vote: "up" | "down") => Promise<void>;
 }
 
 export const useDiscussionStore = create<DiscussionState>((set) => ({
@@ -162,6 +163,33 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       );
     } finally {
       set({ isLoading: false });
+    }
+  },
+  voteDiscussion: async (id, vote) => {
+    try {
+      await axios.post(`/discussions/${id}/vote`, { vote });
+      set((state) => ({
+        discussionList: state.discussionList.map((discussion) =>
+          discussion._id.toString() === id
+            ? {
+                ...discussion,
+                upVoteCount:
+                  vote === "up"
+                    ? (discussion.upVoteCount || 0) + 1
+                    : discussion.upVoteCount,
+                downVoteCount:
+                  vote === "down"
+                    ? (discussion.downVoteCount || 0) + 1
+                    : discussion.downVoteCount,
+              }
+            : discussion
+        ),
+      }));
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      throw new Error(
+        err.response?.data?.message || "Failed to vote discussion"
+      );
     }
   },
 }));

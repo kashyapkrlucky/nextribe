@@ -1,5 +1,6 @@
 import { IDiscussion } from "@/core/types/index.types";
 import { formatRelativeTime } from "@/core/utils/helpers";
+import { useDiscussionStore } from "@/store/useDiscussionStore";
 import {
   ArrowBigDownIcon,
   ArrowBigUpIcon,
@@ -11,6 +12,7 @@ import {
 import Link from "next/link";
 
 export default function DiscussionCard({ item }: { item: IDiscussion }) {
+  const { voteDiscussion } = useDiscussionStore();
   return (
     <article className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl transition-all duration-200 overflow-hidden group">
       <header className="flex flex-row justify-between items-center p-4 pb-2">
@@ -53,16 +55,16 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
 
       <footer className="flex flex-row items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-1">
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group">
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item._id.toString(), "up")}>
             <ArrowBigUpIcon className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              0
+              {item.upVoteCount || 0}
             </span>
           </button>
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group">
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item._id.toString(), "down")}>
             <ArrowBigDownIcon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              0
+              {item.downVoteCount || 0}
             </span>
           </button>
         </div>

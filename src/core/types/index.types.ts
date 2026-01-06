@@ -132,6 +132,10 @@ export interface IDiscussion {
   updatedAt?: string;
   /** Number of replies to the discussion */
   replyCount?: number;
+  /** Number of upvotes */
+  upVoteCount?: number;
+  /** Number of downvotes */
+  downVoteCount?: number;
 }
 
 /**
