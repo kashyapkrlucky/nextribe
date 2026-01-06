@@ -1,6 +1,6 @@
 'use client'
 import { ICommunity } from "@/core/types/index.types";
-import { TrendingUpIcon } from "lucide-react";
+import { CircleUserRoundIcon, Users2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -24,8 +24,8 @@ export function PopularCommunities() {
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
       <h3 className="text-sm font-bold mb-4 inline-flex items-center gap-2 text-gray-900 dark:text-gray-100">
-        <div className="w-5 h-5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
-          <TrendingUpIcon className="w-3 h-3 text-white" />
+        <div className="w-5 h-5 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+          <Users2Icon className="w-3 h-3 text-white" />
         </div>
         Popular Communities
       </h3>
@@ -33,7 +33,7 @@ export function PopularCommunities() {
         <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">No communities found</p>
       ) : (
         <ul className="space-y-3">
-          {list?.map((c, index) => (
+          {list?.map((c) => (
             <li
               key={c._id.toString()}
               className="flex items-center justify-between group"
@@ -47,8 +47,9 @@ export function PopularCommunities() {
                   {c.name}
                 </Link>
               </div>
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
-                  {c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"}
+              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span>{c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"} </span>
+                  <CircleUserRoundIcon className="w-3 h-3" />
                 </div>
             </li>
           ))}

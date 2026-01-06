@@ -49,7 +49,7 @@ export default function ProfilePage() {
   return (
     <div className="w-full h-full relative overflow-y-auto scroll-smooth">
       {/* Cover Photo */}
-      <div className="fixed top-16 z-0 w-full h-full overflow-hidden">
+      <div className="fixed top-16 z-0 w-full h-full overflow-y-auto">
         {profile?.cover ? (
           <Image
             src={profile?.cover}
@@ -60,7 +60,7 @@ export default function ProfilePage() {
           />
         ) : (
           <div className="absolute inset-0 bg-black/20">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t bg-purple-300 from-black/30 to-transparent"></div>
           </div>
         )}
 
@@ -80,45 +80,44 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto w-full bg-white dark:bg-gray-800 overflow-y-auto relative z-10 rounded-t-lg top-20">
-        {/* Enhanced Profile Header with Cover */}
-        <div className="relative">
-          {/* Avatar Section */}
-          <div className="relative w-32 p-4">
-            <div className="h-32 w-32 rounded-full border-4 border-white bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center shadow-xl">
-              {profile?.user?.avatar ? (
-                <Image
-                  src={profile?.user?.avatar}
-                  alt="Profile"
-                  width={128}
-                  height={128}
-                />
-              ) : (
-                <User className="h-16 w-16 text-white" />
-              )}
-            </div>
-            {/* Online Status Indicator */}
-            {/* <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 border-2 border-white rounded-full"></div> */}
-            {/* Avatar Actions */}
-            {isOwner && profile?.username && (
-              <div className="absolute bottom-0 right-0 flex gap-2 bg-indigo-600 rounded-full text-white transition-colors">
-                <ImageUploader
-                  username={profile?.username}
-                  type="avatar"
-                  afterUpload={updateAvatar}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Enhanced Profile Content */}
         <div className="pt-10 px-6 pb-6">
           {/* Profile Header Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 mb-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 mb-6 border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
-              <div className="flex-1">
+              {/* Enhanced Profile Header with Cover */}
+
+              {/* Avatar Section */}
+              <div className="relative w-32">
+                <div className="h-32 w-32 rounded-full border-4 border-white bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center shadow-sm">
+                  {profile?.user?.avatar ? (
+                    <Image
+                      src={profile?.user?.avatar}
+                      alt="Profile"
+                      width={128}
+                      height={128}
+                    />
+                  ) : (
+                    <User className="h-16 w-16 text-white" />
+                  )}
+                </div>
+                {/* Online Status Indicator */}
+                {/* <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 border-2 border-white rounded-full"></div> */}
+                {/* Avatar Actions */}
+                {isOwner && profile?.username && (
+                  <div className="absolute bottom-0 right-0 flex gap-2 bg-indigo-600 rounded-full text-white transition-colors">
+                    <ImageUploader
+                      username={profile?.username}
+                      type="avatar"
+                      afterUpload={updateAvatar}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 flex flex-col gap-4">
                 {/* Name and Badges */}
-                <div className="flex items-center flex-wrap gap-3 mb-4">
+                <div className="flex items-center flex-wrap gap-3">
                   <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
                     {profile?.name || "Anonymous User"}
                   </h1>
@@ -134,21 +133,9 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Username */}
-                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-lg text-gray-600 dark:text-gray-400">
                   @{profile?.username}
                 </p>
-
-                {/* Bio Section */}
-                <div className="mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                      About
-                    </h3>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                      {profile?.bio || "No bio provided yet"}
-                    </p>
-                  </div>
-                </div>
 
                 {/* Location and Join Date */}
                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
@@ -169,6 +156,18 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
+
+                {/* Bio Section */}
+                <div className="mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                      About
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {profile?.bio || "No bio provided yet"}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -188,7 +187,7 @@ export default function ProfilePage() {
           {/* Social Links Section */}
           {profile && (
             <div className="mb-6">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                   Connect
                 </h3>

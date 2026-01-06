@@ -50,6 +50,12 @@ export interface ProfileModel {
   urlDribbble?: string;
 }
 
+export interface ActivityModel {
+  user: Types.ObjectId;
+  type: string;
+  payload: object;
+}
+
 /**
  * Represents a community where users can interact and discuss topics
  */
