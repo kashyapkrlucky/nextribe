@@ -6,6 +6,8 @@ import { useDiscussionStore } from "@/store/useDiscussionStore";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import NavBar from "@/components/layout/NavBar";
+import Link from "next/link";
+import { CircleDotIcon, CircleSmallIcon } from "lucide-react";
 
 export default function Home() {
   const feedTypes = ["top", "recent"];
@@ -16,8 +18,8 @@ export default function Home() {
     useDiscussionStore();
 
   useEffect(() => {
-    fetchDiscussionList(page, pageSize);
-  }, [fetchDiscussionList, page, pageSize]);
+    fetchDiscussionList(page, pageSize, feedType);
+  }, [page, pageSize, feedType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -48,9 +50,17 @@ export default function Home() {
             </ListLoading>
           </div>
 
-          <aside className="lg:w-1/4 gap-6 hidden lg:flex flex-col">
+          <aside className="lg:w-1/4 gap-4 hidden lg:flex flex-col pl-4 border-l border-gray-200 dark:border-gray-700">
             <PopularCommunities />
             <TopDiscussions />
+            <footer className="flex flex-wrap gap-1 px-2 text-xs text-gray-400">
+              <Link href="/about">About</Link>
+              <span>•</span>
+              <Link href="/support">Support</Link>
+              <span>•</span>
+              <Link href="/terms">Terms</Link>
+              <p>Nextribes 2025, All rights reserved</p>
+            </footer>
           </aside>
         </div>
       </main>

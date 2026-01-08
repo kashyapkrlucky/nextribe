@@ -9,9 +9,14 @@ interface DiscussionState {
   isLoading: boolean;
   error: string | null;
   userDiscussions: IDiscussion[];
+  topDiscussions: IDiscussion[];
   fetchDiscussion: (id: string) => Promise<void>;
   fetchDiscussionBySlug: (slug: string) => Promise<void>;
-  fetchDiscussionList: (page: number, pageSize: number) => Promise<void>;
+  fetchDiscussionList: (
+    page: number,
+    pageSize: number,
+    feedType: string
+  ) => Promise<void>;
   fetchDiscussionsByCommunity: (communityId: string) => Promise<void>;
   fetchDiscussionByUser: (username: string) => Promise<void>;
   addDiscussion: (
@@ -23,6 +28,7 @@ interface DiscussionState {
   ) => Promise<void>;
   deleteDiscussion: (id: string) => Promise<void>;
   voteDiscussion: (id: string, vote: "up" | "down") => Promise<void>;
+  getTopDiscussions: () => Promise<void>;
 }
 
 export const useDiscussionStore = create<DiscussionState>((set) => ({
@@ -32,11 +38,24 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   isLoading: false,
   error: null,
   userDiscussions: [],
-  fetchDiscussionList: async (page: number = 1, pageSize: number = 20) => {
+  topDiscussions: [],
+  fetchDiscussionList: async (
+    page: number = 1,
+    pageSize: number = 20,
+    feedType: string = "recent"
+  ) => {
     try {
       set({ isLoading: true, error: null });
-      const { data: {data} } = await axios.get(`/discussions?page=${page}&pageSize=${pageSize}`);
-      set({ discussionList: data.discussions || [], totalPages: data.totalPages || 0, isLoading: false });
+      const {
+        data: { data },
+      } = await axios.get(
+        `/v2/discussions?page=${page}&pageSize=${pageSize}&feedType=${feedType}`
+      );
+      set({
+        discussionList: data.discussions || [],
+        totalPages: data.totalPages || 0,
+        isLoading: false,
+      });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       set({
@@ -65,7 +84,9 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   fetchDiscussionBySlug: async (slug: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/discussions/slug/${slug}`);
+      const {
+        data: { data },
+      } = await axios.get(`/v2/discussions/${slug}`);
       set({ discussion: data || [], isLoading: false });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -83,7 +104,6 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       const { data } = await axios.get(
         `/communities/${communityId}/discussions`
       );
-
       set({
         discussionList: data.discussions,
       });
@@ -114,7 +134,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   addDiscussion: async (discussion) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.post("/discussions", discussion);
+      const { data } = await axios.post("/v2/discussions", discussion);
       set((state) => ({
         discussionList: [data.data, ...state.discussionList],
       }));
@@ -127,11 +147,10 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       set({ isLoading: false });
     }
   },
-
   updateDiscussion: async (id, updates) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.patch(`/discussions/${id}`, updates);
+      const { data } = await axios.patch(`/v2/discussions/${id}`, updates);
       set((state) => ({
         discussionList: state.discussionList.map((discussion) =>
           discussion._id.toString() === id
@@ -148,11 +167,10 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       set({ isLoading: false });
     }
   },
-
   deleteDiscussion: async (id) => {
     try {
       set({ isLoading: true, error: null });
-      await axios.delete(`/discussions/${id}`);
+      await axios.delete(`/v2/discussions/${id}`);
       set((state) => ({
         discussionList: state.discussionList.filter(
           (discussion) => discussion._id.toString() !== id
@@ -167,24 +185,15 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       set({ isLoading: false });
     }
   },
-  voteDiscussion: async (id, vote) => {
+  voteDiscussion: async (slug, vote) => {
     try {
-      await axios.post(`/discussions/${id}/vote`, { vote });
+      const {
+        data: { data },
+      } = await axios.post(`/v2/discussions/${slug}/vote`, { vote });
       set((state) => ({
+        // find discussion by slug and update it
         discussionList: state.discussionList.map((discussion) =>
-          discussion._id.toString() === id
-            ? {
-                ...discussion,
-                upVoteCount:
-                  vote === "up"
-                    ? (discussion.upVoteCount || 0) + 1
-                    : discussion.upVoteCount,
-                downVoteCount:
-                  vote === "down"
-                    ? (discussion.downVoteCount || 0) + 1
-                    : discussion.downVoteCount,
-              }
-            : discussion
+          discussion.slug === slug ? data : discussion
         ),
       }));
     } catch (error) {
@@ -192,6 +201,20 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       throw new Error(
         err.response?.data?.message || "Failed to vote discussion"
       );
+    }
+  },
+  getTopDiscussions: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const { data } = await axios.get("/discussions/top");
+      set({ topDiscussions: data.data || [] });
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      throw new Error(
+        err.response?.data?.message || "Failed to fetch top discussions"
+      );
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

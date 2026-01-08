@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCommunityStore } from "@/store/useCommunityStore";
 import ListLoading from "@/components/ui/ListLoading";
 import Pagination from "@/components/ui/Pagination";
@@ -7,25 +7,16 @@ import CommunityFilters from "@/components/community/CommunityFilters";
 import CommunityCardMini from "@/components/community/CommunityCardMini";
 import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
+import PageLoader from "@/components/ui/PageLoader";
 
 export default function CommunityListPage() {
-  const [query, setQuery] = useState("");
-  const [topic, setTopic] = useState<string | "all">("all");
   const [sort, setSort] = useState<"popular" | "new">("popular");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const hasFetchedRef = useRef<{sort?: string; page?: number}>({});
 
   const { isLoading, communities, totalPages, fetchCommunities } =
     useCommunityStore();
-
-  const onQuery = (query: string) => {
-    setQuery(query);
-    setPage(1);
-  };
-  const onTopicChange = (newTopic: string) => {
-    setTopic(newTopic);
-    setPage(1);
-  };
 
   const onSortChange = (newSort: "popular" | "new") => {
     setSort(newSort);
@@ -33,26 +24,26 @@ export default function CommunityListPage() {
   };
 
   useEffect(() => {
-    const params = new URLSearchParams({
-      q: query,
-      sort,
-      page: String(page),
-      pageSize: String(pageSize),
-    });
-    fetchCommunities(params.toString());
-  }, [query, sort, page, fetchCommunities]);
+    // Only fetch if sort or page has changed since last fetch
+    if (hasFetchedRef.current.sort !== sort || hasFetchedRef.current.page !== page) {
+      hasFetchedRef.current = { sort, page };
+      const params = new URLSearchParams({
+        sort,
+        page: String(page),
+        pageSize: String(pageSize),
+      });
+      fetchCommunities(params.toString());
+    }
+  }, [sort, page]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (isLoading) {
+    return <PageLoader/>
+  }
 
   return (
     <div className="max-w-7xl mx-auto w-full flex flex-row gap-4 py-6">
       <section className="flex flex-col flex-1 gap-6">
-        <CommunityFilters
-          sort={sort}
-          query={query}
-          topic={topic}
-          onQuery={onQuery}
-          onTopicChange={onTopicChange}
-          onSortChange={onSortChange}
-        />
+        <CommunityFilters sort={sort} onSortChange={onSortChange} />
 
         <div className="bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-xl">
           <ListLoading isLoading={isLoading} items={communities}>
@@ -72,7 +63,7 @@ export default function CommunityListPage() {
           />
         </div>
       </section>
-      
+
       <aside className="lg:w-1/4 gap-6 hidden lg:flex flex-col">
         <PopularCommunities />
         <TopDiscussions />

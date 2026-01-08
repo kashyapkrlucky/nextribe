@@ -1,25 +1,20 @@
-'use client'
-import { ICommunity } from "@/core/types/index.types";
-import { CircleUserRoundIcon, Users2Icon } from "lucide-react";
+"use client";
+import { useCommunityStore } from "@/store/useCommunityStore";
+import { Users2Icon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import ListLoading from "../ui/ListLoading";
 
 export function PopularCommunities() {
-  const [list, setList] = useState<ICommunity[]>([]);
+  const { topCommunities, getTopCommunities } = useCommunityStore();
 
   useEffect(() => {
-   const fetchCommunities = async () => {
-      try {
-        const response = await fetch("/api/communities/top");
-        const { data } = await response.json();
-        setList(data || []);
-      } catch (error) {
-        console.error("Error fetching top communities:", error);
-        setList([]);
-      }
-   };
-   fetchCommunities();
-  }, []);
+    if (!topCommunities || topCommunities.length === 0) {
+      getTopCommunities();
+    }
+  }, [getTopCommunities, topCommunities]);
+
+  const isLoading = !topCommunities || topCommunities.length === 0;
 
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
@@ -29,32 +24,31 @@ export function PopularCommunities() {
         </div>
         Popular Communities
       </h3>
-      {list.length === 0 ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">No communities found</p>
-      ) : (
-        <ul className="space-y-3">
-          {list?.map((c) => (
-            <li
-              key={c._id.toString()}
-              className="flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-3 flex-1">
-                
-                <Link
-                  href={`/community/${c.slug}`}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 truncate"
-                >
-                  {c.name}
-                </Link>
-              </div>
-              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                  <span>{c?.memberCount ? c.memberCount.toLocaleString("en-US") : "0"} </span>
-                  <CircleUserRoundIcon className="w-3 h-3" />
-                </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ListLoading items={topCommunities} isLoading={isLoading}>
+        {(item) => (
+          <div
+            key={item._id.toString()}
+            className="flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-3 flex-1">
+              <Link
+                href={`/community/${item.slug}`}
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 truncate"
+              >
+                {item.name}
+              </Link>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+              <Users2Icon className="w-3 h-3" />
+              <span>
+                {item?.memberCount
+                  ? item.memberCount.toLocaleString("en-US")
+                  : "0"}{" "}
+              </span>
+            </div>
+          </div>
+        )}
+      </ListLoading>
     </div>
   );
 }

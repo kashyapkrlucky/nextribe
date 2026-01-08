@@ -9,11 +9,15 @@ interface CommunityState {
   error: string | null;
   currentPage: number;
   totalPages: number;
+  topCommunities: ICommunity[];
   fetchCommunities: (params?: string) => Promise<void>;
   fetchCommunity: (id: string) => Promise<void>;
   createCommunity: (
-    payload: Omit<ICommunity, "_id" | "createdAt" | "updatedAt" | "members">
-  ) => Promise<{slug: string}>;
+    payload: Omit<
+      ICommunity,
+      "_id" | "createdAt" | "updatedAt" | "members" | "slug"
+    >
+  ) => Promise<{ slug: string }>;
   fetchCommunityByID: (id: string) => Promise<void>;
   fetchCommunityBySlug: (name: string) => Promise<void>;
   onCommunityJoin: (communityId: string) => void;
@@ -21,6 +25,7 @@ interface CommunityState {
     communityId: string,
     status: "active" | "left"
   ) => Promise<void>;
+  getTopCommunities: () => Promise<void>;
 }
 
 export const useCommunityStore = create<CommunityState>((set) => ({
@@ -30,10 +35,11 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   error: null,
   currentPage: 1,
   totalPages: 1,
+  topCommunities: [],
   fetchCommunities: async (params = "") => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/api/communities?${params}`);
+      const { data: {data} } = await axios.get(`/api/communities?${params}`);
       set({
         communities: data.communities || [],
         totalPages: data.totalPages || 1,
@@ -62,7 +68,10 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     }
   },
   createCommunity: async (
-    payload: Omit<ICommunity, "_id" | "createdAt" | "updatedAt" | "members">
+    payload: Omit<
+      ICommunity,
+      "_id" | "createdAt" | "updatedAt" | "members" | "slug"
+    >
   ) => {
     try {
       set({ isLoading: true, error: null });
@@ -72,7 +81,6 @@ export const useCommunityStore = create<CommunityState>((set) => ({
       return data;
     } catch (e) {
       console.log(e);
-      
     } finally {
       set({ isLoading: false });
     }
@@ -141,6 +149,23 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch community";
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getTopCommunities: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const {
+        data: { data },
+      } = await axios.get(`/api/communities/top`);
+      set({
+        topCommunities: data || [],
+      });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch communities";
       set({ error: errorMessage });
     } finally {
       set({ isLoading: false });

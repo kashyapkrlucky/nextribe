@@ -21,9 +21,9 @@ export default function ListLoading<T extends { _id: Types.ObjectId }>({
   }
 
   return (
-    <div className="flex flex-col divide-y divide-gray-100">
+    <div className="flex flex-col">
       {items.map((item) => (
-        <div key={item._id.toString()} className="py-2 first:pt-0 last:pb-0">
+        <div key={item._id.toString()} className="py-1 first:pt-0 last:pb-0">
           {children(item)}
         </div>
       ))}

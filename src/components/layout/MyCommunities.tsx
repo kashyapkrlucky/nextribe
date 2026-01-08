@@ -1,17 +1,25 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { MessagesSquareIcon } from "lucide-react";
 import { ICommunity } from "@/core/types/index.types";
 
 const MyCommunities: React.FC = () => {
   const [communities, setCommunities] = useState<Partial<ICommunity>[]>([]);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    
     const fetchCommunities = async () => {
-      const response = await fetch("/api/user/communities");
-      const data = await response.json();
-      setCommunities(data ?? []);
+      try {
+        hasFetched.current = true;
+        const response = await fetch("/api/user/communities");
+        const data = await response.json();
+        setCommunities(data ?? []);
+      } catch (error) {
+        console.error("Failed to fetch communities:", error);
+      }
     };
     fetchCommunities();
   }, []);

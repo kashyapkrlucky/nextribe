@@ -30,7 +30,7 @@ export const useReplyStore = create<ReplyStore>((set) => ({
     try {
       set({ loading: true, error: null });
       const { data } = await axios.get(
-        `/discussions/${discussionId}/replies?limit=${limit}&page=${page}`
+        `/v2/discussions/${discussionId}/replies?limit=${limit}&page=${page}`
       );
       set((state) => ({
         replies: page === 1 ? data.data : [...state.replies, ...data.data],
@@ -49,7 +49,7 @@ export const useReplyStore = create<ReplyStore>((set) => ({
   submitReply: async (discussionId: string, body: string, tag: string) => {
     try {
       set({ loading: true, error: null });
-      await axios.post(`/discussions/${discussionId}/replies`, { body, tag });
+      await axios.post(`/v2/discussions/${discussionId}/replies`, { body, tag });
     } catch (error) {
       logger.error("Failed to submit reply", error);
       throw error;

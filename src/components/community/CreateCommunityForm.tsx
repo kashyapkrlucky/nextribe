@@ -15,7 +15,6 @@ export default function CreateCommunityForm({
   const { topics, fetchTopics } = useTopicStore();
   const [form, setForm] = useState({
     name: "",
-    slug: "",
     description: "",
     isPrivate: false,
     topicIds: [] as string[],
@@ -34,7 +33,6 @@ export default function CreateCommunityForm({
     try {
       const data = await createCommunity({
         name: form.name,
-        slug: form.slug.trim(),
         description: form.description.trim() || undefined,
         isPrivate: !!form.isPrivate,
         topics: form.topicIds.map((id) => ({ _id: id })),
@@ -47,7 +45,6 @@ export default function CreateCommunityForm({
       setShowCreate(false);
       setForm({
         name: "",
-        slug: "",
         description: "",
         isPrivate: false,
         topicIds: [],
@@ -90,13 +87,16 @@ export default function CreateCommunityForm({
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Slug (optional)
+              Description
             </label>
-            <input
-              value={form.slug}
-              onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+            <textarea
+              value={form.description}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
               className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-              placeholder="e.g., nextjs-builders"
+              rows={3}
+              placeholder="Describe the community"
             />
           </div>
           <div>
@@ -125,20 +125,7 @@ export default function CreateCommunityForm({
             </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
-            <textarea
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-              rows={3}
-              placeholder="Describe the community"
-            />
-          </div>
+          
 
           <div>
             <label className="block text-sm font-medium mb-1">Guidelines</label>

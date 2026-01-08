@@ -4,8 +4,8 @@ import { logger } from "@/core/utils/logger";
 export const SuccessResponse = <T>(data: T, message?: string) =>
   NextResponse.json({ data, status: true, message }, { status: 200 });
 
-export const ListResponse = <T>(data: T[], totalPages: number) =>
-  NextResponse.json({ data, totalPages }, { status: 200 });
+export const ListResponse = <T>(data: T[], totalPages: number, message?: string) =>
+  NextResponse.json({ data, totalPages, message }, { status: 200 });
 
 export const BadRequestResponse = (error: string) => {
   logger.error(error);
@@ -21,7 +21,7 @@ export const ErrorResponse = (error: unknown) => {
   const message =
     error instanceof Error ? error.message : "An unknown error occurred";
   logger.error(message);
-  return NextResponse.json({ error: message }, { status: 500 });
+  return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
 };
 
 export const UnauthorizedResponse = (error: string) => {

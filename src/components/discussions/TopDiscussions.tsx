@@ -1,25 +1,20 @@
 "use client";
-import { IDiscussion } from "@/core/types/index.types";
 import { MessageCircleIcon, MessageSquareTextIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDiscussionStore } from "@/store/useDiscussionStore";
+import ListLoading from "../ui/ListLoading";
 
 export function TopDiscussions() {
-  const [list, setList] = useState<IDiscussion[]>([]);
+  const { topDiscussions, getTopDiscussions } = useDiscussionStore();
 
   useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        const response = await fetch("/api/discussions/top");
-        const { data } = await response.json();
-        setList(data || []);
-      } catch (error) {
-        console.error("Error fetching top discussions:", error);
-        setList([]);
-      }
-    };
-    fetchDiscussions();
-  }, []);
+    if (!topDiscussions || topDiscussions.length === 0) {
+      getTopDiscussions();
+    }
+  }, [getTopDiscussions, topDiscussions]);
+
+  const isLoading = !topDiscussions || topDiscussions.length === 0;
 
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
@@ -29,27 +24,25 @@ export function TopDiscussions() {
         </div>
         Top Discussions
       </h3>
-      {list.length === 0 ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-6">
-          No discussions found
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {list?.map((d: IDiscussion) => (
-            <li key={d._id.toString()} className="group flex items-center justify-between gap-2">
-              <Link 
-                href={`/discussion/${d.slug}`} 
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 line-clamp-2"
-              >
-                {d.title}
-              </Link>
-              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                {d.replyCount ?? 0} <MessageCircleIcon className="w-3 h-3" />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <ListLoading items={topDiscussions} isLoading={isLoading}>
+        {(item) => (
+          <div
+            key={item._id.toString()}
+            className="group flex items-center justify-between gap-2"
+          >
+            <Link
+              href={`/discussion/${item.slug}`}
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 line-clamp-2"
+            >
+              {item.title}
+            </Link>
+            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+               <MessageCircleIcon className="w-3 h-3" /> {item.replyCount ?? 0}
+            </div>
+          </div>
+        )}
+      </ListLoading>
     </div>
   );
 }

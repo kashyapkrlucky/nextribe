@@ -65,7 +65,7 @@ export async function GET(req: Request) {
     const discussions = await discussionsQuery
       .populate({
         path: "author",
-        select: "username email",
+        select: "username avatar",
         model: "User",
       })
       .populate({

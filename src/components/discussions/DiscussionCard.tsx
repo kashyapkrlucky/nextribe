@@ -4,11 +4,13 @@ import { useDiscussionStore } from "@/store/useDiscussionStore";
 import {
   ArrowBigDownIcon,
   ArrowBigUpIcon,
+  CircleUserRoundIcon,
   ClockIcon,
   MessageCircleIcon,
   UserIcon,
   Users2Icon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function DiscussionCard({ item }: { item: IDiscussion }) {
@@ -21,11 +23,21 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
             href={`/profile/${item.author.username}`}
             className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
           >
-            <UserIcon className="w-3 h-3" />
+            {item.author.avatar ? (
+              <Image
+                src={item.author.avatar || ""}
+                alt={item.author.username}
+                width={16}
+                height={16}
+                className="rounded-full"
+              />
+            ) : (
+              <CircleUserRoundIcon className="w-4 h-4" />
+            )}
             {item.author.username}
           </Link>
           <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-            <ClockIcon className="w-3 h-3" />
+            <ClockIcon className="w-4 h-4" />
             {formatRelativeTime(item.createdAt || "")}
           </p>
         </div>
@@ -55,13 +67,13 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
 
       <footer className="flex flex-row items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-1">
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item._id.toString(), "up")}>
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item.slug, "up")}>
             <ArrowBigUpIcon className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               {item.upVoteCount || 0}
             </span>
           </button>
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item._id.toString(), "down")}>
+          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item.slug, "down")}>
             <ArrowBigDownIcon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               {item.downVoteCount || 0}
@@ -75,7 +87,7 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
             className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
           >
             <MessageCircleIcon className="w-4 h-4" />
-            {item.replyCount} Reply
+            {item.replyCount}
           </Link>
         </div>
       </footer>

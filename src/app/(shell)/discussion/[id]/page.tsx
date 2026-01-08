@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   ArrowBigUp,
@@ -12,12 +12,17 @@ import { getUserIdFromToken } from "@/lib/auth-client";
 import { Types } from "mongoose";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
 import { useReplyStore } from "@/store/useReplyStore";
+import PageLoader from "@/components/ui/PageLoader";
+import InlineLoader from "@/components/ui/InlineLoader";
+import Image from "next/image";
 
 export default function DiscussionDetailPage() {
   const params = useParams();
-  const id = (params?.id as string) || "1";
-  const { discussion, fetchDiscussionBySlug } = useDiscussionStore();
-  const { replies, totalPages, fetchReplies, submitReply } = useReplyStore();
+  const id = params?.id as string;
+  const hasFetchedRef = useRef<string>("");
+  const { isLoading, discussion, fetchDiscussionBySlug } = useDiscussionStore();
+  const { loading, replies, totalPages, fetchReplies, submitReply } =
+    useReplyStore();
 
   // Controls
   const [query, setQuery] = useState("");
@@ -31,18 +36,21 @@ export default function DiscussionDetailPage() {
     "answer"
   );
   const [submitting, setSubmitting] = useState(false);
-  const pageSize = 2;
+  const pageSize = 20;
 
   // Fetch discussion on mount
   useEffect(() => {
-    fetchDiscussionBySlug(id);
+    if (id && hasFetchedRef.current !== id) {
+      hasFetchedRef.current = id;
+      fetchDiscussionBySlug(id);
+    }
   }, [id, fetchDiscussionBySlug]);
 
   // Fetch replies when discussion or page changes
   useEffect(() => {
-    if (!discussion?._id) return;
-    fetchReplies(discussion?._id.toString(), page, pageSize);
-  }, [discussion?._id, page, fetchReplies]);
+    if (!discussion?.slug) return;
+    fetchReplies(discussion?.slug, page, pageSize);
+  }, [discussion?.slug, page, fetchReplies, fetchDiscussionBySlug]);
 
   async function onViewMore() {
     setPage((p) => Math.min(totalPages, p + 1));
@@ -53,10 +61,10 @@ export default function DiscussionDetailPage() {
     if (!answer.trim()) return;
     try {
       setSubmitting(true);
-      submitReply(discussion?._id?.toString() || "", answer, answerTag);
-
-      if (discussion?._id)
-        fetchReplies(discussion?._id.toString(), page, pageSize);
+      if (discussion?.slug) {
+        submitReply(discussion.slug, answer, answerTag);
+        fetchReplies(discussion.slug, page, pageSize);
+      }
       setAnswer("");
       setAnswerTag("answer");
     } finally {
@@ -93,6 +101,10 @@ export default function DiscussionDetailPage() {
       // toast.error(error.message || 'Failed to update vote');
     }
   };
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <section className="flex flex-row flex-1 gap-6 max-w-7xl mx-auto w-full py-4 overflow-y-auto">
@@ -176,77 +188,88 @@ export default function DiscussionDetailPage() {
               <option value="new">Newest</option>
             </select>
           </div>
-          {replies?.length === 0 ? (
-            <div className="p-8 text-center text-slate-600">
-              No replies found.
+          {loading ? (
+            <div className="py-2">
+              <InlineLoader />
             </div>
           ) : (
-            <ul className="flex flex-col gap-3">
-              {replies?.map((r) => (
-                <li
-                  key={r._id.toString()}
-                  className="p-4 flex flex-col items-start gap-3 border-b border-gray-200 dark:border-gray-700"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-200 mb-1">
-                      <span className="font-medium">{r?.author?.username}</span>
-                      <span>•</span>
-                      <span>{formatDate(r.createdAt.toString())}</span>
-                      <span className="ml-2 inline-flex items-center rounded uppercase font-medium bg-slate-100 dark:bg-slate-700 px-2 py-0.5">
-                        {r.tag}
-                      </span>
-                    </div>
-                    <div className="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
-                      {r.body}
-                    </div>
-                  </div>
+            <>
+              {replies?.length === 0 ? (
+                <div className="p-8 text-center text-slate-600">
+                  No replies found.
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-3">
+                  {replies?.map((r) => (
+                    <li
+                      key={r._id.toString()}
+                      className="p-4 flex flex-col items-start gap-3 border-b border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-200 mb-1">
+                          <Image src={r?.author?.avatar || ""} alt={r?.author?.username} width={24} height={24} className="rounded-full" />
+                          <span className="font-medium">
+                            {r?.author?.username}
+                          </span>
+                          <span>•</span>
+                          <span>{formatDate(r.createdAt.toString())}</span>
+                          <span className="ml-2 inline-flex items-center rounded uppercase font-medium bg-slate-100 dark:bg-slate-700 px-2 py-0.5">
+                            {r.tag}
+                          </span>
+                        </div>
+                        <div className="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
+                          {r.body}
+                        </div>
+                      </div>
 
-                  <div className="flex flex-row items-center gap-1">
-                    <button
-                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
-                        r.upVotes?.includes(new Types.ObjectId(userId!))
-                          ? "text-indigo-500 border-indigo-200 bg-indigo-50"
-                          : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-indigo-500"
-                      }`}
-                      aria-label="Upvote"
-                      type="button"
-                      onClick={() => onVote("up", r._id.toString())}
-                    >
-                      <ArrowBigUp className="w-5 h-5" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                        {r.upVoteCount}
-                      </span>
-                    </button>
-                    <button
-                      className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
-                        r.downVotes?.includes(new Types.ObjectId(userId!))
-                          ? "text-red-500 border-red-200 bg-red-50"
-                          : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-red-500"
-                      }`}
-                      aria-label="Downvote"
-                      type="button"
-                      onClick={() => onVote("down", r._id.toString())}
-                    >
-                      <ArrowBigDown className="w-5 h-5" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                        {r.downVoteCount}
-                      </span>
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-          {page < totalPages && (
-            <div className="flex justify-center items-center p-2">
-              <button
-                className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 disabled:opacity-60"
-                disabled={page >= totalPages}
-                onClick={onViewMore}
-              >
-                View More
-              </button>
-            </div>
+                      <div className="flex flex-row items-center gap-1">
+                        <button
+                          className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
+                            r.upVotes?.includes(new Types.ObjectId(userId!))
+                              ? "text-indigo-500 border-indigo-200 bg-indigo-50"
+                              : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-indigo-500"
+                          }`}
+                          aria-label="Upvote"
+                          type="button"
+                          onClick={() => onVote("up", r._id.toString())}
+                        >
+                          <ArrowBigUp className="w-5 h-5" />
+                          <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                            {r.upVoteCount}
+                          </span>
+                        </button>
+                        <button
+                          className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
+                            r.downVotes?.includes(new Types.ObjectId(userId!))
+                              ? "text-red-500 border-red-200 bg-red-50"
+                              : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-red-500"
+                          }`}
+                          aria-label="Downvote"
+                          type="button"
+                          onClick={() => onVote("down", r._id.toString())}
+                        >
+                          <ArrowBigDown className="w-5 h-5" />
+                          <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                            {r.downVoteCount}
+                          </span>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {page < totalPages && (
+                <div className="flex justify-center items-center p-2">
+                  <button
+                    className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 disabled:opacity-60"
+                    disabled={page >= totalPages}
+                    onClick={onViewMore}
+                  >
+                    View More
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
