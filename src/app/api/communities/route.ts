@@ -4,16 +4,10 @@ import { Community } from "@/models/Community";
 import { Member } from "@/models/Member";
 import { jwtVerify } from "jose";
 import mongoose from "mongoose";
-import { ErrorResponse, SuccessResponse } from "@/core/utils/responses";
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
+import { BadRequestResponse, ErrorResponse, SuccessResponse } from "@/core/utils/responses";
+import { slugify } from "@/core/utils/helpers";
+import { logger } from "@/core/utils/logger";
+import { getUserIdFromCookie } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -69,75 +63,43 @@ export async function GET(req: Request) {
 
     const list = await Community.aggregate(pipeline);
 
-    return NextResponse.json({
+    return SuccessResponse({
       communities: list,
       page,
       pageSize,
       total,
       totalPages: Math.max(1, Math.ceil(total / pageSize)),
     });
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-async function getUserIdFromCookie(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split(";")
-      .map((c) => c.trim())
-      .find((c) => c.startsWith("token="))
-      ?.split("=")[1];
-    if (!token) return null;
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return null;
-    const key = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, key);
-    const sub = payload.sub;
-    if (typeof sub !== "string") return null;
-    return sub;
-  } catch {
-    return null;
+  } catch (error) {
+    logger.error('Error fetching communities:', error);
+    return ErrorResponse(error as Error);
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const userId = await getUserIdFromCookie(req);
+    const userId = await getUserIdFromCookie();
     if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return BadRequestResponse("Unauthorized");
 
     const body = await req.json();
     const name: string | undefined = body?.name;
-    const providedSlug: string | undefined = body?.slug;
     const description: string | undefined = body?.description;
     const isPrivate: boolean | undefined = body?.isPrivate;
     const topicIds: string[] | undefined = body?.topicIds;
     const guidelines: string[] | undefined = body?.guidelines;
 
     if (!name || name.trim().length === 0) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return BadRequestResponse("Name is required");
     }
 
     await connectToDatabase();
 
-    const slug = (
-      providedSlug && providedSlug.trim().length > 0
-        ? providedSlug
-        : slugify(name)
-    ).toLowerCase();
+    const slug = slugify(name).toLowerCase();
 
     const existing = await Community.findOne({ slug }).lean();
     if (existing) {
-      return NextResponse.json(
-        { error: "Slug already in use" },
-        { status: 409 }
-      );
+      return BadRequestResponse("Slug already in use");
     }
 
     const community = await Community.create({
@@ -157,7 +119,8 @@ export async function POST(req: Request) {
     );
 
     return SuccessResponse({ slug: community.slug });
-  } catch (e) {
-    return ErrorResponse(e as Error);
+  } catch (error) {
+    logger.error('Error creating community:', error);
+    return ErrorResponse(error as Error);
   }
 }

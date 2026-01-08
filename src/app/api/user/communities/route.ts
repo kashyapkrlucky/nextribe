@@ -1,11 +1,13 @@
-import { getUserIdFromRequest } from "@/lib/auth";
+import { logger } from "@/core/utils/logger";
+import { ErrorResponse, SuccessResponse } from "@/core/utils/responses";
+import { getUserIdFromCookie } from "@/lib/auth";
 import { Member } from "@/models/Member";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const userId = await getUserIdFromRequest();
+    const userId = await getUserIdFromCookie();
 
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,12 +32,9 @@ export async function GET() {
       },
     ]);
 
-    return NextResponse.json(list);
+    return SuccessResponse(list);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    logger.error('Error fetching user communities:', error);
+    return ErrorResponse("Internal Server Error");
   }
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { SIGNUP_TEMPLATE, FORGOT_PASSWORD_TEMPLATE, PASSWORD_RESET_TEMPLATE } from "./templates";
-import { APP_NAME } from "../constants/app";
+import { APP_NAME } from "../constants";
 
 export async function SendEmail(to: string, subject: string, type: string, data?: string) {
   const BREVO_API_KEY = process.env.BREVO_API_KEY as string;

@@ -1,4 +1,4 @@
-import { APP_NAME } from "../constants/app";
+import { APP_NAME } from "../constants";
 
 const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL as string;
 

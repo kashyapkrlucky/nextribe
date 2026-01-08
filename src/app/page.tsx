@@ -10,12 +10,14 @@ import NavBar from "@/components/layout/NavBar";
 export default function Home() {
   const feedTypes = ["top", "recent"];
   const [feedType, setFeedType] = useState("top");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const { discussionList, isLoading, fetchDiscussionList } =
     useDiscussionStore();
 
   useEffect(() => {
-    fetchDiscussionList();
-  }, [fetchDiscussionList]);
+    fetchDiscussionList(page, pageSize);
+  }, [fetchDiscussionList, page, pageSize]);
 
   return (
     <>

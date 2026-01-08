@@ -1,5 +1,5 @@
 import { ErrorResponse, SuccessResponse } from "@/core/utils/responses";
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/core/config/database";
 import { Discussion } from "@/models/Discussion";
 import { User } from "@/models/User";
 

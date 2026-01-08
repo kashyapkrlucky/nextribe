@@ -5,12 +5,13 @@ import { IDiscussion } from "@/core/types/index.types";
 interface DiscussionState {
   discussion: IDiscussion | null;
   discussionList: IDiscussion[];
+  totalPages: number;
   isLoading: boolean;
   error: string | null;
   userDiscussions: IDiscussion[];
   fetchDiscussion: (id: string) => Promise<void>;
   fetchDiscussionBySlug: (slug: string) => Promise<void>;
-  fetchDiscussionList: () => Promise<void>;
+  fetchDiscussionList: (page: number, pageSize: number) => Promise<void>;
   fetchDiscussionsByCommunity: (communityId: string) => Promise<void>;
   fetchDiscussionByUser: (username: string) => Promise<void>;
   addDiscussion: (
@@ -27,14 +28,15 @@ interface DiscussionState {
 export const useDiscussionStore = create<DiscussionState>((set) => ({
   discussion: null,
   discussionList: [],
+  totalPages: 0,
   isLoading: false,
   error: null,
   userDiscussions: [],
-  fetchDiscussionList: async () => {
+  fetchDiscussionList: async (page: number = 1, pageSize: number = 20) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get("/discussions");
-      set({ discussionList: data.data || [], isLoading: false });
+      const { data: {data} } = await axios.get(`/discussions?page=${page}&pageSize=${pageSize}`);
+      set({ discussionList: data.discussions || [], totalPages: data.totalPages || 0, isLoading: false });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       set({
