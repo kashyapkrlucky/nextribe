@@ -1,8 +1,8 @@
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   icon?: React.ReactNode;
 }
-export default function InputLabelIcon({ label, icon, ...props }: Props) {
+export default function TextareaLabelIcon({ label, icon, ...props }: Props) {
   return (
     <div>
       {label && <label className="block text-sm font-medium text-gray-500 mb-2">
@@ -11,8 +11,9 @@ export default function InputLabelIcon({ label, icon, ...props }: Props) {
           <span>{label}</span>
         </div>
       </label>}
-      <input
+      <textarea
         {...props}
+        rows={4}
         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
       />
     </div>

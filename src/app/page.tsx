@@ -7,13 +7,12 @@ import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import NavBar from "@/components/layout/NavBar";
 import Link from "next/link";
-import { CircleDotIcon, CircleSmallIcon } from "lucide-react";
 
 export default function Home() {
-  const feedTypes = ["top", "recent"];
-  const [feedType, setFeedType] = useState("top");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const feedTypes = ["recent", "top"];
+  const [feedType, setFeedType] = useState("recent");
+  const [page] = useState(1);
+  const [pageSize] = useState(20);
   const { discussionList, isLoading, fetchDiscussionList } =
     useDiscussionStore();
 

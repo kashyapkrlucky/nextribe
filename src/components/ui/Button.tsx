@@ -17,7 +17,7 @@ const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className={`inline-block items-center gap-2 px-4 py-2 h-12 rounded-md cursor-pointer transition-colors ${className} ${
+      className={`inline-block items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${className} ${
         isLoading ? "opacity-60" : ""
       } ${fullWidth ? "w-full" : ""}`}
       {...props}
