@@ -26,7 +26,7 @@ export async function POST(
 
     await connectToDatabase();
 
-    const discussion = await Discussion.findOne({ slug }).populate("author", "username email").populate("community", "name");
+    const discussion = await Discussion.findOne({ slug }).populate("author", "username email avatar").populate("community", "name");
     if (!discussion) {
       return ErrorResponse(new Error("Discussion not found"));
     }

@@ -7,6 +7,7 @@ import { PopularCommunities } from "@/components/community/PopularCommunities";
 import { TopDiscussions } from "@/components/discussions/TopDiscussions";
 import NavBar from "@/components/layout/NavBar";
 import Link from "next/link";
+import { useFlagStore } from "@/store/useFlagStore";
 
 export default function Home() {
   const feedTypes = ["recent", "top"];
@@ -15,9 +16,11 @@ export default function Home() {
   const [pageSize] = useState(20);
   const { discussionList, isLoading, fetchDiscussionList } =
     useDiscussionStore();
+  const { flags, fetchFlags } = useFlagStore();
 
   useEffect(() => {
     fetchDiscussionList(page, pageSize, feedType);
+    fetchFlags();
   }, [page, pageSize, feedType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
