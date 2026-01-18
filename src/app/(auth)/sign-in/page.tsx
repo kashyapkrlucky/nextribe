@@ -7,6 +7,16 @@ import { useAuth } from "@/hooks/useAuth";
 import CustomToast from "@/components/ui/CustomToast";
 import PageLink from "@/components/ui/PageLink";
 import { MailIcon } from "lucide-react";
+import {
+  DONT_HAVE_AN_ACCOUNT,
+  FILL_IN_ALL_FIELDS,
+  HOME_PATH,
+  INVALID_EMAIL_OR_PASSWORD,
+  SIGN_IN_TO_CONTINUE,
+  WELCOME,
+  FORGOT_PASSWORD,
+} from "@/core/constants/app";
+import { Button } from "@/components/ui/Button";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -18,7 +28,7 @@ function SignIn() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      CustomToast("error", "Please fill in all fields.");
+      CustomToast("error", FILL_IN_ALL_FIELDS);
       return;
     }
     try {
@@ -26,10 +36,11 @@ function SignIn() {
       const result = await login(email, password);
       if (result.status && result.data?.user && result.data?.token) {
         authLogin(result.data.user, result.data.token);
-        window.location.href = "/";
+        window.location.href = HOME_PATH;
       }
     } catch (e) {
-      CustomToast("error", "Invalid email or password.");
+      console.log(e);
+      CustomToast("error", INVALID_EMAIL_OR_PASSWORD);
     } finally {
       setLoading(false);
     }
@@ -38,9 +49,9 @@ function SignIn() {
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
-        <h1 className="text-2xl font-semibold mb-1">Welcome back</h1>
+        <h1 className="text-2xl font-semibold mb-1">{WELCOME}</h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-          Sign in to continue to NextTribe.
+          {SIGN_IN_TO_CONTINUE}
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -62,21 +73,16 @@ function SignIn() {
           />
 
           <div className="flex items-center justify-end">
-            <PageLink url="/forgot-password" text="Forgot password?" />
+            <PageLink url="/forgot-password" text={FORGOT_PASSWORD} />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full inline-flex items-center justify-center bg-indigo-600 text-white rounded-lg px-3 py-3 text-sm font-medium disabled:opacity-60"
-            tabIndex={0}
-          >
+          <Button type="submit" disabled={loading} tabIndex={0} fullWidth>
             {loading ? "Signing in..." : "Sign in"}
-          </button>
+          </Button>
         </form>
 
         <div className="mt-6 text-sm text-slate-700 dark:text-slate-400">
-          Don&apos;t have an account?{" "}
+          {DONT_HAVE_AN_ACCOUNT} &nbsp;
           <PageLink url="/sign-up" text="Create one" />
         </div>
       </div>
