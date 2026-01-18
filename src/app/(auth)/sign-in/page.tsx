@@ -16,7 +16,7 @@ import {
   WELCOME,
   FORGOT_PASSWORD,
 } from "@/core/constants/app";
-import { Button } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 
 function SignIn() {
   const [email, setEmail] = useState("");

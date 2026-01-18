@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Heart, Share2, Clock } from "lucide-react";
+import { MessageSquare, Heart, Share2 } from "lucide-react";
 import { IDiscussion } from "@/core/types/index.types";
 
 interface ProfileTabsProps {

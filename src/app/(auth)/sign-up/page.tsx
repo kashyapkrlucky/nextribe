@@ -8,7 +8,7 @@ import PasswordWithIcon from "@/components/ui/PasswordWithIcon";
 import PageLink from "@/components/ui/PageLink";
 import UserNameSub from "@/components/ui/UserNameSub";
 import CustomToast from "@/components/ui/CustomToast";
-import {Button} from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import {
   FILL_IN_ALL_FIELDS,
   PASSWORDS_DO_NOT_MATCH,

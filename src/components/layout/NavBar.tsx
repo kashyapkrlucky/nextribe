@@ -7,7 +7,7 @@ import { PlusIcon, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import CreateCommunityForm from "../community/CreateCommunityForm";
 import Image from "next/image";
-import { Button } from "../ui/Button";
+import Button from "../ui/Button";
 
 const NavBar = () => {
   const { user } = useAuth();

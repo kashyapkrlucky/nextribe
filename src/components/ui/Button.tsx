@@ -27,7 +27,7 @@ const variantClasses = {
   danger: "border border-red-600 bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500",
 };
 
-export function Button({
+export default function Button({
   children,
   className,
   size = "md",

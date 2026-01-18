@@ -17,8 +17,6 @@ export interface IUser {
   email: string;
   /** Password (not returned in API responses) */
   password?: string;
-  /** Short biography or description */
-  bio?: string;
   /** User's avatar image URL */
   avatar?: string;
   /** When the reply was created */
