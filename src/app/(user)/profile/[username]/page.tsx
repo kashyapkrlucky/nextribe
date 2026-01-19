@@ -47,7 +47,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="w-full h-full">
+    <>  
       {/* Cover Photo */}
       <div className="fixed top-16 z-0 w-full h-full overflow-y-auto">
         {profile?.cover ? (
@@ -79,8 +79,8 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <div className="w-full h-full relative z-10 top-20 overflow-y-auto scroll-smooth">
-        <div className="max-w-7xl mx-auto w-full h-full bg-white dark:bg-gray-800 rounded-t-lg">
+      <div className="relative z-10 top-20 overflow-y-auto scroll-smooth h-[calc(100vh-64px)]">
+        <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-t-lg">
           {/* Enhanced Profile Content */}
           <div className="pt-10 px-6 pb-6">
             {/* Profile Header Section */}
@@ -207,6 +207,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+     </>
   );
 }
