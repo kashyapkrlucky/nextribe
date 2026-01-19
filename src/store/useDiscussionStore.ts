@@ -28,6 +28,7 @@ interface DiscussionState {
   ) => Promise<void>;
   deleteDiscussion: (id: string) => Promise<void>;
   voteDiscussion: (id: string, vote: "up" | "down") => Promise<void>;
+  resetDiscussion: () => void;
   getTopDiscussions: () => Promise<void>;
 }
 
@@ -39,6 +40,17 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   error: null,
   userDiscussions: [],
   topDiscussions: [],
+  resetDiscussion: () => {
+    set({
+      discussion: null,
+      discussionList: [],
+      totalPages: 0,
+      isLoading: false,
+      error: null,
+      userDiscussions: [],
+      topDiscussions: [],
+    });
+  },
   fetchDiscussionList: async (
     page: number = 1,
     pageSize: number = 20,
@@ -206,7 +218,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   getTopDiscussions: async () => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get("/discussions/top");
+      const { data } = await axios.get("/v2/discussions/top");
       set({ topDiscussions: data.data || [] });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

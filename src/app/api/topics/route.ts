@@ -1,10 +1,15 @@
 import { connectToDatabase } from "@/core/config/database";
 import { Topic } from "@/models/Topic";
-import { NextResponse } from "next/server";
+import { ErrorResponse, SuccessResponse } from "@/core/utils/responses";
 
 export async function GET() {
-    // moved from lib
+  try {
     await connectToDatabase();
-    const items = await Topic.find({ isArchived: false }).select('name slug createdAt');
-    return NextResponse.json(items);
+    const items = await Topic.find({ isArchived: false }).select(
+      "name slug createdAt",
+    );
+    return SuccessResponse(items);
+  } catch (error) {
+    return ErrorResponse(error);
+  }
 }

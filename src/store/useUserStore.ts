@@ -185,7 +185,7 @@ export const useUserStore = create<UserState>((set) => ({
   updateAvatar: async (avatar: string) => {
     try {
       set({ isLoading: true });
-      await axios.patch("/auth/user/update", { avatar });
+      await axios.patch("/auth/user", { avatar });
       set((state) => ({
         profile: state.profile ? { ...state.profile, user: { ...state.profile.user, avatar } } : null,
       }));

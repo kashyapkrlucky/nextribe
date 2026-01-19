@@ -26,5 +26,5 @@ export const ErrorResponse = (error: unknown) => {
 
 export const UnauthorizedResponse = (error: string) => {
   logger.error(error);
-  return NextResponse.json({ error }, { status: 401 });
+  return NextResponse.json(error, { status: 401 });
 };

@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/core/config/database';
 import {Community} from '@/models/Community';
 import {User} from '@/models/User';
 import {Discussion} from '@/models/Discussion';
+import { ErrorResponse, SuccessResponse } from '@/core/utils/responses';
 
 export async function GET(request: Request) {
   try {
@@ -12,10 +12,7 @@ export async function GET(request: Request) {
     const query = searchParams.get('q') || '';
     
     if (!query.trim()) {
-      return NextResponse.json(
-        { error: 'Search query is required' },
-        { status: 400 }
-      );
+      return ErrorResponse("Search query is required")
     }
 
     // Create a case-insensitive regex for the search
@@ -58,20 +55,14 @@ export async function GET(request: Request) {
       .lean()
     ]);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        users,
-        communities,
-        discussions
-      }
+    return SuccessResponse({
+      users,
+      communities,
+      discussions
     });
 
   } catch (error) {
     console.error('Search error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return ErrorResponse(error);
   }
 }

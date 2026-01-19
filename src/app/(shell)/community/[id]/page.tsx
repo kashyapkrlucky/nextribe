@@ -71,8 +71,9 @@ export default function CommunityPage() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto flex flex-row flex-1 gap-4 py-4">
-      <div className="w-3/4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+    <>
+      <CommunityInfoCard slug={slug} />
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
         {discussionList.length > 0 && (
           <DiscussionFilters
             query={query}
@@ -94,10 +95,6 @@ export default function CommunityPage() {
           />
         )}
       </div>
-
-      <div className="w-1/4">
-        <CommunityInfoCard slug={slug} />
-      </div>
-    </section>
+    </>
   );
 }

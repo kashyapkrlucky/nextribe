@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
 import ListLoading from "../ui/ListLoading";
+import React from "react";
 
-export function TopDiscussions() {
+function TopDiscussions() {
   const { topDiscussions, getTopDiscussions } = useDiscussionStore();
 
   useEffect(() => {
@@ -46,3 +47,5 @@ export function TopDiscussions() {
     </div>
   );
 }
+
+export default React.memo(TopDiscussions);

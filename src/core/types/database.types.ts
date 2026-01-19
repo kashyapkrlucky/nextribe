@@ -138,6 +138,13 @@ export interface DiscussionVoteModel {
   vote: "up" | "down";
 }
 
+export interface ReplyVoteModel {
+  _id: Types.ObjectId;
+  user: Types.ObjectId; // ref: User
+  reply: Types.ObjectId; // ref: Reply
+  vote: "up" | "down";
+}
+
 /**
  * Represents a reply to a discussion or another reply
  */

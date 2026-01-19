@@ -10,7 +10,7 @@ export default function PageLink({ url, text, size = "sm" }: PageLinkProps) {
   return (
     <Link
       href={url}
-      className={` text-violet-600 hover:underline dark:text-violet-400 text-${size}`}
+      className={` text-indigo-600 hover:underline dark:text-indigo-400 text-${size}`}
     >
       {text}
     </Link>

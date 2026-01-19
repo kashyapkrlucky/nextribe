@@ -18,7 +18,7 @@ export const useTopicStore = create<TopicState>((set) => ({
   fetchTopics: async () => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.get('/topics');
+      const { data: { data } } = await axios.get('/topics');
       set({ 
         topics: data || [], 
         isLoading: false 

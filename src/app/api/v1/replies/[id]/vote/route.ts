@@ -1,7 +1,6 @@
 import { getUserIdFromCookie } from "@/lib/auth";
 import { connectToDatabase } from "@/core/config/database";
 import { Reply } from "@/models/Reply";
-import { IReply } from "@/core/types/index.types";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,7 +21,7 @@ export async function PATCH(
     }
 
     await connectToDatabase();
-    const reply = await Reply.findById(id).lean() as IReply;
+    const reply = await Reply.findById(id);
     if (!reply) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -89,7 +88,7 @@ export async function PATCH(
     }
 
     // Return the updated reply
-    const updatedReply = await Reply.findById(id).populate("author", "name").lean() as IReply;
+    const updatedReply = await Reply.findById(id).populate("author", "name");
     return NextResponse.json(updatedReply);
   } catch (e) {
     console.error('Vote error:', e);
