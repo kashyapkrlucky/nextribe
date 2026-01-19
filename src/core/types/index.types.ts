@@ -11,6 +11,8 @@ export type MemberRole = "owner" | "admin" | "member";
 export interface IUser {
   /** Unique identifier for the user */
   _id: Types.ObjectId;
+  /** Unique identifier for the user */
+  id: string;
   /** User's full name */
   username: string;
   /** User's email address (must be unique) */
