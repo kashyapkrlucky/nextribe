@@ -5,11 +5,13 @@ interface ListLoadingProps<T> {
   children: (item: T) => React.ReactNode;
   isLoading: boolean;
   items: T[];
+  gap?: string;
 }
 
 export default function ListLoading<T extends { _id: Types.ObjectId }>({
   children,
   isLoading,
+  gap = "py-2",
   items = [],
 }: ListLoadingProps<T>) {
   if (isLoading) {
@@ -23,7 +25,7 @@ export default function ListLoading<T extends { _id: Types.ObjectId }>({
   return (
     <div className="flex flex-col">
       {items.map((item) => (
-        <div key={item._id.toString()} className="py-1 first:pt-0 last:pb-0">
+        <div key={item._id.toString()} className={`${gap} first:pt-0 last:pb-0`}>
           {children(item)}
         </div>
       ))}

@@ -24,7 +24,7 @@ export function PopularCommunities() {
         </div>
         Popular Communities
       </h3>
-      <ListLoading items={topCommunities} isLoading={isLoading}>
+      <ListLoading items={topCommunities} isLoading={isLoading} gap="py-1">
         {(item) => (
           <div
             key={item._id.toString()}

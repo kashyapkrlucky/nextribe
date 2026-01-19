@@ -26,7 +26,7 @@ function TopDiscussions() {
         Top Discussions
       </h3>
 
-      <ListLoading items={topDiscussions} isLoading={isLoading}>
+      <ListLoading items={topDiscussions} isLoading={isLoading} gap="py-1">
         {(item) => (
           <div
             key={item._id.toString()}

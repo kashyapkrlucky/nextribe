@@ -75,6 +75,15 @@ export function UserMenu() {
           </div>
           
           <Link
+            href={`/create-community`}
+            className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+          >
+            <UserIcon className="mr-3 h-5 w-5 text-gray-400 dark:text-gray-400" />
+            Create Community
+          </Link>
+          <Link
             href={`/profile/${user?.username}`}
             className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
             role="menuitem"

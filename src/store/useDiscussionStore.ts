@@ -15,16 +15,16 @@ interface DiscussionState {
   fetchDiscussionList: (
     page: number,
     pageSize: number,
-    feedType: string
+    feedType: string,
   ) => Promise<void>;
   fetchDiscussionsByCommunity: (communityId: string) => Promise<void>;
   fetchDiscussionByUser: (username: string) => Promise<void>;
   addDiscussion: (
-    discussion: Omit<IDiscussion, "_id" | "createdAt" | "updatedAt">
+    discussion: Omit<IDiscussion, "_id" | "createdAt" | "updatedAt">,
   ) => Promise<void>;
   updateDiscussion: (
     id: string,
-    updates: Partial<IDiscussion>
+    updates: Partial<IDiscussion>,
   ) => Promise<void>;
   deleteDiscussion: (id: string) => Promise<void>;
   voteDiscussion: (id: string, vote: "up" | "down") => Promise<void>;
@@ -54,14 +54,14 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   fetchDiscussionList: async (
     page: number = 1,
     pageSize: number = 20,
-    feedType: string = "recent"
+    feedType: string = "recent",
   ) => {
     try {
       set({ isLoading: true, error: null });
       const {
         data: { data },
       } = await axios.get(
-        `/v2/discussions?page=${page}&pageSize=${pageSize}&feedType=${feedType}`
+        `/v2/discussions?page=${page}&pageSize=${pageSize}&feedType=${feedType}`,
       );
       set({
         discussionList: data.discussions || [],
@@ -79,19 +79,19 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
     }
   },
   fetchDiscussion: async (id: string) => {
-    try {
-      set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/discussions/${id}`);
-      set({ discussion: data.data || [], isLoading: false });
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      set({
-        error: err.response?.data?.message || "Failed to fetch discussions",
-        isLoading: false,
-      });
-    } finally {
-      set({ isLoading: false });
-    }
+    // try {
+    //   set({ isLoading: true, error: null });
+    //   const { data } = await axios.get(`/discussions/${id}`);
+    //   set({ discussion: data.data || [], isLoading: false });
+    // } catch (error) {
+    //   const err = error as AxiosError<{ message: string }>;
+    //   set({
+    //     error: err.response?.data?.message || "Failed to fetch discussions",
+    //     isLoading: false,
+    //   });
+    // } finally {
+    //   set({ isLoading: false });
+    // }
   },
   fetchDiscussionBySlug: async (slug: string) => {
     try {
@@ -113,16 +113,16 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   fetchDiscussionsByCommunity: async (communityId: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get(
-        `/communities/${communityId}/discussions`
-      );
+      const {
+        data: { data },
+      } = await axios.get(`/v2/communities/${communityId}/discussions`);
       set({
-        discussionList: data.discussions,
+        discussionList: data,
       });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to get discussions"
+        err.response?.data?.message || "Failed to get discussions",
       );
     } finally {
       set({ isLoading: false });
@@ -131,7 +131,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   fetchDiscussionByUser: async (username: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/discussions/user/${username}`);
+      const { data } = await axios.get(`/v2/discussions/user/${username}`);
       set({ userDiscussions: data.data || [], isLoading: false });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -153,7 +153,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to add discussion"
+        err.response?.data?.message || "Failed to add discussion",
       );
     } finally {
       set({ isLoading: false });
@@ -167,13 +167,13 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
         discussionList: state.discussionList.map((discussion) =>
           discussion._id.toString() === id
             ? { ...discussion, ...data.data }
-            : discussion
+            : discussion,
         ),
       }));
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to update discussion"
+        err.response?.data?.message || "Failed to update discussion",
       );
     } finally {
       set({ isLoading: false });
@@ -185,13 +185,13 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       await axios.delete(`/v2/discussions/${id}`);
       set((state) => ({
         discussionList: state.discussionList.filter(
-          (discussion) => discussion._id.toString() !== id
+          (discussion) => discussion._id.toString() !== id,
         ),
       }));
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to delete discussion"
+        err.response?.data?.message || "Failed to delete discussion",
       );
     } finally {
       set({ isLoading: false });
@@ -205,13 +205,13 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
       set((state) => ({
         // find discussion by slug and update it
         discussionList: state.discussionList.map((discussion) =>
-          discussion.slug === slug ? data : discussion
+          discussion.slug === slug ? data : discussion,
         ),
       }));
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to vote discussion"
+        err.response?.data?.message || "Failed to vote discussion",
       );
     }
   },
@@ -223,7 +223,7 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(
-        err.response?.data?.message || "Failed to fetch top discussions"
+        err.response?.data?.message || "Failed to fetch top discussions",
       );
     } finally {
       set({ isLoading: false });

@@ -7,11 +7,11 @@ interface Props {
 }
 
 export default function CommunityCardMini({ community }: Props) {
-  const { onCommunityJoin } = useCommunityStore();
+  const { onMemberUpdate } = useCommunityStore();
   return (
     <div
       key={community?._id.toString()}
-      className="p-4 flex items-center justify-between"
+      className="px-4 py-2 flex items-center justify-between"
     >
       <div>
         <Link
@@ -28,7 +28,7 @@ export default function CommunityCardMini({ community }: Props) {
         </div>
       </div>
       <button
-        onClick={() => onCommunityJoin(community._id.toString())}
+        onClick={() => onMemberUpdate(community.slug, "active")}
         className="text-xs border border-gray-200 rounded-md px-2 py-1 dark:border-gray-700"
       >
         Join

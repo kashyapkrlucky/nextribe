@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import axios, { AxiosError } from '@/lib/axios';
-import { ITopic } from '@/core/types/index.types';
+import { create } from "zustand";
+import axios, { AxiosError } from "@/lib/axios";
+import { ITopic } from "@/core/types/index.types";
 
 interface TopicState {
   topics: ITopic[];
@@ -18,16 +18,18 @@ export const useTopicStore = create<TopicState>((set) => ({
   fetchTopics: async () => {
     set({ isLoading: true, error: null });
     try {
-      const { data: { data } } = await axios.get('/topics');
-      set({ 
-        topics: data || [], 
-        isLoading: false 
+      const {
+        data: { data },
+      } = await axios.get("/v2/topics");
+      set({
+        topics: data || [],
+        isLoading: false,
       });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      set({ 
-        error: err.response?.data?.message || 'Failed to fetch topics',
-        isLoading: false 
+      set({
+        error: err.response?.data?.message || "Failed to fetch topics",
+        isLoading: false,
       });
     }
   },

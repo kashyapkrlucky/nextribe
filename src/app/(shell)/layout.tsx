@@ -39,7 +39,7 @@ export default function HomeLayout({
     <Suspense fallback={<Spinner />}>
       <NavBar />
       <div className="flex-1 flex flex-col lg:flex-row gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto p-6">
-        <aside className="flex flex-col lg:w-1/5 gap-4">
+        <aside className="hidden lg:flex flex-col lg:w-1/5 gap-4">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
             <nav className="flex flex-col gap-1">
               {importantLinks.map(({ href, label, icon: Icon }) => (
@@ -57,7 +57,9 @@ export default function HomeLayout({
 
           {user && <MyCommunities />}
         </aside>
-        <main className="flex-1 flex flex-col gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto px-4 border-l border-r border-gray-200">{children}</main>
+        <main className="flex-1 flex flex-col gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto lg:px-4 lg:border-l lg:border-r lg:border-gray-200 dark:border-gray-700">
+          {children}
+        </main>
         <aside className="lg:w-1/5 gap-4 hidden lg:flex flex-col dark:border-gray-700">
           <PopularCommunities />
           <TopDiscussions />

@@ -40,7 +40,7 @@ export const useUserStore = create<UserState>((set) => ({
   login: async (email: string, password: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.post("/auth/sign-in", { email, password });
+      const { data } = await axios.post("/v2/auth/sign-in", { email, password });
       set({
         user: data.data.user,
         isAuthenticated: true,
@@ -62,7 +62,7 @@ export const useUserStore = create<UserState>((set) => ({
   register: async (userData) => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.post("/auth/sign-up", userData);
+      const { data } = await axios.post("/v2/auth/sign-up", userData);
       set({
         user: data.data.user,
         isAuthenticated: true,
@@ -83,7 +83,7 @@ export const useUserStore = create<UserState>((set) => ({
 
   logout: async () => {
     try {
-      await axios.post("/auth/logout");
+      await axios.post("/v2/auth/logout");
       set({
         user: null,
         isAuthenticated: false,
@@ -104,7 +104,7 @@ export const useUserStore = create<UserState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true });
     try {
-      const { data } = await axios.get("/auth/me");
+      const { data } = await axios.get("/v2/auth/me");
       set({
         user: data.data,
         isAuthenticated: true,
@@ -126,7 +126,7 @@ export const useUserStore = create<UserState>((set) => ({
   forgotPassword: async (email: string) => {
     try {
       set({ isLoading: true, passwordLinkSent: false });
-      await axios.post("/auth/forgot-password", { email });
+      await axios.post("/v2/auth/forgot-password", { email });
       set({ passwordLinkSent: true });
     } catch (error) {
       console.error(error);
@@ -137,7 +137,7 @@ export const useUserStore = create<UserState>((set) => ({
   },
   validateToken: async (token: string) => {
     try {
-      await axios.post("/auth/validate-token", { token });
+      await axios.post("/v2/auth/validate-token", { token });
       return true;
     } catch (error) {
       console.error(error);
@@ -146,7 +146,7 @@ export const useUserStore = create<UserState>((set) => ({
   },
   resetPassword: async (token: string, password: string) => {
     try {
-      await axios.post("/auth/reset-password", { token, password });
+      await axios.post("/v2/auth/reset-password", { token, password });
     } catch (error) {
       console.error(error);
       throw error;
@@ -157,7 +157,7 @@ export const useUserStore = create<UserState>((set) => ({
       set({ isLoading: true, error: null });
       const {
         data: { data },
-      } = await axios.get(`/auth/profile/${username}`);
+      } = await axios.get(`/v2/auth/profile/${username}`);
       set({ profile: data });
     } catch (error) {
       const err = error as AxiosError<{ error: string }>;
@@ -172,7 +172,7 @@ export const useUserStore = create<UserState>((set) => ({
   updateProfile: async (profile: Partial<IProfile>) => {
     try {
       set({ isLoading: true });
-      await axios.patch("/auth/profile/update", profile);
+      await axios.patch("/v2/auth/profile/update", profile);
       set((state) => ({
         profile: state.profile ? { ...state.profile, ...profile } : null,
       }));
@@ -185,7 +185,7 @@ export const useUserStore = create<UserState>((set) => ({
   updateAvatar: async (avatar: string) => {
     try {
       set({ isLoading: true });
-      await axios.patch("/auth/user", { avatar });
+      await axios.patch("/v2/auth/user", { avatar });
       set((state) => ({
         profile: state.profile ? { ...state.profile, user: { ...state.profile.user, avatar } } : null,
       }));
@@ -198,7 +198,7 @@ export const useUserStore = create<UserState>((set) => ({
   updateCover: async (cover: string) => {
     try {
       set({ isLoading: true });
-      await axios.patch("/auth/profile/update", { cover });
+      await axios.patch("/v2/auth/profile/update", { cover });
       set((state) => ({
         profile: state.profile ? { ...state.profile, cover } : null,
       }));

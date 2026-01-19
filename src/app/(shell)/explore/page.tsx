@@ -5,8 +5,6 @@ import ListLoading from "@/components/ui/ListLoading";
 import Pagination from "@/components/ui/Pagination";
 import CommunityFilters from "@/components/community/CommunityFilters";
 import CommunityCardMini from "@/components/community/CommunityCardMini";
-import { PopularCommunities } from "@/components/home/PopularCommunities";
-import TopDiscussions from "@/components/home/TopDiscussions";
 import PageLoader from "@/components/ui/PageLoader";
 
 export default function CommunityListPage() {
@@ -48,7 +46,7 @@ export default function CommunityListPage() {
       <CommunityFilters sort={sort} onSortChange={onSortChange} />
 
       <div className="bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-xl">
-        <ListLoading isLoading={isLoading} items={communities}>
+        <ListLoading isLoading={isLoading} items={communities} gap="py-1">
           {(community) => (
             <CommunityCardMini
               key={community?._id.toString()}

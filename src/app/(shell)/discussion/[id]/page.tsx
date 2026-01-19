@@ -8,8 +8,6 @@ import {
   SearchIcon,
 } from "lucide-react";
 import { formatDate } from "@/core/utils/helpers";
-import { getUserIdFromToken } from "@/lib/auth-client";
-import { Types } from "mongoose";
 import { useDiscussionStore } from "@/store/useDiscussionStore";
 import { useReplyStore } from "@/store/useReplyStore";
 import PageLoader from "@/components/ui/PageLoader";
@@ -36,7 +34,6 @@ export default function DiscussionDetailPage() {
   const [tag, setTag] = useState<"all" | "answer" | "tip" | "question">("all");
   const [sort, setSort] = useState<"top" | "new">("top");
   const [page, setPage] = useState(1);
-  const userId = getUserIdFromToken();
   // Add answer box
   const [answer, setAnswer] = useState("");
   const [answerTag, setAnswerTag] = useState<"answer" | "tip" | "question">(
@@ -110,7 +107,7 @@ export default function DiscussionDetailPage() {
         </p>
         <form
           onSubmit={submitAnswer}
-          className="space-y-2 border border-gray-300 p-2 rounded-md"
+          className="space-y-2 border border-gray-300 dark:border-gray-700 p-2 rounded-md"
         >
           <textarea
             value={answer}
@@ -226,11 +223,7 @@ export default function DiscussionDetailPage() {
 
                     <div className="flex flex-row items-center gap-1">
                       <button
-                        className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
-                          r.upVotes?.includes(new Types.ObjectId(userId!))
-                            ? "text-indigo-500 border-indigo-200 bg-indigo-50"
-                            : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-indigo-500"
-                        }`}
+                        className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 border-gray-200 dark:border-gray-700 text-gray-500 hover:text-indigo-500`}
                         aria-label="Upvote"
                         type="button"
                         onClick={() => onVote("up", r._id.toString())}
@@ -241,11 +234,7 @@ export default function DiscussionDetailPage() {
                         </span>
                       </button>
                       <button
-                        className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 ${
-                          r.downVotes?.includes(new Types.ObjectId(userId!))
-                            ? "text-red-500 border-red-200 bg-red-50"
-                            : "border-gray-200 dark:border-gray-700 text-gray-500 hover:text-red-500"
-                        }`}
+                        className={`p-1.5 rounded-md hover:bg-gray-50 border transition-colors flex flex-row items-center gap-1 border-gray-200 dark:border-gray-700 text-gray-500 hover:text-red-500`}
                         aria-label="Downvote"
                         type="button"
                         onClick={() => onVote("down", r._id.toString())}

@@ -18,7 +18,7 @@ export const useSearchStore = create<SearchStore>((set) => ({
     try {
       set({ loading: true, error: null });
       const { data:{data} } = await axios.get(
-        `/search?q=${encodeURIComponent(query)}`
+        `/v2/search?q=${encodeURIComponent(query)}`
       );
       set({ results: data });
     } catch (error: unknown) {

@@ -1,5 +1,5 @@
 import { ICommunity } from "@/core/types/index.types";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 interface CommunityState {
@@ -10,22 +10,25 @@ interface CommunityState {
   currentPage: number;
   totalPages: number;
   topCommunities: ICommunity[];
+  userCommunities: ICommunity[];
   fetchCommunities: (params?: string) => Promise<void>;
   fetchCommunity: (id: string) => Promise<void>;
   createCommunity: (
     payload: Omit<
       ICommunity,
       "_id" | "createdAt" | "updatedAt" | "members" | "slug"
-    >
+    >,
   ) => Promise<{ slug: string }>;
   fetchCommunityByID: (id: string) => Promise<void>;
   fetchCommunityBySlug: (name: string) => Promise<void>;
   onCommunityJoin: (communityId: string) => void;
   onMemberUpdate: (
     communityId: string,
-    status: "active" | "left"
+    status: "active" | "left",
   ) => Promise<void>;
   getTopCommunities: () => Promise<void>;
+  resetCommunity: () => void;
+  getUserCommunities: () => Promise<void>;
 }
 
 export const useCommunityStore = create<CommunityState>((set) => ({
@@ -36,10 +39,13 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   currentPage: 1,
   totalPages: 1,
   topCommunities: [],
+  userCommunities: [],
   fetchCommunities: async (params = "") => {
     try {
       set({ isLoading: true, error: null });
-      const { data: {data} } = await axios.get(`/api/communities?${params}`);
+      const {
+        data: { data },
+      } = await axios.get(`/v2/communities?${params}`);
       set({
         communities: data.communities || [],
         totalPages: data.totalPages || 1,
@@ -57,7 +63,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
       set({ isLoading: true, error: null });
       const {
         data: { data },
-      } = await axios.get(`/api/communities/${id}`);
+      } = await axios.get(`/v2/communities/${id}`);
       set({ community: data });
     } catch (error: unknown) {
       const errorMessage =
@@ -71,13 +77,13 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     payload: Omit<
       ICommunity,
       "_id" | "createdAt" | "updatedAt" | "members" | "slug"
-    >
+    >,
   ) => {
     try {
       set({ isLoading: true, error: null });
       const {
         data: { data },
-      } = await axios.post(`/api/communities`, payload);
+      } = await axios.post(`/v2/communities`, payload);
       return data;
     } catch (e) {
       console.log(e);
@@ -86,25 +92,25 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     }
   },
   onCommunityJoin: async (communityId: string) => {
-    try {
-      set({ isLoading: true, error: null });
-      const res = await axios.post(`/api/communities/${communityId}/join`);
-      if (res.status === 401) {
-        window.location.href = "/sign-in";
-        return;
-      }
-    } catch (e) {
-      console.error(e);
-      alert("Failed to join community");
-    } finally {
-      set({ isLoading: false });
-    }
+    // try {
+    //   set({ isLoading: true, error: null });
+    //   const res = await axios.post(`/api/communities/${communityId}/join`);
+    //   if (res.status === 401) {
+    //     window.location.href = "/sign-in";
+    //     return;
+    //   }
+    // } catch (e) {
+    //   console.error(e);
+    //   alert("Failed to join community");
+    // } finally {
+    //   set({ isLoading: false });
+    // }
   },
 
   onMemberUpdate: async (communityId: string, status: "active" | "left") => {
     try {
       set({ isLoading: true, error: null });
-      await axios.post(`/api/communities/${communityId}/member/update`, {
+      await axios.post(`/v2/communities/${communityId}/member/update`, {
         status,
       });
       set((state) =>
@@ -117,7 +123,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
                 memberRole: "member",
               },
             }
-          : state
+          : state,
       );
     } catch (e) {
       console.error(e);
@@ -127,42 +133,60 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     }
   },
   fetchCommunityByID: async (id: string) => {
-    try {
-      set({ isLoading: true, error: null });
-      const { data } = await axios.get(`/api/communities/${id}`);
-      set({ community: data.community || null });
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch community";
-      set({ error: errorMessage });
-    } finally {
-      set({ isLoading: false });
-    }
+    // try {
+    //   set({ isLoading: true, error: null });
+    //   const { data } = await axios.get(`/api/communities/${id}`);
+    //   set({ community: data.community || null });
+    // } catch (error: unknown) {
+    //   const errorMessage =
+    //     error instanceof Error ? error.message : "Failed to fetch community";
+    //   set({ error: errorMessage });
+    // } finally {
+    //   set({ isLoading: false });
+    // }
   },
   fetchCommunityBySlug: async (name: string) => {
-    try {
-      set({ isLoading: true, error: null });
-      const { data } = await axios.get(
-        `/api/communities/slug/${encodeURIComponent(name)}`
-      );
-      set({ community: data.community || null });
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch community";
-      set({ error: errorMessage });
-    } finally {
-      set({ isLoading: false });
-    }
+    // try {
+    //   set({ isLoading: true, error: null });
+    //   const { data } = await axios.get(
+    //     `/api/communities/slug/${encodeURIComponent(name)}`,
+    //   );
+    //   set({ community: data.community || null });
+    // } catch (error: unknown) {
+    //   const errorMessage =
+    //     error instanceof Error ? error.message : "Failed to fetch community";
+    //   set({ error: errorMessage });
+    // } finally {
+    //   set({ isLoading: false });
+    // }
   },
   getTopCommunities: async () => {
     try {
       set({ isLoading: true, error: null });
       const {
         data: { data },
-      } = await axios.get(`/api/communities/top`);
+      } = await axios.get(`/v2/communities/top`);
       set({
         topCommunities: data || [],
       });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch communities";
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  resetCommunity: () => {
+    set({ community: null });
+  },
+  getUserCommunities: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const {
+        data: { data },
+      } = await axios.get(`/v2/communities/user`);
+      set({ userCommunities: data || [] });
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch communities";

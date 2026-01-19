@@ -12,7 +12,7 @@ import CommunityInfoCard from "@/components/community/CommunityInfoCard";
 export default function CommunityPage() {
   const params = useParams();
   const slug = (params?.id as string) || "";
-  const { fetchCommunity } = useCommunityStore();
+  const { fetchCommunity, resetCommunity } = useCommunityStore();
   const {
     isLoading: discussionsLoading,
     discussionList,
@@ -35,7 +35,10 @@ export default function CommunityPage() {
       fetchDiscussionsByCommunity(slug);
       hasFetchedRef.current = slug;
     }
-  }, [slug, fetchCommunity, fetchDiscussionsByCommunity]);
+    return () => {
+      resetCommunity();
+    };
+  }, [slug, fetchCommunity, fetchDiscussionsByCommunity, resetCommunity]);
 
   const filtered = useMemo(() => {
     let list = [...discussionList];
