@@ -4,7 +4,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, UserCircle2Icon } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useSearchStore } from "@/store/useSearchStore";
@@ -68,13 +68,13 @@ export default function SearchPage() {
                       href={`/profile/${user.username}`}
                       className="block flex items-center space-x-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
-                        <Image
+                        {user.avatar ? <Image
                           src={user.avatar}
                           alt={user.username}
                           width={50}
                           height={50}
                           className="rounded-full"
-                        />
+                        /> : <UserCircle2Icon className="h-16 w-16 text-gray-900 dark:text-gray-200" />  }
                       <div>
                         <div className="font-medium">{user.username}</div>
                         <div className="text-sm text-gray-500">

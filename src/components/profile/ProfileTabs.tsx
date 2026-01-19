@@ -55,7 +55,7 @@ export default function ProfileTabs({ discussions }: ProfileTabsProps) {
   ];
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
+    <div className="border-t border-gray-200 dark:border-gray-600 p-4">
       {/* Tab Navigation */}
       <div className="flex space-x-8 mb-6">
         <button
@@ -66,7 +66,7 @@ export default function ProfileTabs({ discussions }: ProfileTabsProps) {
               : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-2">
             <MessageSquare className="h-4 w-4" />
             Discussions ({discussions.length})
           </div>

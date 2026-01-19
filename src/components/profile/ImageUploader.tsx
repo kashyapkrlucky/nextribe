@@ -17,6 +17,8 @@ export default function ImageUploader({ icon, username, type, afterUpload }: Ima
 
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log('dsl');
+    
     const file = e.target.files?.[0];
     if (file) {
       setUserImage(file);
@@ -73,18 +75,18 @@ export default function ImageUploader({ icon, username, type, afterUpload }: Ima
 
   return (
     <div className="relative">
-      <button className="p-2 cursor-pointer">
-        {icon || <CameraIcon className="absolute top-3 left-3 cursor-pointer" />}
+      <button className="w-10 h-10 cursor-pointer flex items-center justify-center">
+        {icon || <CameraIcon />}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleImageChange}
           accept="image/*"
-          className="w-8 h-8 opacity-0"
+          className="w-full h-full opacity-0 absolute z-50 top-0 left-0 cursor-pointer"
         />
       </button>
       {imagePreview && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4">
           <div className="bg-white p-4 rounded-md w-md flex flex-col items-center gap-4">
             <Image src={imagePreview} alt="Profile" width={400} height={400} />
             <div className="flex gap-2">

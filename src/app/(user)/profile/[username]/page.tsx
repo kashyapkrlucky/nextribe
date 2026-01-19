@@ -47,44 +47,39 @@ export default function ProfilePage() {
   }
 
   return (
-    <>  
+    <>
       {/* Cover Photo */}
-      <div className="fixed top-16 z-0 w-full h-full overflow-y-auto">
+      <div className="w-full h-full overflow-y-auto">
         {profile?.cover ? (
           <Image
             src={profile?.cover}
             alt="Cover"
             width={908}
             height={400}
-            className="object-cover w-full h-full"
+            className="relative top-0 left-0 object-cover w-full h-full"
           />
         ) : (
-          <div className="absolute inset-0 bg-black/20">
-            <div className="absolute inset-0 bg-gradient-to-t bg-purple-300 from-black/30 to-transparent"></div>
+          <div className="relative top-0 left-0 object-cover w-full h-full">
+            <div className="absolute inset-0 bg-gradient-to-t bg-purple-900 from-black/30 to-transparent"></div>
           </div>
         )}
 
         {/* Cover Photo Actions */}
         {isOwner && profile?.username && (
-          <div className="absolute top-4 right-4 flex gap-2 bg-white/20 rounded-lg text-white transition-colors">
+          <div className="absolute top-20 right-4 flex gap-2 bg-white/20 rounded-lg text-white transition-colors">
             <ImageUploader
-              icon={
-                <ImageIcon className="absolute top-3 left-3 cursor-pointer" />
-              }
+              icon={<ImageIcon />}
               username={profile?.username}
               type="cover"
               afterUpload={updateCover}
             />
           </div>
         )}
-      </div>
 
-      <div className="relative z-10 top-20 overflow-y-auto scroll-smooth h-[calc(100vh-64px)]">
-        <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-t-lg">
-          {/* Enhanced Profile Content */}
-          <div className="pt-10 px-6 pb-6">
+        <div className="absolute top-16 w-full z-10 overflow-y-auto scroll-smooth">
+          <div className="max-w-7xl mx-auto bg-white/30 dark:bg-gray-800/30 h-[calc(100vh-64px)] p-4 overflow-y-auto">
             {/* Profile Header Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 mb-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-8 mb-6 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
                 {/* Enhanced Profile Header with Cover */}
 
@@ -130,6 +125,14 @@ export default function ProfilePage() {
                         <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                         Active
                       </span>
+                      {isOwner && (
+                        <button
+                          className="px-3 py-1 bg-indigo-600 text-white rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors duration-200"
+                          onClick={() => setIsModalOpen(true)}
+                        >
+                          Edit Profile
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -172,23 +175,14 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col gap-3">
-                  {isOwner && (
-                    <button
-                      className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      Edit Profile
-                    </button>
-                  )}
-                </div>
+                <div className="flex flex-col gap-3"></div>
               </div>
             </div>
 
             {/* Social Links Section */}
             {profile && (
               <div className="mb-6">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Connect
                   </h3>
@@ -198,7 +192,7 @@ export default function ProfilePage() {
             )}
 
             {/* Tabs Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl  overflow-hidden">
+            <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl  overflow-hidden">
               <ProfileTabs discussions={userDiscussions} />
             </div>
 
@@ -207,6 +201,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-     </>
+    </>
   );
 }
