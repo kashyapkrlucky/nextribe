@@ -72,16 +72,16 @@ export interface ICommunity {
   topics?: Partial<ITopic>[]; // ref: Topic[]
   /** Number of members in the community */
   memberCount?: number;
-  /** Whether the current user is a member of this community */
-  isMember?: boolean;
-  /** The role of the current user in this community (if member) */
-  memberRole?: string;
   /** Community guidelines */
   guidelines?: string[];
   /** When the reply was created */
   createdAt: string;
   /** When the reply was last updated */
   updatedAt: string;
+}
+
+export interface ICommunityMember extends ICommunity {
+  member: IMember;
 }
 
 /**
@@ -101,7 +101,9 @@ export interface IMember {
   /** When the membership was last updated */
   updatedAt?: Date;
 }
-
+export interface ICommunityMember extends ICommunity, Omit<IMember, 'createdAt' | 'updatedAt'> {
+  joinedAt?: Date;
+}
 /**
  * Represents a discussion thread within a community
  */

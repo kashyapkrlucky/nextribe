@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 import { Topic } from "@/models/Topic";
@@ -6,7 +6,12 @@ import mongoose from "mongoose";
 // import { jwtVerify } from "jose";
 import { getUserIdFromCookie } from "@/lib/auth";
 import { Member } from "@/models/Member";
-import { BadRequestResponse, ErrorResponse, SuccessResponse } from "@/core/utils/responses";
+import {
+  BadRequestResponse,
+  ErrorResponse,
+  SuccessResponse,
+  UnauthorizedResponse,
+} from "@/core/utils/responses";
 
 // Ensure Topic model is registered
 if (!mongoose.models.Topic) {
@@ -15,7 +20,7 @@ if (!mongoose.models.Topic) {
 
 export async function GET(
   req: Request,
-  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+  context: { params: { id: string } } | { params: Promise<{ id: string }> },
 ) {
   try {
     const params =
@@ -26,14 +31,19 @@ export async function GET(
     // Find user ID from cookie
     const userId = await getUserIdFromCookie();
     if (!userId)
-      return ErrorResponse("Unauthorized");
+      return UnauthorizedResponse(
+        "You are not authorized to perform this action",
+      );
 
     // Connect to database
     await connectToDatabase();
     // Find community by slug
     const community = await Community.findOne({
       slug: id.toLowerCase(),
-    }).populate("topics", "slug name").lean();
+    })
+      .populate("topics", "slug name")
+      .populate("owner", "username avatar")
+      .lean();
 
     if (!community) {
       return BadRequestResponse("Community not found");
@@ -44,11 +54,7 @@ export async function GET(
       community: community._id,
     }).lean();
 
-    return SuccessResponse({
-      ...community,
-      memberRole: member?.role || null,
-      isMember: member?.status === 'active',
-    });
+    return SuccessResponse({ ...community, member });
   } catch (error) {
     console.error("Error in GET /api/communities/[id]:", error);
     return ErrorResponse("Internal Server Error");
@@ -57,7 +63,7 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+  context: { params: { id: string } } | { params: Promise<{ id: string }> },
 ) {
   try {
     const params =
@@ -66,15 +72,16 @@ export async function PATCH(
 
     const userId = await getUserIdFromCookie();
     if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return UnauthorizedResponse(
+        "You are not authorized to perform this action",
+      );
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+      return BadRequestResponse("Invalid id");
     }
 
     await connectToDatabase();
     const community = await Community.findById(id);
-    if (!community)
-      return ErrorResponse("Not found");
+    if (!community) return ErrorResponse("Not found");
 
     if (String(community.owner) !== String(userId)) {
       return ErrorResponse("Forbidden");

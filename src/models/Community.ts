@@ -11,7 +11,8 @@ const CommunitySchema = new Schema<ICommunity>(
       type: String, 
       required: [true, 'Community name is required'],
       trim: true, 
-      maxlength: [140, 'Name cannot be longer than 140 characters'] 
+      maxlength: [140, 'Name cannot be longer than 140 characters'],
+      index: true
     },
     slug: { 
       type: String, 
@@ -24,7 +25,8 @@ const CommunitySchema = new Schema<ICommunity>(
     description: { 
       type: String, 
       trim: true, 
-      maxlength: [2000, 'Description cannot be longer than 2000 characters'] 
+      maxlength: [2000, 'Description cannot be longer than 2000 characters'], 
+      index: true
     },
     owner: { 
       type: Schema.Types.ObjectId, 
@@ -44,6 +46,11 @@ const CommunitySchema = new Schema<ICommunity>(
     }],
     guidelines: {
       type: [String]
+    },
+    memberCount: {
+      type: Number,
+      default: 0,
+      index: true
     }
   },
   { 
@@ -52,37 +59,6 @@ const CommunitySchema = new Schema<ICommunity>(
     toObject: { virtuals: true }
   }
 );
-
-// Index for text search on community name and description
-CommunitySchema.index({ 
-  name: 'text',
-  description: 'text'
-}, {
-  weights: {
-    name: 3,      // Higher weight to name
-    description: 1
-  }
-});
-
-/**
- * Virtual for memberCount
- * This is a virtual field that will be populated with the actual count of community members
- */
-CommunitySchema.virtual('memberCount', {
-  ref: 'Member',
-  localField: '_id',
-  foreignField: 'community',
-  count: true
-});
-
-/**
- * Middleware to handle cleanup when a community is deleted
- */
-CommunitySchema.pre('deleteOne', { document: true }, async function(next: (err?: Error) => void) {
-  // This middleware will be used to clean up related documents
-  // when a community is deleted
-  next();
-});
 
 /**
  * Mongoose model for the Community collection

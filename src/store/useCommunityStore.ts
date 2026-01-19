@@ -1,10 +1,11 @@
-import { ICommunity } from "@/core/types/index.types";
+import { ICommunity, ICommunityMember } from "@/core/types/index.types";
 import axios from "@/lib/axios";
 import { create } from "zustand";
 
 interface CommunityState {
   communities: ICommunity[];
   community: ICommunity | null;
+  communityMember: ICommunityMember | null;
   isLoading: boolean;
   error: string | null;
   currentPage: number;
@@ -34,6 +35,7 @@ interface CommunityState {
 export const useCommunityStore = create<CommunityState>((set) => ({
   communities: [],
   community: null,
+  communityMember: null,
   isLoading: false,
   error: null,
   currentPage: 1,
@@ -64,7 +66,7 @@ export const useCommunityStore = create<CommunityState>((set) => ({
       const {
         data: { data },
       } = await axios.get(`/v2/communities/${id}`);
-      set({ community: data });
+      set({ communityMember: data });
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch community";

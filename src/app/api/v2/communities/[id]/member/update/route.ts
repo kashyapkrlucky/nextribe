@@ -3,11 +3,11 @@ import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 import { Member } from "@/models/Member";
 import { getUserIdFromCookie } from "@/lib/auth";
-import { ErrorResponse } from "@/core/utils/responses";
+import { ErrorResponse, NotFoundResponse, SuccessResponse } from "@/core/utils/responses";
 
 export async function POST(
   req: NextRequest,
-  context: { params: { id: string } } | { params: Promise<{ id: string }> }
+  context: { params: { id: string } } | { params: Promise<{ id: string }> },
 ) {
   try {
     const params =
@@ -23,24 +23,30 @@ export async function POST(
     await connectToDatabase();
     const community = await Community.findOne({
       slug: id.toLowerCase(),
-    }).lean();
-    if (!community)
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    });
+    if (!community) return NotFoundResponse("Community not found");
 
     const { status } = body;
 
     await Member.updateOne(
       { community: community?._id, user: userId },
       { $set: { status } },
-      { upsert: true }
+      { upsert: true },
     );
 
-    return NextResponse.json({ success: true });
+    const memberCount = await Member.countDocuments({
+      community: community._id,
+      status: "active",
+    });
+    community.memberCount = memberCount;
+    await community.save();
+
+    return SuccessResponse({
+      success: true,
+      message: "Member updated successfully",
+    });
   } catch (e) {
     console.error(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return ErrorResponse("Internal Server Error");
   }
 }

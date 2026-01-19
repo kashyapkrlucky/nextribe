@@ -10,12 +10,12 @@ function TopDiscussions() {
   const { topDiscussions, getTopDiscussions } = useDiscussionStore();
 
   useEffect(() => {
-    if (!topDiscussions || topDiscussions.length === 0) {
+    if (!topDiscussions) {
       getTopDiscussions();
     }
   }, [getTopDiscussions, topDiscussions]);
 
-  const isLoading = !topDiscussions || topDiscussions.length === 0;
+  const isLoading = !topDiscussions;
 
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">

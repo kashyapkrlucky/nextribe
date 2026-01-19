@@ -218,8 +218,10 @@ export const useDiscussionStore = create<DiscussionState>((set) => ({
   getTopDiscussions: async () => {
     try {
       set({ isLoading: true, error: null });
-      const { data } = await axios.get("/v2/discussions/top");
-      set({ topDiscussions: data.data || [] });
+      const {
+        data: { data },
+      } = await axios.get("/v2/discussions/top");
+      set({ topDiscussions: data });
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       throw new Error(

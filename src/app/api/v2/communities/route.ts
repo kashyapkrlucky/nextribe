@@ -116,6 +116,9 @@ export async function POST(req: Request) {
       { upsert: true }
     );
 
+    community.memberCount = 1;
+    await community.save();
+
     return SuccessResponse({ slug: community.slug });
   } catch (error) {
     logger.error('Error creating community:', error);

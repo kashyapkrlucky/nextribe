@@ -95,6 +95,10 @@ export interface MemberModel {
   role: MemberRole;
   /** Status of the membership */
   status: 'invited' | 'pending' | 'active' | 'left' | 'suspended';
+  /** When the membership was created */
+  createdAt?: Date;
+  /** When the membership was last updated */
+  updatedAt?: Date;
 }
 
 /**
