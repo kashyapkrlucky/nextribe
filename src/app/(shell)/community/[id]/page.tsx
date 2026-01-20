@@ -46,7 +46,7 @@ export default function CommunityPage() {
       const q = query.toLowerCase();
       list = list.filter(
         (d) =>
-          d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q)
+          d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q),
       );
     }
     if (sort === "popular") {
@@ -55,7 +55,7 @@ export default function CommunityPage() {
       list.sort(
         (a, b) =>
           new Date(a.createdAt || 0).getTime() -
-          new Date(b.createdAt || 0).getTime()
+          new Date(b.createdAt || 0).getTime(),
       );
     }
     return list;

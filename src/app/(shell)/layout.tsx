@@ -1,14 +1,16 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useState } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import NavBar from "@/components/layout/NavBar";
 import { PopularCommunities } from "@/components/home/PopularCommunities";
 import TopDiscussions from "@/components/home/TopDiscussions";
 import Footer from "@/components/layout/Footer";
-import { CompassIcon, HomeIcon } from "lucide-react";
+import { CompassIcon, HomeIcon, PlusIcon } from "lucide-react";
 import MyCommunities from "@/components/home/MyCommunities";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
+import CreateCommunityForm from "@/components/community/CreateCommunityForm";
 
 export default function HomeLayout({
   children,
@@ -16,6 +18,8 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   const { isAuthenticated, loading, user } = useAuth();
+
+  const [showCreate, setShowCreate] = useState(false);
 
   // Left sidebar data
   const importantLinks = [
@@ -46,12 +50,22 @@ export default function HomeLayout({
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
+                  className="flex items-center gap-3  px-3 py-2.5  text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
                 >
                   <Icon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" />
                   <span className="font-medium">{label}</span>
                 </Link>
               ))}
+              <button
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowCreate(true);
+                }}
+              >
+                <PlusIcon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" />
+                <span className="font-medium">Create Community</span>
+              </button>
             </nav>
           </div>
 
@@ -65,6 +79,9 @@ export default function HomeLayout({
           <TopDiscussions />
           <Footer />
         </aside>
+        {showCreate ? (
+          <CreateCommunityForm setShowCreate={setShowCreate} />
+        ) : null}
       </div>
     </Suspense>
   );

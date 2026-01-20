@@ -21,6 +21,7 @@ interface ReplyStore {
     tag: string,
   ) => Promise<void>;
   updateVoteOnReply: (replyId: string, vote: "up" | "down") => Promise<void>;
+  deleteReply: (replyId: string) => Promise<void>;
   resetReplies: () => void;
 }
 export const useReplyStore = create<ReplyStore>((set) => ({
@@ -96,6 +97,17 @@ export const useReplyStore = create<ReplyStore>((set) => ({
       }));
     } catch (error) {
       logger.error("Failed to update vote on reply", error);
+      throw error;
+    }
+  },
+  deleteReply: async (replyId: string) => {
+    try {
+      await axios.delete(`/v2/replies/${replyId}`);
+      set((state) => ({
+        replies: state.replies.filter((reply) => reply._id.toString() !== replyId),
+      }));
+    } catch (error) {
+      logger.error("Failed to delete reply", error);
       throw error;
     }
   },

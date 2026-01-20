@@ -1,19 +1,16 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useRef } from "react";
 import Link from "next/link";
 import { UserMenu } from "../auth/UserMenu";
-import { PlusIcon, Search } from "lucide-react";
+import { BellIcon, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import CreateCommunityForm from "../community/CreateCommunityForm";
 import Image from "next/image";
-import Button from "../ui/Button";
 
 const NavBar = () => {
   const { user } = useAuth();
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
-  const [showCreate, setShowCreate] = useState(false);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -56,17 +53,9 @@ const NavBar = () => {
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <Button
-              variant="secondary"
-              size="xs"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowCreate(true);
-              }}
-            >
-              <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
-              Create Community
-            </Button>
+            <button>
+              <BellIcon className="w-5 h-5" />
+            </button>
             <UserMenu />
           </>
         ) : (
@@ -86,10 +75,6 @@ const NavBar = () => {
           </>
         )}
       </div>
-
-      {showCreate ? (
-        <CreateCommunityForm setShowCreate={setShowCreate} />
-      ) : null}
     </header>
   );
 };
