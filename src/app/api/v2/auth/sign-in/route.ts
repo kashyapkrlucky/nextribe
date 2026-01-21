@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     });
 
     const res = SuccessResponse({
-      user: { id: user._id, email: user.email, username: user.username },
+      user: { id: user._id, email: user.email, username: user.username, avatar: user.avatar },
       token,
     });
     setAuthCookie(res, token);

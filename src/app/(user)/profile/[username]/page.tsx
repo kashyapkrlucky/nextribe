@@ -79,7 +79,7 @@ export default function ProfilePage() {
         <div className="absolute top-16 w-full z-10 overflow-y-auto scroll-smooth">
           <div className="max-w-7xl mx-auto bg-white/30 dark:bg-gray-800/30 h-[calc(100vh-64px)] p-4 overflow-y-auto">
             {/* Profile Header Section */}
-            <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-8 mb-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-8 mb-6 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
                 {/* Enhanced Profile Header with Cover */}
 
@@ -163,7 +163,7 @@ export default function ProfilePage() {
 
                   {/* Bio Section */}
                   <div className="mb-6">
-                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-6 border border-gray-100 dark:border-gray-700">
                       <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                         About
                       </h3>
@@ -182,7 +182,7 @@ export default function ProfilePage() {
             {/* Social Links Section */}
             {profile && (
               <div className="mb-6">
-                <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Connect
                   </h3>
@@ -192,7 +192,7 @@ export default function ProfilePage() {
             )}
 
             {/* Tabs Section */}
-            <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl  overflow-hidden">
+            <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg  overflow-hidden">
               <ProfileTabs discussions={userDiscussions} />
             </div>
 

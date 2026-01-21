@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { connectToDatabase } from "@/core/config/database";
 import { Community } from "@/models/Community";
 import { Member } from "@/models/Member";
@@ -32,19 +32,21 @@ export async function POST(
       { community: community?._id, user: userId },
       { $set: { status } },
       { upsert: true },
-    );
+    );    
 
     const memberCount = await Member.countDocuments({
       community: community._id,
       status: "active",
     });
+
+    const member = await Member.findOne({
+      community: community._id,
+      user: userId,
+    });
     community.memberCount = memberCount;
     await community.save();
 
-    return SuccessResponse({
-      success: true,
-      message: "Member updated successfully",
-    });
+    return SuccessResponse({ ...community.toObject(), member });
   } catch (e) {
     console.error(e);
     return ErrorResponse("Internal Server Error");

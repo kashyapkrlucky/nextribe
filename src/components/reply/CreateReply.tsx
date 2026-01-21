@@ -26,7 +26,7 @@ export default function CreateReply({
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         placeholder="Share your knowledge..."
-        className="w-full border-none rounded-lg p-3 text-sm min-h-16 resize-none outline-none"
+        className="w-full border-none rounded-lg text-sm min-h-18 p-1 resize-none outline-none"
       />
       <div className="flex justify-end items-center gap-2">
         <select

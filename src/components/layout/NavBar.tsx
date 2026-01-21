@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useRef } from "react";
 import Link from "next/link";
 import { UserMenu } from "../auth/UserMenu";
-import { BellIcon, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
+// import Notifications from "./Notifications";
 
 const NavBar = () => {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky z-50 backdrop-blur-lg bg-white/10 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 h-16 w-full flex flex-row justify-between items-center px-4 lg:px-6">
+    <header className="sticky z-50 backdrop-blur-lg bg-white/90 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 h-16 w-full flex flex-row justify-between items-center px-4 lg:px-6">
       <div className="flex items-center gap-8">
         <Link
           className="font-bold text-xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
@@ -53,9 +54,7 @@ const NavBar = () => {
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <button>
-              <BellIcon className="w-5 h-5" />
-            </button>
+            {/* <Notifications /> */}
             <UserMenu />
           </>
         ) : (

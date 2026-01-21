@@ -4,11 +4,13 @@ import { useDiscussionStore } from "@/store/useDiscussionStore";
 import {
   ArrowBigDownIcon,
   ArrowBigUpIcon,
+  BoxesIcon,
   CircleUserRoundIcon,
   ClockIcon,
   MessageCircleIcon,
   UserIcon,
   Users2Icon,
+  UsersRoundIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,40 +19,28 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
   const { voteDiscussion } = useDiscussionStore();
   return (
     <article className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl transition-all duration-200 overflow-hidden group">
-      <header className="flex flex-row justify-between items-center p-4 pb-2">
-        <div className="flex items-center gap-4">
-          <Link
-            href={`/profile/${item.author.username}`}
-            className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
-          >
-            {item.author.avatar ? (
-              <Image
-                src={item.author.avatar || ""}
-                alt={item.author.username}
-                width={16}
-                height={16}
-                className="rounded-full"
-              />
-            ) : (
-              <CircleUserRoundIcon className="w-4 h-4" />
-            )}
-            {item.author.username}
-          </Link>
-          <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-            <ClockIcon className="w-4 h-4" />
-            {formatRelativeTime(item.createdAt || "")}
-          </p>
-        </div>
-
+      <header className="flex flex-row justify-between md:items-center p-4 pb-2">
         <Link
-          href={`/community/${item.community.slug}`}
-          className="flex items-center gap-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
+          href={`/profile/${item.author.username}`}
+          className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
         >
-          <div className="w-5 h-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-            <Users2Icon className="w-3 h-3 text-white" />
-          </div>
-          <span>{item.community.name}</span>
+          {item.author.avatar ? (
+            <Image
+              src={item.author.avatar || ""}
+              alt={item.author.username}
+              width={16}
+              height={16}
+              className="rounded-full"
+            />
+          ) : (
+            <CircleUserRoundIcon className="w-3 h-3" />
+          )}
+          {item.author.username}
         </Link>
+        <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+          <ClockIcon className="w-3 h-3" />
+          {formatRelativeTime(item.createdAt || "")}
+        </p>
       </header>
 
       <section className="px-4 pb-3">
@@ -60,34 +50,47 @@ export default function DiscussionCard({ item }: { item: IDiscussion }) {
         >
           {item.title}
         </Link>
-        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-3">
           {item.body}
         </p>
       </section>
 
       <footer className="flex flex-row items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-1">
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item.slug, "up")}>
+        <div className="flex items-center gap-3">
+          <button
+            className="flex items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group"
+            onClick={() => voteDiscussion(item.slug, "up")}
+          >
             <ArrowBigUpIcon className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               {item.upVoteCount || 0}
             </span>
           </button>
-          <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group" onClick={() => voteDiscussion(item.slug, "down")}>
+          <button
+            className="flex items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 group"
+            onClick={() => voteDiscussion(item.slug, "down")}
+          >
             <ArrowBigDownIcon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               {item.downVoteCount || 0}
             </span>
           </button>
-        </div>
-
-        <div className="flex items-center gap-4">
           <Link
             href={`/discussion/${item.slug}`}
             className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
           >
-            <MessageCircleIcon className="w-4 h-4" />
-            {item.replyCount}
+            <MessageCircleIcon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{item.replyCount}</span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href={`/community/${item.community.slug}`}
+            className="flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200"
+          >
+            <BoxesIcon className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+            <span>{item.community.name}</span>
           </Link>
         </div>
       </footer>

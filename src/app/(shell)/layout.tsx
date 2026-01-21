@@ -9,7 +9,6 @@ import Footer from "@/components/layout/Footer";
 import { CompassIcon, HomeIcon, PlusIcon } from "lucide-react";
 import MyCommunities from "@/components/home/MyCommunities";
 import Link from "next/link";
-import Button from "@/components/ui/Button";
 import CreateCommunityForm from "@/components/community/CreateCommunityForm";
 
 export default function HomeLayout({
@@ -42,9 +41,9 @@ export default function HomeLayout({
   return (
     <Suspense fallback={<Spinner />}>
       <NavBar />
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto p-6">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto p-4">
         <aside className="hidden lg:flex flex-col lg:w-1/5 gap-4">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <nav className="flex flex-col gap-1">
               {importantLinks.map(({ href, label, icon: Icon }) => (
                 <Link

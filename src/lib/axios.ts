@@ -29,6 +29,9 @@ axiosInstance.interceptors.response.use(
       if (error.response.status === 401) {
         // Handle unauthorized
         console.error('Authentication error');
+        axiosInstance.get('/v2/auth/logout');
+        localStorage.clear();
+        window.location.href = '/sign-in';
       }
     }
     return Promise.reject(error);

@@ -42,7 +42,7 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
                 <Users className="h-4 w-4" />
-                <span>{communityMember?.memberCount || 0} members</span>
+                <span>{communityMember?.memberCount || 0} <span className="hidden md:inline">members</span></span>
               </div>
               <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
                 <Calendar className="h-4 w-4" />
@@ -74,7 +74,7 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
           </div>
           <div className="lg:w-auto w-full">
             {!isLoading ? (
-              communityMember?.member ? (
+              communityMember?.member?.status === "active" ? (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button onClick={() => setShowCreateDiscussion(true)}>
@@ -100,8 +100,11 @@ export default function CommunityInfoCard({ slug }: CommunityInfoCardProps) {
                       {communityMember?.member?.createdAt
                         ? new Date(
                             communityMember.member.createdAt,
-                          ).getFullYear()
-                        : "2025"}
+                          ).toLocaleDateString(
+                        "en-US",
+                        { month: "short", year: "numeric" },
+                      )
+                        : "Jan 2026"}
                     </span>
                   </div>
                 </div>

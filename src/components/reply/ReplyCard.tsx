@@ -86,7 +86,7 @@ export default function ReplyCard({ reply }: { reply: IReply }) {
             </Button>
           )}
         </div>
-        <div className="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
+        <div className="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap word-break">
           {reply.body}
         </div>
       </div>

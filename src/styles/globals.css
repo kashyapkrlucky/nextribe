@@ -54,3 +54,8 @@ body ::-webkit-scrollbar-track,
 body ::-webkit-scrollbar-thumb {
   display: none;
 }
+
+
+.word-break {
+  word-break: break-word;
+}

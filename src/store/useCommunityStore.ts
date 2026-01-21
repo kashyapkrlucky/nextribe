@@ -112,18 +112,16 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   onMemberUpdate: async (communityId: string, status: "active" | "left") => {
     try {
       set({ isLoading: true, error: null });
-      await axios.post(`/v2/communities/${communityId}/member/update`, {
+      const {
+        data: { data },
+      } = await axios.post(`/v2/communities/${communityId}/member/update`, {
         status,
       });
       set((state) =>
-        state.community
+        state.communityMember
           ? {
               ...state,
-              community: {
-                ...state.community,
-                isMember: true,
-                memberRole: "member",
-              },
+              communityMember: data,
             }
           : state,
       );
