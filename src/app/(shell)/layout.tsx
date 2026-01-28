@@ -17,19 +17,15 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   const { isAuthenticated, loading, user } = useAuth();
-
   const [showCreate, setShowCreate] = useState(false);
 
-  // Left sidebar data
   const importantLinks = [
     { href: "/", label: "Home", icon: HomeIcon },
     { href: "/explore", label: "Explore", icon: CompassIcon },
   ];
-
-  // Redirect if not authenticated
+  
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      console.log("Home page - Not authenticated, redirecting to sign-in");
       window.location.replace("/sign-in");
     }
   }, [isAuthenticated, loading]);
@@ -44,19 +40,19 @@ export default function HomeLayout({
       <div className="flex-1 flex flex-col lg:flex-row gap-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto p-4">
         <aside className="hidden lg:flex flex-col lg:w-1/5 gap-4">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <nav className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-4">
               {importantLinks.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-3  px-3 py-2.5  text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
+                  className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
                 >
                   <Icon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" />
                   <span className="font-medium">{label}</span>
                 </Link>
               ))}
               <button
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
+              className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 group"
                 onClick={(e) => {
                   e.preventDefault();
                   setShowCreate(true);

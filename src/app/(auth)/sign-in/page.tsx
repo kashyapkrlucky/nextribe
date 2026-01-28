@@ -17,6 +17,7 @@ import {
   FORGOT_PASSWORD,
 } from "@/core/constants/app";
 import Button from "@/components/ui/Button";
+import Text from "@/components/ui/Text";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -48,11 +49,11 @@ function SignIn() {
 
   return (
     <main className="flex-1 w-full flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
-        <h1 className="text-2xl font-semibold mb-1">{WELCOME}</h1>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+      <div className="w-full max-w-md flex flex-col gap-2 bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+        <Text variant="h2" className="mb-1">{WELCOME}</Text>
+        <Text variant="body-sm" color="muted" className="mb-6">
           {SIGN_IN_TO_CONTINUE}
-        </p>
+        </Text>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <InputWithIcon
@@ -81,9 +82,11 @@ function SignIn() {
           </Button>
         </form>
 
-        <div className="mt-6 text-sm text-slate-700 dark:text-slate-400">
-          {DONT_HAVE_AN_ACCOUNT} &nbsp;
-          <PageLink url="/sign-up" text="Create one" />
+        <div className="mt-6">
+          <Text variant="body-sm" color="secondary">
+            {DONT_HAVE_AN_ACCOUNT} &nbsp;
+            <PageLink url="/sign-up" text="Create one" />
+          </Text>
         </div>
       </div>
     </main>

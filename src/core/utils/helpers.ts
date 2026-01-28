@@ -42,3 +42,7 @@ export function truncateText(text: string, length: number): string {
   if (text.length <= length) return text;
   return text.substring(0, length) + '...';
 }
+
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
